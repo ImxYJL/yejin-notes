@@ -4,7 +4,7 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Rainbow Palette (Default) */
+  /* 🌈 Rainbow Palette (Default) */
   --palette-0: #d32f2f;
   --palette-1: #f39b9b;
   --palette-2: #f0ae59;
@@ -22,7 +22,7 @@
   --palette-e: #96abde;
   --palette-f: #eb9fc9;
 
-  /* Markdown Mapping */
+  /* 🖋️ Markdown Mapping */
   --md-h1: var(--palette-0);
   --md-h2: var(--palette-2);
   --md-h3: var(--palette-4);
@@ -31,16 +31,34 @@
   --md-quote: color-mix(in srgb, var(--palette-5), transparent 90%);
   --md-highlight: var(--palette-3);
   --md-callout-bg: #f8f9fa;
+
+  /* 📐 Design System Tokens */
+  --radius-main: 12px;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
   --color-accent-primary: var(--palette-5);
+  --radius-main: var(--radius-main);
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
+}
+
+@layer components {
+  /* 레이어: 여러 속성이 결합된 '상태'나 '행동' */
+  .base-focus {
+    @apply focus-visible:ring-2 focus-visible:ring-accent-primary/30 focus-visible:ring-offset-2 focus-visible:outline-none transition-all;
+  }
+
+  .base-disabled {
+    @apply disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 disabled:shadow-none;
+  }
+
+  .base-transition {
+    @apply duration-200 ease-in-out;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

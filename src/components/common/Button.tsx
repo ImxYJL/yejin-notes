@@ -1,9 +1,23 @@
 import { cn } from "@/utils/styles";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 
+const BUTTON_VARIANT = {
+  primary:
+    "bg-accent-primary text-white shadow-sm hover:opacity-90 active:scale-[0.98]",
+  outline:
+    "border border-border bg-transparent text-foreground hover:bg-gray-50",
+  ghost: "text-muted-foreground hover:bg-gray-100 hover:text-foreground",
+} as const;
+
+const BUTTON_SIZE = {
+  sm: "h-8 px-3 text-xs",
+  md: "h-10 px-4 text-sm",
+  lg: "h-12 px-6 text-base",
+} as const;
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "outline" | "ghost" | "primary";
-  size?: "sm" | "md" | "lg";
+  variant?: keyof typeof BUTTON_VARIANT;
+  size?: keyof typeof BUTTON_SIZE;
   icon?: ReactNode;
 };
 
@@ -13,34 +27,17 @@ const Button = ({
   variant = "primary",
   size = "md",
   icon,
-  disabled,
   className,
   ...props
 }: ButtonProps) => {
-  const variants = {
-    primary:
-      "bg-primary text-primary-foreground shadow-sm hover:opacity-90 active:scale-[0.98]",
-    outline:
-      "border border-border bg-transparent text-foreground hover:bg-muted",
-    ghost: "text-muted-foreground hover:bg-muted hover:text-foreground",
-  };
-
-  const sizes = {
-    sm: "h-8 px-3 text-xs",
-    md: "h-10 px-4 text-sm",
-    lg: "h-12 px-6 text-base",
-  };
-
   return (
     <button
       type={type}
-      disabled={disabled}
       className={cn(
-        "inline-flex items-center justify-center rounded-md font-medium whitespace-nowrap transition-all duration-200",
-        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
-        "disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-400 disabled:opacity-50 disabled:shadow-none",
-        variants[variant],
-        sizes[size],
+        "inline-flex items-center justify-center rounded-main font-medium whitespace-nowrap",
+        "base-focus base-disabled base-transition", // 전역 레이어 적용
+        BUTTON_VARIANT[variant],
+        BUTTON_SIZE[size],
         className,
       )}
       {...props}

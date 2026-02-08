@@ -5,7 +5,7 @@ import useLayoutStore from "@/store/useLayoutStore";
 import { cn } from "@/utils/styles";
 import { Menu } from "lucide-react";
 import Button from "../common/Button";
-import { ANIMATION_CONFIG, LAYOUT_CONFIG } from "@/constants/styles";
+import { LAYOUT_CONFIG } from "@/constants/styles";
 import Sidebar from "../common/Sidebar";
 import { usePathname } from "next/navigation";
 
@@ -36,8 +36,8 @@ const MainLayout = ({ children }: LayoutProps) => {
         }}
         className={cn(
           "transition-[padding] min-h-screen",
-          ANIMATION_CONFIG.default,
-          !isEditorPage && "max-md:!pl-0",
+          "base-transition",
+          !isEditorPage && "max-md:pl-0!",
         )}
       >
         {/* 2. 상단 헤더: 에디터가 아닐 때만 햄버거 버튼 노출 */}
