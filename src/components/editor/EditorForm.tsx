@@ -8,6 +8,7 @@ import { Button } from "../common";
 import { EditorMode, PostFormData } from "@/types/blog";
 import { ContentEditor, TitleInput } from ".";
 import dynamic from "next/dynamic";
+import { useScrollSync } from "@/hooks/useScrollSync";
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -24,9 +25,9 @@ const MarkdownRenderer = dynamic(() => import("../markdown/MarkdownRenderer"), {
 });
 
 const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
-  const router = useRouter();
-
   const [formData, setFormData] = useState<PostFormData>(initialData);
+  const router = useRouter();
+  const { editorRef, previewRef, handleScroll } = useScrollSync();
 
   // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
   const deferredContent = useDeferredValue(formData.content);
@@ -85,11 +86,16 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
           <ContentEditor
             value={formData.content}
             onChange={(val) => handleUpdateField("content", val)}
+            onScroll={handleScroll}
+            ref={editorRef}
           />
         </section>
 
         {/* 미리보기 (DeferredValue로 타이핑 랙 방지) */}
-        <section className="flex-1 overflow-y-auto border-l border-border pl-10 bg-background/50">
+        <section
+          ref={previewRef}
+          className="flex-1 overflow-y-auto border-l border-border pl-10 bg-background/50"
+        >
           <MarkdownRenderer content={deferredContent} isEditor={true} />
         </section>
       </div>
