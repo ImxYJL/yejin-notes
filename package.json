@@ -20,6 +20,7 @@
     "react-dom": "19.2.3",
     "react-error-boundary": "^6.1.0",
     "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
     "rehype-pretty-code": "^0.14.1",
     "remark-gfm": "^4.0.1",
     "shiki": "^3.22.0",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
