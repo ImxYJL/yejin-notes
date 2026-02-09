@@ -1,4 +1,4 @@
-import { TextareaHTMLAttributes, forwardRef } from "react";
+import { TextareaHTMLAttributes } from "react";
 import { cn } from "@/utils/styles";
 
 const TEXTAREA_VARIANT = {
@@ -9,24 +9,25 @@ const TEXTAREA_VARIANT = {
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   variant?: keyof typeof TEXTAREA_VARIANT;
+  ref?: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, variant = "outline", ...props }, ref) => {
-    return (
-      <textarea
-        ref={ref}
-        className={cn(
-          "w-full min-h-[200px] rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground",
-          "base-disabled base-transition",
-          TEXTAREA_VARIANT[variant],
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
+const Textarea = ({
+  className,
+  variant = "outline",
+  ref,
+  ...props
+}: TextareaProps) => (
+  <textarea
+    ref={ref}
+    className={cn(
+      "w-full min-h-[200px] rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground",
+      "base-disabled base-transition",
+      TEXTAREA_VARIANT[variant],
+      className,
+    )}
+    {...props}
+  />
 );
 
-Textarea.displayName = "Textarea";
 export default Textarea;

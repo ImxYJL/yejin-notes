@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef } from "react";
+import { InputHTMLAttributes } from "react";
 import { cn } from "@/utils/styles";
 
 const INPUT_VARIANT = {
@@ -15,25 +15,27 @@ const FONT_SIZE = {
 type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   variant?: keyof typeof INPUT_VARIANT;
   fontSize?: keyof typeof FONT_SIZE;
+  ref?: React.RefObject<HTMLInputElement | null>;
 };
 
-const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, variant = "outline", fontSize = "base", ...props }, ref) => {
-    return (
-      <input
-        ref={ref}
-        className={cn(
-          "w-full rounded-main px-4 py-2 outline-none placeholder:text-muted-foreground",
-          "base-focus base-disabled base-transition",
-          INPUT_VARIANT[variant],
-          FONT_SIZE[fontSize],
-          className,
-        )}
-        {...props}
-      />
-    );
-  },
+const Input = ({
+  className,
+  variant = "outline",
+  fontSize = "base",
+  ref,
+  ...props
+}: InputProps) => (
+  <input
+    ref={ref}
+    className={cn(
+      "w-full rounded-main px-4 py-2 outline-none placeholder:text-muted-foreground",
+      "base-focus base-disabled base-transition",
+      INPUT_VARIANT[variant],
+      FONT_SIZE[fontSize],
+      className,
+    )}
+    {...props}
+  />
 );
 
-Input.displayName = "Input";
 export default Input;
