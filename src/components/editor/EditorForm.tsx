@@ -1,97 +1,97 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useDeferredValue, useCallback } from "react";
+import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Save, Eye, Edit3, ArrowLeft } from "lucide-react";
-import Button from "@/components/common/Button";
-import { cn } from "@/utils/styles";
+import { Button } from "../common";
+// import MarkdownRenderer from "../markdown/MarkdownRenderer";
+import { EditorMode, PostFormData } from "@/types/blog";
+import { ContentEditor, TitleInput } from ".";
+import dynamic from "next/dynamic";
 
 type EditorFormProps = {
-  initialData?: {
-    title: string;
-    content: string;
-    category: string;
-    isPublished: boolean;
-  };
-  mode: "create" | "edit"; // mode 추가
-  postId: string; // 클라이언트 발급 UUID
+  mode: EditorMode;
+  initialData?: PostFormData; // 낱개가 아닌 덩어리로 전달
 };
 
-const EditorForm = ({ initialData, mode, postId }: EditorFormProps) => {
+const MarkdownRenderer = dynamic(() => import("../markdown/MarkdownRenderer"), {
+  ssr: false,
+  loading: () => (
+    <div className="p-4 text-muted-foreground font-mono">
+      미리보기 준비 중...
+    </div>
+  ),
+});
+
+const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
   const router = useRouter();
-  const [isPreview, setIsPreview] = useState(false);
-  const [formData, setFormData] = useState(
-    initialData ?? {
-      title: "",
-      content: "",
-      category: "dev",
-      isPublished: false,
+
+  const [formData, setFormData] = useState<PostFormData>(initialData);
+
+  // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
+  const deferredContent = useDeferredValue(formData.content);
+
+  const handleUpdateField = useCallback(
+    <K extends keyof PostFormData>(field: K, value: PostFormData[K]) => {
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
     },
+    [],
   );
-  const isEdit = mode === "edit";
 
   const handleSave = async () => {
-    // 1. 여기서 content의 앞부분을 잘라 summary를 만듭니다.
-    const summary = formData.content.slice(0, 150).replace(/[#*`]/g, "");
-
-    // 2. Supabase Upsert 로직 (postId를 PK로 사용)
-    console.log("Saving...", { ...formData, id: postId, summary });
-    // 성공 후 상세 페이지로 이동
-    // router.push(`/${formData.category}/posts/${postId}`);
+    alert("저장되었습니다!");
+    router.push(`/${formData.categoryId}/posts/${formData.id}`);
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <header className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">
-          {isEdit ? "Edit Post" : "New Post"}
-        </h2>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsPreview(!isPreview)}
-            icon={isPreview ? <Edit3 size={16} /> : <Eye size={16} />}
-          >
-            {isPreview ? "Write" : "Preview"}
-          </Button>
+    <div className="flex flex-col h-[calc(100vh-160px)] gap-8">
+      {/* 툴바 */}
+      <header className="flex justify-between items-center px-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => router.back()}
+          icon={<ArrowLeft size={16} />}
+        >
+          나가기
+        </Button>
+        <div className="flex items-center gap-4">
+          <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-1 rounded-md">
+            나중에 임시저장 만들기
+          </span>
           <Button
             variant="primary"
-            size="sm"
+            size="md"
             onClick={handleSave}
             icon={<Save size={16} />}
+            className="font-bold"
           >
-            {isEdit ? "Update" : "Publish"}
+            {mode === "create" ? "게시하기" : "수정완료"}
           </Button>
         </div>
       </header>
 
-      <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col min-h-[70vh]">
-        <input
-          className="p-8 text-4xl font-bold outline-none border-b border-gray-50"
-          placeholder="Enter title..."
-          value={formData.title}
-          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-        />
+      <TitleInput
+        value={formData.title}
+        onChange={(val) => handleUpdateField("title", val)}
+      />
 
-        <div className="flex-1">
-          {!isPreview ? (
-            <textarea
-              className="w-full h-full p-8 outline-none resize-none font-mono text-base leading-relaxed"
-              placeholder="Write your story in markdown..."
-              value={formData.content}
-              onChange={(e) =>
-                setFormData({ ...formData, content: e.target.value })
-              }
-            />
-          ) : (
-            <div className="markdown-body p-8">
-              <h1>{formData.title}</h1>
-              {/* Markdown Parser 컴포넌트 위치 */}
-              <p>{formData.content}</p>
-            </div>
-          )}
-        </div>
+      <div className="flex-1 flex min-h-0 gap-10">
+        <section className="flex-1 flex flex-col">
+          {/* 본문 에디터 */}
+          <ContentEditor
+            value={formData.content}
+            onChange={(val) => handleUpdateField("content", val)}
+          />
+        </section>
+
+        {/* 미리보기 (DeferredValue로 타이핑 랙 방지) */}
+        <section className="flex-1 overflow-y-auto border-l border-border pl-10 bg-background/50">
+          <MarkdownRenderer content={deferredContent} isEditor={true} />
+        </section>
       </div>
     </div>
   );

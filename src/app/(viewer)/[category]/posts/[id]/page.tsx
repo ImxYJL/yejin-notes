@@ -2,6 +2,7 @@
 
 import { PostNavigationList } from "@/app/(viewer)/components";
 import Button from "@/components/common/Button";
+import MarkdownRenderer from "@/components/markdown/MarkdownRenderer";
 import { Edit2, Lock, Clock, Tag } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
@@ -14,6 +15,8 @@ type PostParams = {
 const PostDetailPage = ({ params }: { params: Promise<PostParams> }) => {
   const { category, id } = use(params);
   const isAdmin = true; // 실제로는 유저 세션 확인
+
+  const mockContent = "# Hello World...";
 
   return (
     <div className="space-y-16">
@@ -57,10 +60,9 @@ const PostDetailPage = ({ params }: { params: Promise<PostParams> }) => {
           </div>
         </header>
 
-        <div className="markdown-body min-h-[400px]">
-          {/* 실제 데이터 렌더링 */}
-          <p>마크다운 본문이 출력되는 영역입니다.</p>
-        </div>
+        <section className="bg-background rounded-main">
+          <MarkdownRenderer content={mockContent} />
+        </section>
       </article>
 
       {/* Bottom List (네이버 블로그 스타일) */}

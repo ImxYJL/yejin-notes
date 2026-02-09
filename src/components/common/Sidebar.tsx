@@ -15,7 +15,7 @@ const Sidebar = () => {
   const navItems = [
     {
       label: "Reading",
-      href: "/reading",
+      href: "/reading/posts",
       icon: <Book size={18} />,
       textColor: "text-accent-primary",
     },

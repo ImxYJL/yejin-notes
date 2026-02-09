@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 :root {
   --background: #ffffff;
@@ -37,17 +38,46 @@
 }
 
 @theme inline {
+  --color-primary: #3b82f6;
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-accent-primary: var(--palette-5);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
   --radius-main: var(--radius-main);
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
 }
 
+@layer base {
+  /* 인라인 코드 */
+  .prose :not(pre) > code {
+    @apply bg-slate-100! dark:bg-slate-800! text-accent-primary! px-1.5! py-0.5! rounded-md! font-mono! text-[0.9em]! font-medium!;
+  }
+
+  /* 인라인 코드에서 백틱 제거 */
+  .prose :not(pre) > code::before,
+  .prose :not(pre) > code::after {
+    display: none !important;
+  }
+
+  /* 인용문 따옴표 제거 및 스타일 */
+  .prose blockquote p::before,
+  .prose blockquote p::after {
+    display: none !important;
+  }
+
+  .prose blockquote {
+    @apply border-l-4 border-slate-300 pl-4! not-italic! text-slate-600!;
+  }
+}
+
 @layer components {
-  /* 레이어: 여러 속성이 결합된 '상태'나 '행동' */
   .base-focus {
     @apply focus-visible:ring-2 focus-visible:ring-accent-primary/30 focus-visible:ring-offset-2 focus-visible:outline-none transition-all;
   }

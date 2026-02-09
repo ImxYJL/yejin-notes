@@ -2,19 +2,8 @@
 
 import { use } from "react";
 import EditorForm from "@/components/editor/EditorForm";
+import { Post } from "@/types/blog";
 
-export type Post = {
-  id: string;
-  title: string;
-  content: string;
-  summary: string;
-  category: "reading" | "dev";
-  isPublished: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
-
-// src/mocks/postData.ts
 export const MOCK_POST: Post = {
   id: "550e8400-e29b-41d4-a716-446655440000",
   title: "Next.js 15와 Tailwind v4로 구축하는 현대적인 블로그",
@@ -36,10 +25,13 @@ console.log(greeting);
   `,
   summary:
     "Next.js 15의 최신 스펙을 활용하여 블로그를 구축하는 과정을 담았습니다.",
-  category: "dev",
+  categoryId: "asdf",
   isPublished: true,
+  userId: "hello",
+  tags: [],
+  thumbnailUrl: null,
+  isPrivate: true,
   createdAt: "2026-02-08T15:00:00Z",
-  updatedAt: "2026-02-08T15:00:00Z",
 };
 
 const EditPage = ({ params }: { params: Promise<{ id: string }> }) => {
@@ -50,18 +42,20 @@ const EditPage = ({ params }: { params: Promise<{ id: string }> }) => {
   const post = MOCK_POST;
 
   return (
-    <div className="py-10">
-      <EditorForm
-        postId={id}
-        mode="edit"
-        initialData={{
-          title: post.title,
-          content: post.content,
-          category: post.category,
-          isPublished: post.isPublished,
-        }}
-      />
-    </div>
+    <EditorForm
+      mode="edit"
+      initialData={{
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        categoryId: post.categoryId,
+        isPrivate: post.isPrivate,
+        isPublished: post.isPublished,
+        summary: post.summary,
+        tags: post.tags,
+        thumbnailUrl: post.thumbnailUrl,
+      }}
+    />
   );
 };
 

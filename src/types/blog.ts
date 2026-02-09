@@ -4,9 +4,9 @@ export type Category = {
   isPrivate: boolean;
   userId: string;
 };
-
-//
 export type CategoryType = "dev" | "reading" | "life";
+
+export type EditorMode = "create" | "edit";
 
 export type Post = {
   id: string;
@@ -21,3 +21,16 @@ export type Post = {
   isPrivate: boolean;
   thumbnailUrl: string | null;
 };
+
+export type PostFormData = Pick<
+  Post,
+  | "id"
+  | "title"
+  | "content"
+  | "summary"
+  | "categoryId"
+  | "tags"
+  | "isPublished"
+  | "isPrivate"
+  | "thumbnailUrl"
+>;
