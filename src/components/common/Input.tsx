@@ -9,6 +9,7 @@ const INPUT_VARIANT = {
 const FONT_SIZE = {
   base: "text-base",
   xl: "text-xl font-bold",
+  "3xl": "text-3xl font-bold tracking-tight leading-snug",
   "4xl": "text-4xl font-black tracking-tight leading-tight",
 } as const;
 
