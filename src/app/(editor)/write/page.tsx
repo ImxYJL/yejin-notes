@@ -15,11 +15,7 @@ const WritePage = () => {
     [],
   );
 
-  return (
-    <div className="py-10">
-      <EditorForm initialData={initialData} mode="create" />
-    </div>
-  );
+  return <EditorForm initialData={initialData} mode="create" />;
 };
 
 export default WritePage;

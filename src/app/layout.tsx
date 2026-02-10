@@ -1,5 +1,4 @@
 import "@/app/globals.css";
-import MainLayout from "@/components/layouts/MainLayout";
 
 import { pretendard } from "@/libs/fonts";
 import ClientProviders from "@/utils/providers/ClientProviders";
@@ -16,7 +15,7 @@ export default function RootLayout({
       <body>
         <ClientProviders>
           {/* <ToastContainer autoClose={2500} /> */}
-          <MainLayout>{children}</MainLayout>
+          {children}
         </ClientProviders>
       </body>
     </html>
