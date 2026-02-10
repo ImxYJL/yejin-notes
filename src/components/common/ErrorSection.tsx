@@ -31,7 +31,7 @@ const ErrorSection = ({
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="currentColor"
-          className="text-primary mx-auto mb-4 h-20 w-20"
+          className="text-accent-primary mx-auto mb-4 h-20 w-20"
         >
           <path
             fillRule="evenodd"
