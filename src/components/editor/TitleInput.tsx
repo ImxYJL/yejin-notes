@@ -11,11 +11,11 @@ const TitleInput = memo(({ value, onChange }: TitleInputProps) => {
     <Input
       name="title"
       variant="ghost"
-      fontSize="4xl"
+      fontSize="3xl"
       placeholder="제목을 입력하세요"
       value={value}
       onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-      className="px-0 border-b border-border rounded-none focus:border-accent-primary"
+      className="px-0 border-none font-bold placeholder:text-muted-foreground/40"
     />
   );
 });

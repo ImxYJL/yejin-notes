@@ -10,29 +10,34 @@ const ViewerLayout = ({ children }: { children: React.ReactNode }) => {
   const { isSidebarOpen, toggleSidebar } = useLayoutStore();
 
   return (
-    <div className="min-h-screen">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <main
-        className={cn(
-          "min-h-screen base-transition",
-          isSidebarOpen ? "pl-(--sidebar-w)" : "pl-0",
-          "max-md:pl-0!",
-        )}
-      >
-        <header className="h-(--header-h) sticky top-0 z-30 bg-background/50 backdrop-blur-md px-6 flex items-center">
-          {!isSidebarOpen && (
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={<Menu size={20} />}
-              onClick={toggleSidebar}
-              className="-ml-2"
-            />
-          )}
-        </header>
 
-        <div className="mx-auto px-6 pb-20 max-w-(--content-max-w) base-transition">
-          {children}
+      {!isSidebarOpen && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={toggleSidebar}
+          className="fixed left-6 top-6 z-sidebar-btn p-2 rounded-main bg-background/50 backdrop-blur-md border border-border shadow-sm hover:bg-accent-primary/10 text-muted-foreground hover:text-accent-primary animate-in fade-in slide-in-from-left-2"
+        >
+          <Menu size={20} />
+        </Button>
+      )}
+
+      <main className="flex-1 min-w-0 flex flex-col base-transition">
+        <div className="flex-1 overflow-y-auto">
+          <div
+            className={cn(
+              "mx-auto pb-20 pt-20 base-transition",
+              "max-w-content",
+              "px-6",
+              "md:px-16",
+              "lg:px-24",
+              "xl:px-32",
+            )}
+          >
+            {children}
+          </div>
         </div>
       </main>
     </div>

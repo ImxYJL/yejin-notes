@@ -59,6 +59,12 @@
   --width-content: var(--content-max-w);
   --width-editor: var(--editor-max-w);
 
+  /* 📐 z-index Tokens */
+  --z-sidebar: 50;
+  --z-sidebar-btn: 51;
+  --z-sidebar-mobile: 61;
+  --z-overlay: 60;
+
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
 }
