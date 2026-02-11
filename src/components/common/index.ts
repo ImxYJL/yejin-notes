@@ -3,5 +3,5 @@ export { default as ErrorFallback } from "./ErrorFallback";
 export { default as Input } from "./Input";
 export { default as Textarea } from "./Textarea";
 export { default as ErrorSection } from "./ErrorSection";
-export { default as VerticalDivider } from "./VerticalDivider";
+export { default as Divider } from "./Divider";
 export { default as Sidebar } from "./Sidebar";

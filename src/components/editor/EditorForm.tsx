@@ -3,7 +3,7 @@
 import { useState, useDeferredValue, useCallback } from "react";
 import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button, VerticalDivider } from "../common";
+import { Button, Divider } from "@/components/common";
 import { EditorMode, PostFormData } from "@/types/blog";
 import { ContentEditor, TitleInput } from ".";
 import dynamic from "next/dynamic";
@@ -102,10 +102,10 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
           />
         </section>
 
-        <VerticalDivider
+        <Divider
+          direction="vertical"
           style={{ height: `calc(100% - ${EDITOR_LAYOUT.bottomPadding}vh)` }}
         />
-
         {/* 미리보기 */}
         <section
           ref={previewRef}
