@@ -106,6 +106,7 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
           direction="vertical"
           style={{ height: `calc(100% - ${EDITOR_LAYOUT.bottomPadding}vh)` }}
         />
+
         {/* 미리보기 */}
         <section
           ref={previewRef}
