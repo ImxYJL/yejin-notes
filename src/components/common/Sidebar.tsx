@@ -1,9 +1,12 @@
-import { useState } from "react";
+"use client";
+
 import Link from "next/link";
 import Button from "./Button";
 import { usePathname } from "next/navigation";
 import { Github, Mail, Palette, X, Menu, BookOpen, Code } from "lucide-react";
 import { cn } from "@/utils/styles";
+import useLayoutStore from "@/store/useLayoutStore";
+import useThemeStore from "@/store/useThemeStore";
 
 type NavItem = {
   label: string;
@@ -28,27 +31,24 @@ const navItems: NavItem[] = [
 ];
 
 const Sidebar = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [theme, setTheme] = useState("rainbow");
+  const { isSidebarOpen, toggleSidebar } = useLayoutStore();
+  const { theme, setTheme } = useThemeStore();
   const pathname = usePathname();
-
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <>
-      {/* 1. 사이드바가 닫혔을 때 나타나는 플로팅 열기 버튼 */}
       {!isSidebarOpen && (
         <Button
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="fixed left-4 top-4 z-sidebar-btn shadow-md bg-background/80 backdrop-blur-md border border-border rounded-main animate-in fade-in slide-in-from-left-5 hover:bg-accent-primary/10"
+          className="fixed left-4 top-4 z-sidebar-btn bg-background/80 backdrop-blur-md rounded-main animate-in fade-in slide-in-from-left-5 hover:bg-accent-primary/10"
         >
           <Menu size={20} className="text-accent-primary" />
         </Button>
       )}
 
-      {/* 2. 메인 사이드바 */}
+      {/* 메인 사이드바 */}
       <aside
         className={cn(
           "border-r border-border base-transition shrink-0",
@@ -148,7 +148,7 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/*  모바일 전용 오버레이 (사이드바 열렸을 때 배경 클릭 시 닫기) */}
+      {/*  모바일 전용 오버레이 */}
       {isSidebarOpen && (
         <div
           onClick={toggleSidebar}

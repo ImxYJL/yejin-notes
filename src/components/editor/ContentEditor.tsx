@@ -39,7 +39,7 @@ const ContentEditor = memo(
         onScroll={onScroll}
         onKeyDown={handleKeyDown}
         ref={ref}
-        className="flex-1 resize-none font-mono text-base leading-relaxed overflow-y-auto"
+        className="flex-1 resize-none font-mono text-base leading-relaxed overflow-y-auto border-muted-foreground/50"
       />
     );
   },

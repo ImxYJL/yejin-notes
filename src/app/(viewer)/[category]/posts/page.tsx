@@ -1,6 +1,7 @@
 "use client";
 
 import Button from "@/components/common/Button";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { use } from "react";
 
@@ -12,7 +13,7 @@ const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
   const { category } = use(params);
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-4">
       <header className="flex justify-between items-end border-b border-border pb-8">
         <div>
           <h1 className="text-4xl font-black capitalize tracking-tight">
@@ -25,7 +26,7 @@ const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
         </div>
         <Link href="/write">
           <Button variant="primary" size="md" className="font-bold">
-            New Post
+            <Plus size={24} />
           </Button>
         </Link>
       </header>

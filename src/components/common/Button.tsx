@@ -35,7 +35,7 @@ const Button = ({
       type={type}
       className={cn(
         "inline-flex items-center justify-center rounded-main font-medium whitespace-nowrap",
-        "base-focus base-disabled base-transition", // 전역 레이어 적용
+        "base-focus base-disabled base-transition",
         BUTTON_VARIANT[variant],
         BUTTON_SIZE[size],
         className,

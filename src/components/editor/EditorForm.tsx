@@ -3,8 +3,7 @@
 import { useState, useDeferredValue, useCallback } from "react";
 import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "../common";
-// import MarkdownRenderer from "../markdown/MarkdownRenderer";
+import { Button, VerticalDivider } from "../common";
 import { EditorMode, PostFormData } from "@/types/blog";
 import { ContentEditor, TitleInput } from ".";
 import dynamic from "next/dynamic";
@@ -12,17 +11,24 @@ import { useScrollSync } from "@/hooks/useScrollSync";
 
 type EditorFormProps = {
   mode: EditorMode;
-  initialData?: PostFormData; // 낱개가 아닌 덩어리로 전달
+  initialData?: PostFormData;
 };
 
-const MarkdownRenderer = dynamic(() => import("../markdown/MarkdownRenderer"), {
-  ssr: false,
-  loading: () => (
-    <div className="p-4 text-muted-foreground font-mono">
-      미리보기 준비 중...
-    </div>
-  ),
-});
+export const EDITOR_LAYOUT = {
+  bottomPadding: 4,
+} as const;
+
+const MarkdownRenderer = dynamic(
+  () => import("@/components/markdown/MarkdownRenderer"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="p-4 text-muted-foreground font-mono">
+        미리보기 준비 중...
+      </div>
+    ),
+  },
+);
 
 const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
   const [formData, setFormData] = useState<PostFormData>(initialData);
@@ -48,20 +54,21 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-160px)] gap-8">
+    <div className="flex flex-col h-full gap-4">
       {/* 툴바 */}
-      <header className="flex justify-between items-center px-2">
+      <header className="flex justify-between items-center pr-6 pt-6 pb-2">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => router.back()}
           icon={<ArrowLeft size={16} />}
+          className="hover:bg-accent-primary/10"
         >
           나가기
         </Button>
         <div className="flex items-center gap-4">
-          <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-1 rounded-md">
-            나중에 임시저장 만들기
+          <span className="text-[10px] uppercase tracking-wider font-mono text-muted-foreground bg-muted/50 px-3 py-1 rounded-full border border-border/50">
+            Draft
           </span>
           <Button
             variant="primary"
@@ -75,13 +82,17 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
         </div>
       </header>
 
-      <TitleInput
-        value={formData.title}
-        onChange={(val) => handleUpdateField("title", val)}
-      />
+      <div className="px-2 flex flex-col gap-2">
+        <TitleInput
+          value={formData.title}
+          onChange={(val) => handleUpdateField("title", val)}
+        />
+      </div>
 
-      <div className="flex-1 flex min-h-0 gap-10">
-        <section className="flex-1 flex flex-col">
+      <div className="flex-1 flex min-h-0 gap-6 mt-4">
+        <section
+          className={`flex-1 flex flex-col pb-[${EDITOR_LAYOUT.bottomPadding}vh]`}
+        >
           {/* 본문 에디터 */}
           <ContentEditor
             value={formData.content}
@@ -91,10 +102,14 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
           />
         </section>
 
-        {/* 미리보기 (DeferredValue로 타이핑 랙 방지) */}
+        <VerticalDivider
+          style={{ height: `calc(100% - ${EDITOR_LAYOUT.bottomPadding}vh)` }}
+        />
+
+        {/* 미리보기 */}
         <section
           ref={previewRef}
-          className="flex-1 overflow-y-auto border-l border-border pl-10 bg-background/50"
+          className={`flex-1 overflow-y-auto border-border pl-10 bg-background/50 pb-[${EDITOR_LAYOUT}vh]`}
         >
           <MarkdownRenderer content={deferredContent} isEditor={true} />
         </section>
