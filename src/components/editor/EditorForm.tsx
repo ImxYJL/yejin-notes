@@ -18,8 +18,8 @@ export const EDITOR_LAYOUT = {
   bottomPadding: 4,
 } as const;
 
-const MarkdownRenderer = dynamic(
-  () => import("@/components/markdown/MarkdownRenderer"),
+const MarkdownPreview = dynamic(
+  () => import("@/components/markdown/MarkdownPreview"),
   {
     ssr: false,
     loading: () => (
@@ -111,7 +111,7 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
           ref={previewRef}
           className={`flex-1 overflow-y-auto border-border pl-10 bg-background/50 pb-[${EDITOR_LAYOUT}vh]`}
         >
-          <MarkdownRenderer content={deferredContent} isEditor={true} />
+          <MarkdownPreview content={deferredContent} />
         </section>
       </div>
     </div>
