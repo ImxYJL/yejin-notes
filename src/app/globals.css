@@ -64,6 +64,7 @@
   --z-sidebar-btn: 51;
   --z-sidebar-mobile: 61;
   --z-overlay: 60;
+  --z-toast: 900;
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
