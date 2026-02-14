@@ -12,3 +12,7 @@ export const OAUTH_PARAMS = {
   next: "next",
   message: "message", // 임의로 지정한 next middleware 메세지 전달용 파라미터
 } as const;
+
+export const QUERY_PARAMS = {
+  category: "category",
+} as const;

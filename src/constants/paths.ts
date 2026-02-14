@@ -14,4 +14,6 @@ export const PAGE_PATH = {
 
 export const API_ENDPOINT = {
   posts: "posts",
+  me: "/auth/me",
+  categories: "/categories",
 } as const;

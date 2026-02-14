@@ -2,7 +2,6 @@ export type Category = {
   id: string; // 'dev', 'reading', 'life'
   name: string; // '개발', '독서', '일상'
   isPrivate: boolean;
-  userId: string;
 };
 export type CategoryType = "dev" | "reading" | "life";
 
@@ -28,6 +27,23 @@ export type PostFormData = Pick<
   | "title"
   | "content"
   | "summary"
+  | "categoryId"
+  | "tags"
+  | "isPublished"
+  | "isPrivate"
+  | "thumbnailUrl"
+>;
+
+/**
+ * 포스트 목록에서 보여주는 미리보기용 타입
+ */
+export type PostItemType = Omit<Post, "content">;
+
+export type CreatePostInput = Pick<
+  Post,
+  | "title"
+  | "summary"
+  | "content"
   | "categoryId"
   | "tags"
   | "isPublished"

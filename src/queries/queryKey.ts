@@ -1,3 +1,7 @@
 export const ADMIN_QUERY_KEY = {
-  authUser: 'authUser',
+  authUser: "authUser",
+} as const;
+
+export const BLOG_QUERY_KEY = {
+  categories: "categories",
 } as const;
