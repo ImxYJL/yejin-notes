@@ -1,22 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
-import { createSupabaseClient } from "@/libs/supabase/client";
 import { ADMIN_QUERY_KEY } from "../queryKey";
+import axiosInstance from "@/libs/axios/axios";
+import { API_ENDPOINT } from "@/constants/paths";
 
 const useIsAdmin = () => {
-  const supabase = createSupabaseClient();
-
-  const { data: user, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: [ADMIN_QUERY_KEY.authUser],
     queryFn: async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      return user;
+      const { data: res } = await axiosInstance.get(API_ENDPOINT.me);
+      return res.data;
     },
+    staleTime: Infinity, 
+    gcTime: Infinity,   
   });
 
   return {
-    isAdmin: !!user,
+    isAdmin: !!data?.isAdmin,
     isLoading,
   };
 };

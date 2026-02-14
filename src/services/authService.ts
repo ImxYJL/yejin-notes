@@ -1,4 +1,7 @@
+import "server-only";
+
 import { createServerSupabaseClient } from "@/libs/supabase/server";
+import { AppError } from "@/utils/error";
 
 // 구글 로그인 후 받은 코드를 세션으로 교환
 export const exchangeCode = async (code: string) => {
@@ -28,4 +31,11 @@ export const getAuthUser = async () => {
 
 export const checkIsAdmin = async () => {
   return !!(await getAuthUser());
+};
+
+export const validateAuth = async () => {
+  const user = await getAuthUser();
+  if (!user) throw AppError.unauthorized(); 
+
+  return user;
 };
