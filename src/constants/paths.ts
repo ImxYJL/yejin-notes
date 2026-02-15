@@ -13,7 +13,7 @@ export const PAGE_PATH = {
 } as const;
 
 export const API_ENDPOINT = {
-  posts: "posts",
+  posts: (postId?: string) => (postId ? `/posts/${postId}` : "/posts"),
   me: "/auth/me",
   categories: "/categories",
 } as const;
