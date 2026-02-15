@@ -1,13 +1,13 @@
-import { Category } from "@/types/blog";
+import { CategorySlug } from "@/types/blog";
 
 export const PAGE_PATH = {
   home: "/",
   login: "/login",
   write: "/write",
   edit: (postId: string) => `/edit/${postId}`,
-  posts: (category: Category) => `/${category}/posts`,
-  postDetail: (category: Category, postId: string) =>
-    `/${category}/posts/${postId}`,
+  posts: (slug: CategorySlug) => `/${slug}/posts`,
+  postDetail: (slug: CategorySlug, postId: string) =>
+    `/${slug}/posts/${postId}`,
 
   adminOnly: ["/write", "/edit"],
 } as const;
