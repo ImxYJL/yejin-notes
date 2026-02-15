@@ -4,14 +4,14 @@ import { useState, useDeferredValue, useCallback } from "react";
 import { Save, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button, Divider } from "@/components/common";
-import { EditorMode, PostFormData } from "@/types/blog";
+import { EditorMode, PostForm } from "@/types/blog";
 import { ContentEditor, TitleInput } from ".";
 import dynamic from "next/dynamic";
 import { useScrollSync } from "@/hooks/useScrollSync";
 
 type EditorFormProps = {
   mode: EditorMode;
-  initialData?: PostFormData;
+  initialData?: PostForm;
 };
 
 export const EDITOR_LAYOUT = {
@@ -31,7 +31,7 @@ const MarkdownPreview = dynamic(
 );
 
 const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
-  const [formData, setFormData] = useState<PostFormData>(initialData);
+  const [formData, setFormData] = useState<PostForm>(initialData);
   const router = useRouter();
   const { editorRef, previewRef, handleScroll } = useScrollSync();
 
@@ -39,7 +39,7 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
   const deferredContent = useDeferredValue(formData.content);
 
   const handleUpdateField = useCallback(
-    <K extends keyof PostFormData>(field: K, value: PostFormData[K]) => {
+    <K extends keyof PostForm>(field: K, value: PostForm[K]) => {
       setFormData((prev) => ({
         ...prev,
         [field]: value,

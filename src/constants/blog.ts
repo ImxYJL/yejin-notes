@@ -1,6 +1,6 @@
-import { PostFormData } from "@/types/blog";
+import { PostForm } from "@/types/blog";
 
-export const DEFAULT_POST_FORM: PostFormData = {
+export const DEFAULT_POST_FORM: PostForm = {
   id: "",
   title: "",
   content: "",

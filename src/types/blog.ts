@@ -7,46 +7,33 @@ export type CategoryType = "dev" | "reading" | "life";
 
 export type EditorMode = "create" | "edit";
 
-export type Post = {
-  id: string;
-  createdAt: string;
+/**
+ * Post 관련 타입들
+ */
+
+type PostBase = {
   title: string;
   summary: string;
   content: string;
   categoryId: string;
   tags: string[];
-  userId: string;
   isPublished: boolean;
   isPrivate: boolean;
   thumbnailUrl: string | null;
 };
 
-export type PostFormData = Pick<
-  Post,
-  | "id"
-  | "title"
-  | "content"
-  | "summary"
-  | "categoryId"
-  | "tags"
-  | "isPublished"
-  | "isPrivate"
-  | "thumbnailUrl"
->;
+export type CreatePostInput = PostBase;
+export type UpdatePostInput = Partial<PostBase>;
+
+export type PostForm = PostBase & {
+  id?: string;
+};
+export type PostDetail = PostBase & {
+  id: string;
+  createdAt: string;
+};
 
 /**
  * 포스트 목록에서 보여주는 미리보기용 타입
  */
-export type PostItemType = Omit<Post, "content">;
-
-export type CreatePostInput = Pick<
-  Post,
-  | "title"
-  | "summary"
-  | "content"
-  | "categoryId"
-  | "tags"
-  | "isPublished"
-  | "isPrivate"
-  | "thumbnailUrl"
->;
+export type PostItem = Omit<PostDetail, "content">;
