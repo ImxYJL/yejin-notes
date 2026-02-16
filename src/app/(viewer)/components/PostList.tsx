@@ -9,6 +9,7 @@ import { useState } from "react";
 import Link from "next/link";
 import usePosts from "@/queries/usePosts";
 import PostListPagination from "./PostListPagination";
+import { getButtonStyles } from "@/components/common/Button";
 
 type Props = {
   categorySlug: CategorySlug;
@@ -33,17 +34,17 @@ const PostList = ({ categorySlug }: Props) => {
             {CATEGORY_MAP[categorySlug].name}
           </h1>
           <p className="text-muted-foreground mt-3 font-medium">
-            총
             <span className="text-accent-primary font-bold">
               {data.posts.length}개
             </span>
             의 기록이 있습니다.
           </p>
         </div>
-        <Link href="/write">
-          <Button variant="primary" size="md" className="font-bold">
-            <Plus size={24} />
-          </Button>
+        <Link
+          href="/write"
+          className={getButtonStyles("primary", "md", "font-bold")}
+        >
+          <Plus size={24} />
         </Link>
       </header>
 
