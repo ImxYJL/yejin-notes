@@ -15,5 +15,5 @@ export const DEFAULT_POST_FORM: PostForm = {
 export const CATEGORY_MAP = {
   dev: { name: "개발", isPrivate: false },
   reading: { name: "독서", isPrivate: false },
-  life: { name: "일상", isPrivate: false },
+  life: { name: "일상", isPrivate: true },
 } as const;
