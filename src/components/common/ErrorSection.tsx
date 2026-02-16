@@ -41,14 +41,17 @@ const ErrorSection = ({
         </svg>
 
         <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
-
         <p className="mt-2 text-base text-gray-500">{errorMessage}</p>
 
         <div className="mt-8 flex w-full flex-col justify-center gap-3">
           <Button variant="primary" onClick={handleReload} className="p-2.5">
             다시 시도
           </Button>
-          <Button variant="ghost" onClick={handleGoOtherPage} className="p-2.5">
+          <Button
+            variant="outline"
+            onClick={handleGoOtherPage}
+            className="p-2.5 border-muted-foreground/40"
+          >
             시작 화면으로 돌아가기
           </Button>
         </div>
