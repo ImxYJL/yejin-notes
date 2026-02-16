@@ -3,25 +3,20 @@ import "server-only";
 import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { getAuthUser } from "./authService";
 import { AppError } from "@/utils/error";
+import { CATEGORY_MAP } from "@/constants/blog";
+import { CategorySlug } from "@/types/blog";
 
-export const validateCategoryAccess = async (categoryName: string) => {
-  const supabase = await createServerSupabaseClient();
+export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
   const user = await getAuthUser();
 
-  const { data: category, error } = await supabase
-    .from("categories")
-    .select("is_private")
-    .eq("name", categoryName)
-    .single();
+  const category = CATEGORY_MAP[categorySlug];
 
-  // 1. 카테고리가 존재하지 않는 경우
-  if (error || !category) {
-    throw AppError.notFound(null, "존재하지 않는 카테고리입니다.");
+  if (!category) {
+    throw AppError.notFound("존재하지 않는 카테고리입니다.");
   }
 
-  // 2. 비공개 카테고리인데 관리자가 아닌 경우
-  if (category.is_private && !user) {
-    throw AppError.forbidden(null, "해당 카테고리에 접근할 권한이 없습니다.");
+  if (category.isPrivate && !user) {
+    throw AppError.forbidden("접근 권한이 없습니다.");
   }
 };
 

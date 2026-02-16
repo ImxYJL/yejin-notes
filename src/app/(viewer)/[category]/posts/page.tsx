@@ -3,25 +3,42 @@
 import Button from "@/components/common/Button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
+import { PAGE_PATH } from "@/constants/paths";
+import { CategorySlug } from "@/types/blog";
+import { CATEGORY_MAP } from "@/constants/blog";
+import usePosts from "@/queries/usePosts";
+import { PostListPagination } from "../../components";
 
 type ListParams = {
-  category: string;
+  categorySlug: CategorySlug;
 };
 
 const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
-  const { category } = use(params);
+  const [page, setPage] = useState(1);
+
+  const { categorySlug } = use(params);
+  const { data } = usePosts(categorySlug, page);
+
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="space-y-4">
       <header className="flex justify-between items-end border-b border-border pb-8">
         <div>
           <h1 className="text-4xl font-black capitalize tracking-tight">
-            {category}
+            {CATEGORY_MAP[categorySlug].name}
           </h1>
           <p className="text-muted-foreground mt-3 font-medium">
-            총 <span className="text-accent-primary font-bold">12개</span>의
-            기록이 있습니다.
+            총
+            <span className="text-accent-primary font-bold">
+              {data.posts.length}개
+            </span>
+            의 기록이 있습니다.
           </p>
         </div>
         <Link href="/write">
@@ -33,46 +50,35 @@ const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
 
       {/* Post List */}
       <div className="divide-y divide-border">
-        {[1, 2, 3, 4, 5].map((i) => (
+        {data.posts.map((post) => (
           <Link
-            key={i}
-            href={`/${category}/posts/uuid-${i}`}
+            key={post.id}
+            href={PAGE_PATH.postDetail(categorySlug, post.id)}
             className="block py-10 group"
           >
             <article className="space-y-4">
               <h2 className="text-2xl font-bold group-hover:text-accent-primary base-transition tracking-tight">
-                글 제목 {i}
+                {post.title}
               </h2>
               <p className="text-muted-foreground line-clamp-2 leading-relaxed text-base">
-                이것은 요약 텍스트(summary)입니다. DB의 summary 컬럼에서 가져온
-                데이터를 프론트에서 2줄 정도로 잘라서 보여줍니다. v4의 텍스트
-                밸런싱을 적용하면 더 예뻐집니다.
+                {post.summary}
               </p>
               <div className="flex items-center gap-3 text-sm text-muted-foreground/60 font-mono">
-                <span>2026.02.08</span>
+                <span>{post.createdAt}</span>
                 <span className="w-1 h-1 rounded-full bg-border" />
-                <span>5 min read</span>
               </div>
             </article>
           </Link>
         ))}
       </div>
 
-      {/* Pagination: 공통 버튼 활용 */}
-      <nav
-        className="flex justify-center items-center gap-6 pt-12"
-        aria-label="Pagination"
-      >
-        <Button variant="outline" size="sm" disabled className="w-24">
-          Prev
-        </Button>
-        <span className="text-sm font-bold font-mono tracking-widest">
-          <span className="text-accent-primary">1</span> / 3
-        </span>
-        <Button variant="outline" size="sm" className="w-24">
-          Next
-        </Button>
-      </nav>
+      {data.totalPages > 1 && (
+        <PostListPagination
+          currentPage={data.currentPage}
+          totalPages={data.totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 };

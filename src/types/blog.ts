@@ -1,4 +1,5 @@
 import { CATEGORY_MAP } from "@/constants/blog";
+import { PaginationMeta } from "./page";
 
 export type CategorySlug = keyof typeof CATEGORY_MAP;
 export type Category = {
@@ -51,6 +52,12 @@ export type UpdatePostInput = Partial<PostBase>;
 export type PostForm = PostBase & {
   id?: string;
 };
+
+export type PostNavigation = {
+  prevPost: { id: string; title: string } | null;
+  nextPost: { id: string; title: string } | null;
+};
+
 export type PostDetail = PostBase & {
   id: string;
   createdAt: string;
@@ -58,6 +65,12 @@ export type PostDetail = PostBase & {
     slug: CategorySlug;
     name: string;
   };
+};
+
+export type PostDetailResponse = PostDetail & PostNavigation;
+
+export type PostsResponse = PaginationMeta & {
+  posts: PostItem[];
 };
 
 /**

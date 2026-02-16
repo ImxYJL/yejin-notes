@@ -12,58 +12,55 @@ import {
   UpdatePostInput,
 } from "@/types/blog";
 
-export const getPosts = async (categoryName?: string) => {
+const DEFAULT_PAGE_LIMIT = 10;
+const MAX_PAGE_LIMIT = 50;
+
+export const getPosts = async (
+  categorySlug: CategorySlug,
+  page: number = 1,
+  limit?: number,
+) => {
   const supabase = await createServerSupabaseClient();
   const user = await getAuthUser();
 
-  if (categoryName) {
-    await validateCategoryAccess(categoryName);
-  }
+  await validateCategoryAccess(categorySlug);
 
-  let query = supabase
+  const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
+
+  const from = (page - 1) * LIMIT;
+  const to = from + LIMIT - 1;
+
+  const query = supabase
     .from("posts")
     .select(
       `
-      id, 
-      title, 
-      summary, 
-      category_id, 
-      tags, 
-      is_private, 
-      is_published, 
-      thumbnail_url, 
-      created_at
+      id, title, summary, category_id, tags, 
+      is_private, is_published, thumbnail_url, created_at,
+      category:categories!inner(slug, name)
     `,
+      { count: "exact" },
     )
-    .order("created_at", { ascending: false });
-
-  if (categoryName) {
-    query = query.eq("category_id", categoryName);
-  }
+    .eq("category.slug", categorySlug)
+    .order("created_at", { ascending: false })
+    .range(from, to);
 
   if (!user) {
-    query = query.eq("is_private", false).eq("is_published", true);
+    query.eq("is_private", false).eq("is_published", true);
   }
 
-  const { data, error } = await query;
+  const { data, count, error } = await query;
   if (error) throw AppError.fromSupabase(error);
-  if (!data) return [];
 
-  return data.map((row) => ({
-    id: row.id,
-    title: row.title,
-    summary: row.summary,
-    categoryId: row.category_id,
-    tags: row.tags || [],
-    isPrivate: row.is_private,
-    isPublished: row.is_published,
-    thumbnailUrl: row.thumbnail_url,
-    createdAt: row.created_at,
-  }));
+  return {
+    posts: data || [],
+    totalCount: count || 0,
+    totalPages: Math.ceil((count || 0) / LIMIT),
+    currentPage: page,
+  };
 };
 
-export const getPost = async (categoryName: string, postId: string) => {
-  await validateCategoryAccess(categoryName);
+export const getPost = async (categorySlug: CategorySlug, postId: string) => {
+  await validateCategoryAccess(categorySlug);
 
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
@@ -154,6 +151,10 @@ export const deletePost = async (id: string) => {
   if (error) throw AppError.fromSupabase(error);
 };
 
+/**
+ * 서비스 유틸리티
+ */
+
 const mapPostResponse = (row: PostRow): PostDetail => ({
   id: row.id,
   title: row.title,
@@ -170,3 +171,19 @@ const mapPostResponse = (row: PostRow): PostDetail => ({
   thumbnailUrl: row.thumbnail_url,
   createdAt: row.created_at,
 });
+
+export const getCategoryIdBySlug = async (slug: string) => {
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("categories")
+    .select("id")
+    .eq("slug", slug)
+    .single();
+
+  if (error || !data) {
+    throw AppError.notFound(null, "존재하지 않는 카테고리입니다.");
+  }
+
+  return data.id;
+};

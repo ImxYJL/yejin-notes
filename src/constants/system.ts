@@ -14,5 +14,7 @@ export const OAUTH_PARAMS = {
 } as const;
 
 export const QUERY_PARAMS = {
-  category: "category",
+  categorySlug: "categorySlug",
+  page: "page",
+  limit: "limit",
 } as const;

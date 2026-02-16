@@ -2,16 +2,22 @@ import { API_ENDPOINT } from "@/constants/paths";
 import type {
   CreatePostInput,
   PostDetail,
-  PostItem,
+  PostsResponse,
   UpdatePostInput,
 } from "@/types/blog";
 import axiosInstance from "@/libs/axios/axios";
+import { PaginationParams } from "@/types/page";
 
 export const getPostsApi = async (
-  categoryName?: string,
-): Promise<PostItem[]> => {
+  categorySlug: string,
+  params: PaginationParams,
+): Promise<PostsResponse> => {
   const { data } = await axiosInstance.get(API_ENDPOINT.posts(), {
-    params: { category: categoryName },
+    params: {
+      categorySlug: categorySlug,
+      page: params.page ?? 1,
+      limit: params.limit ?? 10,
+    },
   });
 
   return data.data;
