@@ -1,23 +1,22 @@
 "use client";
 
-import Button from "@/components/common/Button";
-import { Plus } from "lucide-react";
-import Link from "next/link";
-import { use, useState } from "react";
+import { Button } from "@/components/common";
+import { CATEGORY_MAP } from "@/constants/blog";
 import { PAGE_PATH } from "@/constants/paths";
 import { CategorySlug } from "@/types/blog";
-import { CATEGORY_MAP } from "@/constants/blog";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+import Link from "next/link";
 import usePosts from "@/queries/usePosts";
-import { PostListPagination } from "../../components";
+import PostListPagination from "./PostListPagination";
 
-type ListParams = {
+type Props = {
   categorySlug: CategorySlug;
 };
 
-const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
+const PostList = ({ categorySlug }: Props) => {
   const [page, setPage] = useState(1);
 
-  const { categorySlug } = use(params);
   const { data } = usePosts(categorySlug, page);
 
   const handlePageChange = (newPage: number) => {
@@ -83,4 +82,4 @@ const PostListPage = ({ params }: { params: Promise<ListParams> }) => {
   );
 };
 
-export default PostListPage;
+export default PostList;

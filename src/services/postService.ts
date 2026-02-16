@@ -7,7 +7,8 @@ import { getAuthUser, validateAuth } from "./authService";
 import {
   CategorySlug,
   CreatePostInput,
-  PostDetail,
+  Post,
+  PostDetailResponse,
   PostRow,
   UpdatePostInput,
 } from "@/types/blog";
@@ -87,38 +88,54 @@ export const getPost = async (categorySlug: CategorySlug, postId: string) => {
   return data.map(mapPostResponse);
 };
 
-export const createPost = async (input: CreatePostInput) => {
+export const createPost = async (input: CreatePostInput): Promise<Post> => {
   const user = await validateAuth();
   const supabase = await createServerSupabaseClient();
+
+  const categoryId = await getCategoryIdBySlug(input.categorySlug);
 
   const { data, error } = await supabase
     .from("posts")
     .insert({
+      id: input.id,
       title: input.title,
       content: input.content,
       summary: input.summary,
-      category_id: input.categoryId,
+      category_id: categoryId,
       tags: input.tags,
       is_private: input.isPrivate,
       is_published: input.isPublished,
       thumbnail_url: input.thumbnailUrl,
       user_id: user.id, // 작성자 정보 추가
     })
-    .select()
+    .select(
+      `
+      *,
+      category:categories!inner(slug, name)
+    `,
+    )
     .single();
 
   if (error) throw AppError.fromSupabase(error);
   if (!data) throw AppError.internal("게시글 생성에 실패했습니다.");
 
-  return data.map(mapPostResponse);
+  return mapPostResponse(data);
 };
 
 export const updatePost = async (
   id: string,
   input: UpdatePostInput,
-): Promise<PostDetail> => {
+): Promise<PostDetailResponse> => {
   await validateAuth();
+  const user = await validateAuth();
   const supabase = await createServerSupabaseClient();
+
+  const userId = user.id;
+
+  let categoryId: string | undefined;
+  if (input.categorySlug) {
+    categoryId = await getCategoryIdBySlug(input.categorySlug);
+  }
 
   const { data, error } = await supabase
     .from("posts")
@@ -126,14 +143,20 @@ export const updatePost = async (
       title: input.title,
       content: input.content,
       summary: input.summary,
-      category_id: input.categoryId,
+      category_id: categoryId,
       tags: input.tags,
       is_private: input.isPrivate,
       is_published: input.isPublished,
       thumbnail_url: input.thumbnailUrl,
     })
-    .eq("id", id)
-    .select()
+    .eq("id", id) 
+    .eq("user_id", userId) 
+    .select(
+      `
+      *,
+      category:categories!inner(slug, name)
+    `,
+    )
     .single();
 
   if (error) throw AppError.fromSupabase(error);
@@ -155,22 +178,23 @@ export const deletePost = async (id: string) => {
  * 서비스 유틸리티
  */
 
-const mapPostResponse = (row: PostRow): PostDetail => ({
-  id: row.id,
-  title: row.title,
-  content: row.content,
-  summary: row.summary,
-  categoryId: row.category_id,
-  category: {
-    slug: (row.category.slug as CategorySlug) || "dev",
-    name: row.category.name,
-  },
-  tags: row.tags || [],
-  isPrivate: row.is_private,
-  isPublished: row.is_published,
-  thumbnailUrl: row.thumbnail_url,
-  createdAt: row.created_at,
-});
+export const mapPostResponse = (row: PostRow): Post => {
+  return {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    summary: row.summary,
+    category: {
+      slug: (row.category.slug as CategorySlug) || "dev",
+      name: row.category.name,
+    },
+    tags: row.tags || [],
+    thumbnailUrl: row.thumbnail_url,
+    isPrivate: row.is_private,
+    isPublished: row.is_published,
+    createdAt: row.created_at,
+  };
+};
 
 export const getCategoryIdBySlug = async (slug: string) => {
   const supabase = await createServerSupabaseClient();

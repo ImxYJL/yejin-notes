@@ -1,6 +1,6 @@
 import { createPostApi } from "@/apis/posts";
 import { useToastStore } from "@/store/useToastStore";
-import { CreatePostInput, PostDetail } from "@/types/blog";
+import { CreatePostInput, PostDetailResponse } from "@/types/blog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { BLOG_QUERY_KEY } from "./queryKey";
@@ -13,7 +13,7 @@ const useCreatePost = () => {
 
   return useMutation({
     mutationFn: (input: CreatePostInput) => createPostApi(input),
-    onSuccess: (newPost: PostDetail) => {
+    onSuccess: (newPost: PostDetailResponse) => {
       showToast("게시글을 성공적으로 업로드했습니다!", "success");
 
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });

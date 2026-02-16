@@ -50,7 +50,7 @@ const EditorForm = ({ mode, initialData = {} }: EditorFormProps) => {
 
   const handleSave = async () => {
     alert("저장되었습니다!");
-    router.push(`/${formData.categoryId}/posts/${formData.id}`);
+    router.push(`/${formData.categorySlug}/posts/${formData.id}`);
   };
 
   return (

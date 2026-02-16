@@ -1,29 +1,47 @@
 import { CATEGORY_MAP } from "@/constants/blog";
 import { PaginationMeta } from "./page";
 
+/** -----------------------------------------------------------
+ * 1. Category 관련 (공통)
+ * ----------------------------------------------------------- */
 export type CategorySlug = keyof typeof CATEGORY_MAP;
+
 export type Category = {
   id: string;
   slug: CategorySlug;
-  name: string; // '개발' | '독서' | '일상'
+  name: string;
   isPrivate: boolean;
 };
 
-export type EditorMode = "create" | "edit";
+/** -----------------------------------------------------------
+ * 2. Post 관련 (Domain Entity)
+ * ----------------------------------------------------------- */
 
-/**
- * Post 관련 타입들
- */
+export type Post = {
+  id: string;
+  title: string;
+  content: string;
+  summary: string;
+  category: {
+    slug: CategorySlug;
+    name: string;
+  };
+  tags: string[];
+  thumbnailUrl: string | null;
+  isPrivate: boolean;
+  isPublished: boolean;
+  createdAt: string;
+};
 
-/**
- * DB의 Post table row
- */
+/** -----------------------------------------------------------
+ * 3. DB Raw Data (Supabase에서 넘어오는 원본)
+ * ----------------------------------------------------------- */
 export type PostRow = {
   id: string;
   title: string;
   content: string;
   summary: string;
-  category_id: string;
+  category_id: string; // FK
   tags: string[] | null;
   is_private: boolean;
   is_published: boolean;
@@ -35,45 +53,35 @@ export type PostRow = {
   };
 };
 
-type PostBase = {
-  title: string;
-  summary: string;
-  content: string;
-  categoryId: string;
-  tags: string[];
-  isPublished: boolean;
-  isPrivate: boolean;
-  thumbnailUrl: string | null;
+/** -----------------------------------------------------------
+ * 4. DTO & Form (생성, 수정, 입력)
+ * ----------------------------------------------------------- */
+
+type PostInputBase = Omit<Post, "createdAt" | "category"> & {
+  categorySlug: CategorySlug; // 입력 시엔 객체가 아닌 slug만 사용
 };
 
-export type CreatePostInput = PostBase;
-export type UpdatePostInput = Partial<PostBase>;
+export type CreatePostInput = PostInputBase;
 
-export type PostForm = PostBase & {
-  id?: string;
-};
+export type UpdatePostInput = { id: string } & Partial<PostInputBase>;
+
+export type EditorMode = "create" | "edit";
+export type PostForm = PostInputBase & { id?: string };
+
+/** -----------------------------------------------------------
+ * 5. Response & Navigation (API 응답)
+ * ----------------------------------------------------------- */
+
+// 목록용 미리보기 (본문 제외)
+export type PostItem = Omit<Post, "content">;
 
 export type PostNavigation = {
-  prevPost: { id: string; title: string } | null;
-  nextPost: { id: string; title: string } | null;
+  prevPost: Pick<Post, "id" | "title"> | null;
+  nextPost: Pick<Post, "id" | "title"> | null;
 };
 
-export type PostDetail = PostBase & {
-  id: string;
-  createdAt: string;
-  category: {
-    slug: CategorySlug;
-    name: string;
-  };
-};
-
-export type PostDetailResponse = PostDetail & PostNavigation;
+export type PostDetailResponse = Post & PostNavigation;
 
 export type PostsResponse = PaginationMeta & {
   posts: PostItem[];
 };
-
-/**
- * 포스트 목록에서 보여주는 미리보기용 타입
- */
-export type PostItem = Omit<PostDetail, "content">;
