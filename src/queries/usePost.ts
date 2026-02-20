@@ -1,12 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { BLOG_QUERY_KEY } from "./queryKey";
 import { getPostApi } from "@/apis/posts";
-import { CategorySlug } from "@/types/blog";
 
-const usePost = (postId: string, categorySlug: CategorySlug) => {
+const usePost = (postId: string) => {
   return useSuspenseQuery({
     queryKey: [BLOG_QUERY_KEY.post, postId],
-    queryFn: () => getPostApi(postId, categorySlug),
+    queryFn: () => getPostApi(postId),
     staleTime: 1000 * 60 * 60,
   });
 };

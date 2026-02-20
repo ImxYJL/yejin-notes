@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { deletePost, getPost, updatePost } from "@/services/postService";
+import { deletePost, getPost, upsertPost } from "@/services/postService";
 import { handleRouteError } from "@/utils/error";
-import { QUERY_PARAMS } from "@/constants/system";
 
 export type PostParams = {
   params: {
@@ -9,19 +8,9 @@ export type PostParams = {
   };
 };
 
-export const GET = async (request: NextRequest, { params }: PostParams) => {
+export const GET = async (_request: NextRequest, { params }: PostParams) => {
   try {
-    const { searchParams } = new URL(request.url);
-    const categoryName = searchParams.get(QUERY_PARAMS.category);
-
-    if (!categoryName) {
-      return NextResponse.json(
-        { success: false, message: "카테고리를 설정해주세요." },
-        { status: 400 },
-      );
-    }
-
-    const post = await getPost(categoryName, params.id);
+    const post = await getPost(params.id);
 
     return NextResponse.json({
       success: true,
@@ -34,8 +23,10 @@ export const GET = async (request: NextRequest, { params }: PostParams) => {
 
 export const PATCH = async (request: Request, { params }: PostParams) => {
   try {
+    const { id } = params;
     const body = await request.json();
-    const updatedPost = await updatePost(params.id, body);
+
+    const updatedPost = await upsertPost({ ...body, id });
 
     return NextResponse.json({
       success: true,

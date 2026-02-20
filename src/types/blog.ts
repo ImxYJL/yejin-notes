@@ -31,6 +31,7 @@ export type Post = {
   isPrivate: boolean;
   isPublished: boolean;
   createdAt: string;
+  updatedAt: string;
 };
 
 /** -----------------------------------------------------------
@@ -47,7 +48,9 @@ export type PostRow = {
   is_published: boolean;
   thumbnail_url: string | null;
   created_at: string;
+  updated_at: string; // DB에서 알아서 생성해줌
   category: {
+    // TODO: 프론트에서도 이대로 쓸 것인가?
     slug: string;
     name: string;
   };
@@ -57,23 +60,18 @@ export type PostRow = {
  * 4. DTO & Form (생성, 수정, 입력)
  * ----------------------------------------------------------- */
 
-type PostInputBase = Omit<Post, "createdAt" | "category"> & {
-  categorySlug: CategorySlug; // 입력 시엔 객체가 아닌 slug만 사용
+export type PostForm = Omit<Post, "createdAt" | "category"> & {
+  categorySlug: CategorySlug;
 };
 
-export type CreatePostInput = PostInputBase;
-
-export type UpdatePostInput = { id: string } & Partial<PostInputBase>;
-
 export type EditorMode = "create" | "edit";
-export type PostForm = PostInputBase & { id?: string };
 
 /** -----------------------------------------------------------
  * 5. Response & Navigation (API 응답)
  * ----------------------------------------------------------- */
 
-// 목록용 미리보기 (본문 제외)
-export type PostItem = Omit<Post, "content">;
+// 목록용 미리보기
+export type PostItem = Omit<Post, "content" | "updatedAt" | "category">;
 
 export type PostNavigation = {
   prevPost: Pick<Post, "id" | "title"> | null;
