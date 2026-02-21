@@ -1,5 +1,10 @@
 import { API_ENDPOINT } from "@/constants/paths";
-import type { CategorySlug, PostForm, PostsResponse } from "@/types/blog";
+import type {
+  CategorySlug,
+  PostDetailResponse,
+  PostForm,
+  PostsResponse,
+} from "@/types/blog";
 import axiosInstance from "@/libs/axios/axios";
 import { PaginationParams } from "@/types/page";
 import { QUERY_PARAMS } from "@/constants/system";
@@ -18,7 +23,7 @@ export const getPostsApi = async (
   return data.data;
 };
 
-export const getPostApi = async (id: string) => {
+export const getPostApi = async (id: string): Promise<PostDetailResponse> => {
   const { data } = await axiosInstance.get(API_ENDPOINT.post(id));
 
   return data.data;

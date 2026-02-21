@@ -60,7 +60,7 @@ export type PostRow = {
  * 4. DTO & Form (생성, 수정, 입력)
  * ----------------------------------------------------------- */
 
-export type PostForm = Omit<Post, "createdAt" | "category"> & {
+export type PostForm = Omit<Post, "createdAt" | "updatedAt" | "category"> & {
   categorySlug: CategorySlug;
 };
 
