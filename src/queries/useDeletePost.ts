@@ -2,7 +2,7 @@ import { deletePostApi } from "@/apis/posts";
 import { PAGE_PATH } from "@/constants/paths";
 import { useToastStore } from "@/store/useToastStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { BLOG_QUERY_KEY } from "./queryKey";
 import { CategorySlug } from "@/types/blog";
 
