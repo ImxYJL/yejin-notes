@@ -6,7 +6,7 @@ type ToastState = {
   message: string;
   isVisible: boolean;
   type: ToastType;
-  timeoutId: NodeJS.Timeout | null; // 💡 타이머 ID 저장소 추가
+  timeoutId: NodeJS.Timeout | null;
   showToast: (message: string, type?: ToastType) => void;
   hideToast: () => void;
 };
@@ -20,7 +20,6 @@ export const useToastStore = create<ToastState>((set, get) => ({
   timeoutId: null,
 
   showToast: (message, type = "info") => {
-    // 1. 💡 이미 실행 중인 타이머가 있다면 취소 (중복 방지)
     const currentTimeout = get().timeoutId;
     if (currentTimeout) {
       clearTimeout(currentTimeout);
