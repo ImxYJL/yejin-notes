@@ -4,7 +4,14 @@ import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { AppError } from "@/utils/error";
 import { validateCategoryAccess } from "./categoryService";
 import { getAuthUser, validateAuth } from "./authService";
-import { CategorySlug, Post, PostForm, PostItem, PostRow } from "@/types/blog";
+import {
+  CategorySlug,
+  Post,
+  PostDetailResponse,
+  PostForm,
+  PostItem,
+  PostRow,
+} from "@/types/blog";
 
 const DEFAULT_PAGE_LIMIT = 10;
 const MAX_PAGE_LIMIT = 50;
@@ -52,31 +59,55 @@ export const getPosts = async (
   };
 };
 
-export const getPost = async (postId: string) => {
+export const getPost = async (postId: string): Promise<PostDetailResponse> => {
   const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+
+  // 1. 현재 포스트 먼저 가져오기
+  const { data: currentPost, error } = await supabase
     .from("posts")
     .select(
       `
-    *,
-    category:categories (
-      slug,
-      name
-      )
-      `,
+      *,
+      category:categories (slug, name)
+    `,
     )
     .eq("id", postId)
     .single();
-  if (error || !data) throw AppError.notFound();
 
-  await validateCategoryAccess(data.category.slug);
+  if (error || !currentPost) throw AppError.notFound();
 
+  // 2. 권한 및 카테고리 체크
+  await validateCategoryAccess(currentPost.category.slug);
   const user = await getAuthUser();
-  if (data.is_private && !user) {
-    throw AppError.forbidden();
-  }
+  if (currentPost.is_private && !user) throw AppError.forbidden();
 
-  return mapPostDetailResponse(data);
+  // 3. 이전 글 & 다음 글 가져오기 (병렬 처리)
+  // - 이전 글: 현재보다 작으면서 가장 큰 값 (DESC limit 1)
+  // - 다음 글: 현재보다 크면서 가장 작은 값 (ASC limit 1)
+  const [prevRes, nextRes] = await Promise.all([
+    supabase
+      .from("posts")
+      .select("id, title")
+      .eq("category_id", currentPost.category_id)
+      .lt("created_at", currentPost.created_at)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    supabase
+      .from("posts")
+      .select("id, title")
+      .gt("created_at", currentPost.created_at)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  // 4. 결과 합쳐서 반환
+  return {
+    ...mapPostDetailResponse(currentPost), // 기존 Post 데이터
+    prevPost: prevRes.data || null,
+    nextPost: nextRes.data || null,
+  };
 };
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {

@@ -45,7 +45,7 @@ export const POST = async (request: Request) => {
   }
 };
 
-// patch 담당 (로직은 위의 post와 동일함!)
+// patch 담당 (로직은 위와 동일함!)
 export const PATCH = async (request: Request) => {
   try {
     const body = await request.json();

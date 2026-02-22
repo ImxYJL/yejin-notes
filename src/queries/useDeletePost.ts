@@ -16,7 +16,7 @@ const useDeletePost = (slug: CategorySlug) => {
     onSuccess: () => {
       showToast("게시글이 삭제되었습니다.", "success");
 
-      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });
+      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts, slug] });
 
       router.push(PAGE_PATH.posts(slug));
     },

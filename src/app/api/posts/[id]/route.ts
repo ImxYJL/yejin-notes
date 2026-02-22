@@ -10,7 +10,8 @@ export type PostParams = {
 
 export const GET = async (_request: NextRequest, { params }: PostParams) => {
   try {
-    const post = await getPost(params.id);
+    const { id } = await params;
+    const post = await getPost(id);
 
     return NextResponse.json({
       success: true,
@@ -23,7 +24,7 @@ export const GET = async (_request: NextRequest, { params }: PostParams) => {
 
 export const PATCH = async (request: Request, { params }: PostParams) => {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     const updatedPost = await upsertPost({ ...body, id });
@@ -39,7 +40,8 @@ export const PATCH = async (request: Request, { params }: PostParams) => {
 
 export const DELETE = async (_request: Request, { params }: PostParams) => {
   try {
-    await deletePost(params.id);
+    const { id } = await params;
+    await deletePost(id);
 
     return NextResponse.json({
       success: true,

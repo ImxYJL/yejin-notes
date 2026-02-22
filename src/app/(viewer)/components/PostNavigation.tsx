@@ -4,6 +4,7 @@ import {
   CategorySlug,
   PostNavigation as PostNavigationType,
 } from "@/types/blog";
+import { PAGE_PATH } from "@/constants/paths";
 
 type PostNavigationProps = {
   navigation: PostNavigationType;
@@ -18,8 +19,8 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
       {/* 이전 글 */}
       {prevPost ? (
         <Link
-          href={`/${categorySlug}/${prevPost.id}`}
-          className="group flex items-center gap-4 p-5 rounded-main border border-border hover:bg-secondary/50 transition-all duration-200 text-left"
+          href={PAGE_PATH.postDetail(categorySlug, prevPost.id)}
+          className="group flex items-center gap-4 p-5 rounded-main border-none hover:bg-secondary/50 transition-all duration-200 text-left"
         >
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted group-hover:bg-background transition-colors">
             <ChevronLeft
@@ -37,12 +38,12 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
           </div>
         </Link>
       ) : (
-        <div className="hidden sm:flex items-center gap-4 p-5 rounded-main border border-dashed border-border opacity-50 cursor-not-allowed">
+        <div className="hidden sm:flex items-center gap-4 p-5 rounded-main border-none opacity-50 cursor-not-allowed">
           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
             <ChevronLeft size={24} className="text-muted-foreground/50" />
           </div>
           <span className="text-sm text-muted-foreground">
-            이전 기록이 없습니다.
+            이전 포스트가 없습니다.
           </span>
         </div>
       )}
@@ -50,8 +51,8 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
       {/* 다음 글 */}
       {nextPost ? (
         <Link
-          href={`/${categorySlug}/${nextPost.id}`}
-          className="group flex items-center justify-end gap-4 p-5 rounded-main border border-border hover:bg-secondary/50 transition-all duration-200 text-right"
+          href={PAGE_PATH.postDetail(categorySlug, nextPost.id)}
+          className="group flex items-center justify-end gap-4 p-5 rounded-main border-none hover:bg-secondary/50 transition-all duration-200 text-right"
         >
           <div className="flex flex-col overflow-hidden items-end">
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
@@ -69,9 +70,9 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
           </div>
         </Link>
       ) : (
-        <div className="hidden sm:flex items-center justify-end gap-4 p-5 rounded-main border border-dashed border-border opacity-50 cursor-not-allowed text-right">
+        <div className="hidden sm:flex items-center justify-end gap-4 p-5 rounded-main border-none opacity-50 cursor-not-allowed text-right">
           <span className="text-sm text-muted-foreground">
-            다음 기록이 없습니다.
+            다음 포스트가 없습니다.
           </span>
           <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
             <ChevronRight size={24} className="text-muted-foreground/50" />
