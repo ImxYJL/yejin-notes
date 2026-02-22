@@ -4,3 +4,5 @@ export { default as PostDetail } from "./PostDetail";
 export { default as PostList } from "./PostList";
 export { default as PostListContainer } from "./PostListContainer";
 export { default as PostNavigation } from "./PostNavigation";
+export { default as PostDetailSkeleton } from "./PostDetailSkeleton";
+export { default as PostAction } from "./PostAction";
