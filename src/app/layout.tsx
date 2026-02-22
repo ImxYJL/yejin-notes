@@ -1,9 +1,8 @@
 import "@/app/globals.css";
+import { Toast } from "@/components/common";
 
 import { pretendard } from "@/libs/fonts";
 import ClientProviders from "@/utils/providers/ClientProviders";
-// import { ToastContainer } from 'react-toastify/unstyled';
-// import 'react-toastify/ReactToastify.css';
 
 export default function RootLayout({
   children,
@@ -13,10 +12,8 @@ export default function RootLayout({
   return (
     <html lang="ko" className={pretendard.variable}>
       <body>
-        <ClientProviders>
-          {/* <ToastContainer autoClose={2500} /> */}
-          {children}
-        </ClientProviders>
+        <Toast />
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
