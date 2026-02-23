@@ -4,12 +4,27 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export const middleware = async (request: NextRequest) => {
+  const { pathname } = request.nextUrl;
+
+  // 1. [필터링] 미들웨어가 개입할 필요가 없는 요청들 우선 처리
+  // - Next.js 내부 요청 (prefetch, static, image 등)
+  // - 정적 파일들
+  if (
+    request.headers.get("x-middleware-prefetch") ||
+    pathname.startsWith("/_next") ||
+    pathname.includes(".") // 확장자가 있는 파일들 (favicon.ico, .png 등)
+  ) {
+    return NextResponse.next();
+  }
+
+  // 2. 응답 객체 초기화
   let response = NextResponse.next({
     request: {
       headers: request.headers,
     },
   });
 
+  // 3. Supabase 클라이언트 설정 (쿠키 핸들링 포함)
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -31,21 +46,27 @@ export const middleware = async (request: NextRequest) => {
     },
   );
 
-  // 세션 정보 가져오기
+  // 4. 세션 정보 가져오기
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const { pathname } = request.nextUrl;
 
+  // 5. 보호된 경로 체크 (어드민 전용 페이지 등)
   const isProtectedPath = PAGE_PATH.adminOnly.some((path) =>
     pathname.startsWith(path),
   );
 
-  // [보호된 경로 설정]
-  // 로그인이 필요한 페이지에 비로그인 유저가 접근하면 로그인 페이지로 리다이렉트
+  // 6. [리다이렉트 로직] 로그인이 필요한 페이지에 비로그인 유저 접근 시
   if (isProtectedPath && !user) {
+    // 만약 API 요청이라면 리다이렉트 대신 401 상태코드를 반환
+    if (pathname.startsWith("/api")) {
+      return NextResponse.json(
+        { error: "로그인이 필요합니다." },
+        { status: 401 },
+      );
+    }
+
     const url = new URL(PAGE_PATH.login, request.url);
-    // 원래 가려던 주소
     url.searchParams.set(OAUTH_PARAMS.next, pathname);
     url.searchParams.set(OAUTH_PARAMS.message, "로그인이 필요한 페이지입니다.");
 
@@ -55,16 +76,14 @@ export const middleware = async (request: NextRequest) => {
   return response;
 };
 
-// 미들웨어가 실행될 경로
+// 미들웨어가 실행될 경로 (정적 리소스 제외 최적화)
 export const config = {
   matcher: [
     /*
-     * 아래 경로를 제외한 모든 요청에 미들웨어 실행:
-     * - _next/static (정적 파일)
-     * - _next/image (이미지 최적화 파일)
-     * - favicon.ico (파비콘)
-     * - public 폴더 내 파일들
+     * 아래 경로들을 제외한 모든 요청에 미들웨어 실행:
+     * - _next/static, _next/image, favicon.ico 등
+     * - 이미지, 폰트 등 정적 파일 확장자
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|woff|woff2|ttf|css)$).*)",
   ],
 };
