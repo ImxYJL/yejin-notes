@@ -23,7 +23,7 @@ const useSavePost = (mode: EditorMode) => {
 
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });
 
-      router.push(PAGE_PATH.postDetail(newPost.category_slug, newPost.id));
+      router.push(PAGE_PATH.postDetail(newPost.category.slug, newPost.id));
     },
     onError: (error: Error) => showToast(error.message, "error"),
   });
