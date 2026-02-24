@@ -3,6 +3,7 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeHighlight from "rehype-highlight";
+import remarkBreaks from "remark-breaks";
 import { cn } from "@/utils/styles";
 
 import "highlight.js/styles/base16/brush-trees-dark.css";
@@ -14,9 +15,15 @@ type MarkdownPreviewProps = {
 
 const MarkdownPreview = ({ content, className }: MarkdownPreviewProps) => {
   return (
-    <div className={cn("prose max-w-none dark:prose-invert", className)}>
+    <div
+      className={cn(
+        "prose max-w-none dark:prose-invert",
+        "prose-h1:text-4xl prose-h1:mt-6 prose-h1:mb-2 prose-h1:font-bold",
+        className,
+      )}
+    >
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight]}
         components={{
           // prose의 기본 배경과 여백 제거 (전역과 무관 - 코드 블럭 내 설정)
