@@ -2,7 +2,8 @@ import { InputHTMLAttributes } from "react";
 import { cn } from "@/utils/styles";
 
 const INPUT_VARIANT = {
-  outline: "border border-border bg-background focus:border-accent-primary",
+  outline:
+    "border border-border bg-background focus:border-accent-primary focus:ring-0",
   ghost: "border-none bg-transparent",
 } as const;
 
@@ -30,7 +31,7 @@ const Input = ({
     ref={ref}
     className={cn(
       "w-full rounded-main px-4 py-2 outline-none placeholder:text-muted-foreground",
-      "base-focus base-disabled base-transition",
+      "base-disabled base-transition",
       INPUT_VARIANT[variant],
       FONT_SIZE[fontSize],
       className,

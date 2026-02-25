@@ -11,9 +11,9 @@ const ICON_MAP = {
 };
 
 const toastStyles = {
-  success: "border-l-4 border-[#31748f] bg-slate-50",
-  error: "border-l-4 border-[#eb6f92] bg-rose-50",
-  info: "border-l-4 border-[#907aa9] bg-purple-50",
+  success: "border-l-4 border-[#31748f] bg-[#f2f9f9] text-[#31748f]",
+  error: "border-l-4 border-[#eb6f92] bg-[#fff5f5] text-[#eb6f92]",
+  info: "border-l-4 border-[#907aa9] bg-[#f5f3f7] text-[#907aa9]",
 };
 
 const Toast = () => {
@@ -22,7 +22,7 @@ const Toast = () => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-10 left-1/2 -translate-x-1/2 z-toast animate-in fade-in slide-in-from-bottom-4 duration-300">
+    <div className="isolation-isolate fixed top-20 left-1/2 -translate-x-1/2 z-toast animate-in fade-in slide-in-from-bottom-4 duration-300">
       <div
         className={cn(
           "flex items-center gap-3 px-5 py-3 shadow-xl rounded-main min-w-[300px]",
@@ -30,7 +30,7 @@ const Toast = () => {
         )}
       >
         <span className="shrink-0">{ICON_MAP[type]}</span>
-        <p className="text-sm font-medium text-foreground flex-1">{message}</p>
+        <p className="text-sm font-bold flex-1 text-inherit">{message}</p>
         <button
           onClick={hideToast}
           className="p-1 hover:bg-black/5 rounded-full base-transition text-muted-foreground"

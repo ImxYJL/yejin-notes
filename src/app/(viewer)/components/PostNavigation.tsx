@@ -29,10 +29,10 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
             />
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
+            <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
               이전 글
             </span>
-            <span className="font-semibold truncate group-hover:text-palette-0 transition-colors">
+            <span className="font-medium text-muted-foreground truncate group-hover:text-palette-0 transition-colors">
               {prevPost.title}
             </span>
           </div>
@@ -58,7 +58,7 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
             <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
               다음 글
             </span>
-            <span className="font-semibold truncate group-hover:text-palette-0 transition-colors">
+            <span className="font-medium text-muted-foreground truncate group-hover:text-palette-0 transition-colors">
               {nextPost.title}
             </span>
           </div>
