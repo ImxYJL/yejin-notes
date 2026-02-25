@@ -3,10 +3,10 @@ import { BLOG_QUERY_KEY } from "./queryKey";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useToastStore } from "@/store/useToastStore";
-import { EditorMode, PostForm } from "@/types/blog";
+import { PostForm } from "@/types/blog";
 import { savePostApi } from "@/apis/posts";
 
-const useSavePost = (mode: EditorMode) => {
+const useSavePost = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showToast } = useToastStore();
@@ -14,12 +14,7 @@ const useSavePost = (mode: EditorMode) => {
   return useMutation({
     mutationFn: (formData: PostForm) => savePostApi(formData),
     onSuccess: (newPost) => {
-      const message =
-        mode === "create"
-          ? "기록을 성공적으로 남겼습니다!"
-          : "기록이 수정되었습니다.";
-
-      showToast(message, "success");
+      showToast("저장이 완료되었습니다.", "success");
 
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });
 

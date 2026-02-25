@@ -1,62 +1,41 @@
-"use client";
+import { PostDetailResponse, PostForm } from "@/types/blog";
+import EditorContainer from "../components/EditorContainer";
+import { INITIAL_POST } from "@/constants/blog";
+import { getPost } from "@/services/postService";
 
-import { use } from "react";
-import EditorForm from "@/components/editor/EditorForm";
-import { Post } from "@/types/blog";
-
-export const MOCK_POST: Post = {
-  id: "550e8400-e29b-41d4-a716-446655440000",
-  title: "Next.js 15와 Tailwind v4로 구축하는 현대적인 블로그",
-  content: `
-# 시작하며
-이 블로그는 **프리텐다드** 폰트와 **Rainbow 테마**를 사용하여 제작되었습니다.
-
-## 주요 특징
-1. **UUID** 기반의 리소스 관리
-2. **Zustand**를 활용한 레이아웃 상태 관리
-3. **Tailwind v4**의 강력한 테마 시스템
-
-> 인용구 테스트: 지식은 나눌수록 커집니다.
-
-\`\`\`typescript
-const greeting = "Hello, Gemini!";
-console.log(greeting);
-\`\`\`
-  `,
-  summary:
-    "Next.js 15의 최신 스펙을 활용하여 블로그를 구축하는 과정을 담았습니다.",
-  categoryId: "asdf",
-  isPublished: true,
-  userId: "hello",
-  tags: [],
-  thumbnailUrl: null,
-  isPrivate: true,
-  createdAt: "2026-02-08T15:00:00Z",
+type EditPageParams = {
+  id: string;
 };
 
-const EditPage = ({ params }: { params: Promise<{ id: string }> }) => {
-  const { id } = use(params);
+const EditPage = async ({ params }: { params: Promise<EditPageParams> }) => {
+  const { id } = await params;
+  const data = await getPost(id).catch(() => null);
 
-  // 실제로는 여기서 TanStack Query로 데이터를 가져옵니다.
-  // const { data: post } = useQuery({ queryKey: ['post', id], ... });
-  const post = MOCK_POST;
+  const initialPost: PostForm = {
+    ...INITIAL_POST,
+    id: crypto.randomUUID(),
+  };
 
-  return (
-    <EditorForm
-      mode="edit"
-      initialData={{
-        id: post.id,
-        title: post.title,
-        content: post.content,
-        categoryId: post.categoryId,
-        isPrivate: post.isPrivate,
-        isPublished: post.isPublished,
-        summary: post.summary,
-        tags: post.tags,
-        thumbnailUrl: post.thumbnailUrl,
-      }}
-    />
-  );
+  const post: PostForm = data ? convertToPostForm(data) : initialPost;
+
+  return <EditorContainer post={post} />;
 };
 
 export default EditPage;
+
+/**
+ * 서버 응답 데이터를 폼 전용 타입으로 변환해주는 매퍼
+ */
+export const convertToPostForm = (data: PostDetailResponse): PostForm => {
+  return {
+    id: data.id,
+    title: data.title,
+    content: data.content,
+    summary: data.summary,
+    categorySlug: data.category.slug,
+    tags: data.tags,
+    thumbnailUrl: data.thumbnailUrl,
+    isPrivate: data.isPrivate,
+    isPublished: data.isPublished,
+  };
+};
