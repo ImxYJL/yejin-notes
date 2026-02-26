@@ -50,6 +50,8 @@ export class AppError extends Error {
         return AppError.notFound(null, "데이터를 찾을 수 없습니다.");
       case "42501":
         return AppError.forbidden(null, "접근 권한이 없습니다.");
+      case "42703":
+        return AppError.validation(null, `DB 쿼리 오류: ${error.message}`);
       default:
         return AppError.internal(null, error.message);
     }
@@ -70,18 +72,37 @@ export const appErrorToResponse = (e: AppError) =>
   );
 
 export const handleRouteError = (e: unknown) => {
+  // 1. 진짜 AppError인지 플래그로 확인
   if (isAppError(e)) return appErrorToResponse(e);
 
-  // Supabase 에러 객체인 경우 (code와 message가 있는 경우)
+  // 2. 만약 AppError가 아닌데 code와 message가 있다면 Supabase 에러로 간주
   if (typeof e === "object" && e !== null && "code" in e && "message" in e) {
+    // 💡 여기서 로그를 찍어보세요!
+    console.log("[Supabase or Unknown Error]:", e);
+
     return appErrorToResponse(
       AppError.fromSupabase(e as { code: string; message: string }),
     );
   }
 
-  if (process.env.NODE_ENV !== "production") {
-    console.error("[unhandled_error]:", e);
-  }
-
+  // 3. 진짜 알 수 없는 에러
+  console.error("[unhandled_error]:", e);
   return appErrorToResponse(AppError.internal());
 };
+
+// export const handleRouteError = (e: unknown) => {
+//   if (isAppError(e)) return appErrorToResponse(e);
+
+//   // Supabase 에러 객체인 경우 (code와 message가 있는 경우)
+//   if (typeof e === "object" && e !== null && "code" in e && "message" in e) {
+//     return appErrorToResponse(
+//       AppError.fromSupabase(e as { code: string; message: string }),
+//     );
+//   }
+
+//   if (process.env.NODE_ENV !== "production") {
+//     console.error("[unhandled_error]:", e);
+//   }
+
+//   return appErrorToResponse(AppError.internal());
+// };
