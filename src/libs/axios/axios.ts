@@ -1,3 +1,4 @@
+import { useToastStore } from "@/store/useToastStore";
 import axios from "axios";
 
 const API_PREFIX = "/api";
@@ -23,5 +24,21 @@ const axiosInstance = axios.create({
   withCredentials: true,
   timeout: 10_000,
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      const { showToast } = useToastStore.getState();
+      showToast("세션이 만료되었습니다. 다시 로그인해 주세요.", "error");
+
+      if (!isServer) {
+        // TODO: 토스트를 위한 리다이렉트 지연 필요?
+        window.location.href = "/login?message=unauthorized";
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default axiosInstance;
