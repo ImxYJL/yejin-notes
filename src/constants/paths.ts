@@ -1,23 +1,30 @@
 import { CategorySlug } from "@/types/blog";
 
+const ADMIN_BASE = {
+  WRITE: "/write",
+  EDIT: "/edit",
+} as const;
+
 export const PAGE_PATH = {
   home: "/",
   login: "/login",
-  write: "/write",
-  edit: (postId: string) => `/edit/${postId}`,
+
+  write: ADMIN_BASE.WRITE,
+  edit: (postId: string) => `${ADMIN_BASE.EDIT}/${postId}`,
+
   posts: (slug: CategorySlug) => `/${slug}/posts`,
   postDetail: (slug: CategorySlug, postId: string) =>
     `/${slug}/posts/${postId}`,
 
-  adminOnly: ["/write", "/edit"],
+  adminOnly: Object.values(ADMIN_BASE),
 } as const;
 
 export const API_ENDPOINT = {
+  posts: "/posts",
   drafts: "/posts/drafts",
+  post: (id: string) => `/posts/${id}`,
   categoryPosts: (categorySlug: CategorySlug) =>
     `/posts?category=${categorySlug}`,
-  posts: "/posts",
-  post: (id: string) => `/posts/${id}`,
   me: "/auth/me",
   categories: "/categories",
 } as const;
