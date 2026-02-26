@@ -3,6 +3,7 @@ import { OAUTH_PARAMS } from "@/constants/system";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+// TODO: api 요청 2차 보안 걸기
 export const middleware = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
 
