@@ -45,7 +45,9 @@ export const getPosts = async (
     .order("created_at", { ascending: false })
     .range(from, to);
 
-  if (!user) {
+  if (user) {
+    query.eq("is_published", true);
+  } else {
     query.eq("is_private", false).eq("is_published", true);
   }
 
