@@ -3,13 +3,21 @@
 import dynamic from "next/dynamic";
 import { useState, useDeferredValue, useCallback } from "react";
 import { Divider } from "@/components/common";
-import { CategorySlug, EditorMode, PostForm } from "@/types/blog";
+import {
+  CategorySlug,
+  EditorMode,
+  PostDetailResponse,
+  PostForm,
+} from "@/types/blog";
 import { ContentEditor, TitleInput } from ".";
 import { useScrollSync } from "@/hooks/useScrollSync";
 import useSavePost from "@/queries/useSavePost";
 import { EditorToolbar } from "@/app/(editor)/edit/components";
 import useSaveDraft from "@/queries/useSaveDraft";
 import { CATEGORY_MAP } from "@/constants/blog";
+import { useQueryClient } from "@tanstack/react-query";
+import { getPostApi } from "@/apis/posts";
+import { BLOG_QUERY_KEY } from "@/queries/queryKey";
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -37,10 +45,14 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
 
   const { editorRef, previewRef, handleScroll, handleMouseEnter } =
     useScrollSync();
+
+  const queryClient = useQueryClient();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
   const { mutate: onDraftSave, isPending: isSaveDraftPending } = useSaveDraft();
 
   const isPending = isSavePending || isSaveDraftPending;
+    // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
+  const deferredContent = useDeferredValue(formData.content);
 
   const handleSave = () => {
     if (isSavePending) return;
@@ -54,8 +66,14 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
     onDraftSave(formData);
   };
 
-  // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
-  const deferredContent = useDeferredValue(formData.content);
+  const handleSelectDraft = async (id: string) => {
+    const data = await queryClient.fetchQuery({
+      queryKey: [BLOG_QUERY_KEY.post, id],
+      queryFn: () => getPostApi(id),
+    });
+
+    setFormData(convertToPostForm(data));
+  };
 
   const handleToggleIsPrivate = () => {
     setFormData((prev) => ({
@@ -92,7 +110,8 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
         onTogglePrivate={handleToggleIsPrivate}
         onSave={handleSave}
         onDraftSave={handleSaveDraft}
-        onSelect={handleSelectCategory}
+        onCategorySelect={handleSelectCategory}
+        onDraftSelect={handleSelectDraft}
       />
 
       <TitleInput
@@ -118,7 +137,6 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
           style={{ height: `calc(100% - ${EDITOR_LAYOUT.bottomPadding}vh)` }}
         />
 
-        {/* 미리보기 */}
         <section
           ref={previewRef}
           onMouseEnter={() => handleMouseEnter("preview")}
@@ -132,6 +150,20 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
       </div>
     </div>
   );
+};
+
+export const convertToPostForm = (data: PostDetailResponse): PostForm => {
+  return {
+    id: data.id,
+    title: data.title ?? "",
+    content: data.content ?? "",
+    summary: data.content ?? "",
+    tags: data.tags,
+    thumbnailUrl: data.thumbnailUrl,
+    categorySlug: data.category?.slug ?? "dev",
+    isPrivate: data.isPrivate,
+    isPublished: data.isPublished,
+  };
 };
 
 export default EditorForm;

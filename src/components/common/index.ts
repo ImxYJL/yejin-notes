@@ -7,3 +7,4 @@ export { default as Divider } from "./Divider";
 export { default as Sidebar } from "./Sidebar";
 export { default as Toast } from "./Toast";
 export { default as Badge } from "./Badge";
+export { default as Portal } from "./Portal";

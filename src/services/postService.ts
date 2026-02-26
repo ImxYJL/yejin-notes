@@ -6,6 +6,7 @@ import { validateCategoryAccess } from "./categoryService";
 import { getAuthUser, validateAuth } from "./authService";
 import {
   CategorySlug,
+  DraftPost,
   Post,
   PostDetailResponse,
   PostForm,
@@ -151,6 +152,22 @@ export const deletePost = async (id: string) => {
   const { error } = await supabase.from("posts").delete().eq("id", id);
 
   if (error) throw AppError.fromSupabase(error);
+};
+
+export const getDrafts = async (): Promise<DraftPost[]> => {
+  await validateAuth();
+
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from("posts")
+    .select(`id, title, createdAt:created_at`)
+    .eq("is_published", false)
+    .order("created_at", { ascending: false });
+
+  if (error) throw AppError.fromSupabase(error);
+
+  return (data as DraftPost[]) || [];
 };
 
 /**

@@ -12,7 +12,7 @@ const useSavePost = () => {
   const { showToast } = useToastStore();
 
   return useMutation({
-    mutationFn: (formData: PostForm) => savePostApi(formData),
+    mutationFn: (formData: PostForm) => savePostApi({...formData, isPublished: true }),
     onSuccess: (newPost) => {
       showToast("저장이 완료되었습니다.", "success");
 

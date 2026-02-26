@@ -1,6 +1,8 @@
 import { API_ENDPOINT } from "@/constants/paths";
 import type {
   CategorySlug,
+  DraftPost,
+  Post,
   PostDetailResponse,
   PostForm,
   PostsResponse,
@@ -29,7 +31,7 @@ export const getPostApi = async (id: string): Promise<PostDetailResponse> => {
   return data.data;
 };
 
-export const savePostApi = async (formData: PostForm) => {
+export const savePostApi = async (formData: PostForm): Promise<Post> => {
   const { data } = await axiosInstance.patch(
     API_ENDPOINT.post(formData.id),
     formData,
@@ -40,4 +42,10 @@ export const savePostApi = async (formData: PostForm) => {
 
 export const deletePostApi = async (id: string) => {
   await axiosInstance.delete(API_ENDPOINT.post(id));
+};
+
+export const getDraftsApi = async (): Promise<DraftPost[]> => {
+  const { data } = await axiosInstance.get(API_ENDPOINT.drafts);
+
+  return data.data;
 };

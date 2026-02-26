@@ -6,4 +6,5 @@ export const BLOG_QUERY_KEY = {
   categories: "categories",
   posts: "posts",
   post: "post",
+  drafts: "drafts",
 } as const;

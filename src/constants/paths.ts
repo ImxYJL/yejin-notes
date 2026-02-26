@@ -13,6 +13,7 @@ export const PAGE_PATH = {
 } as const;
 
 export const API_ENDPOINT = {
+  drafts: "/posts/drafts",
   categoryPosts: (categorySlug: CategorySlug) =>
     `/posts?category=${categorySlug}`,
   posts: "/posts",

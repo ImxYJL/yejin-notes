@@ -6,6 +6,8 @@ import { Button } from "@/components/common";
 import { CategorySlug, EditorMode } from "@/types/blog";
 import { cn } from "@/utils/styles";
 import CategorySelector from "./CategorySelector";
+import { useState } from "react";
+import DraftListDrawer from "./DraftListDrawer";
 
 type EditorToolbarProps = {
   mode: EditorMode;
@@ -13,22 +15,25 @@ type EditorToolbarProps = {
   isPending: boolean;
   categorySlug: CategorySlug;
   onTogglePrivate: () => void;
-  onSelect: (slug: CategorySlug) => void;
+  onCategorySelect: (slug: CategorySlug) => void;
+  onDraftSelect: (id: string) => void;
   onSave: () => void;
   onDraftSave: () => void;
 };
 
 const EditorToolbar = ({
-  mode,
+  onDraftSelect,
   isPrivate,
   isPending,
   categorySlug,
   onTogglePrivate,
   onDraftSave,
-  onSelect,
+  onCategorySelect,
   onSave,
 }: EditorToolbarProps) => {
   const router = useRouter();
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
     <header className="flex justify-between items-center pr-6 pt-6 pb-2 bg-background/80 backdrop-blur-sm sticky top-0 z-30">
@@ -57,10 +62,27 @@ const EditorToolbar = ({
           <span>{isPrivate ? "비공개" : "공개"}</span>
         </button>
 
-        <CategorySelector categorySlug={categorySlug} onSelect={onSelect} />
+        <CategorySelector
+          categorySlug={categorySlug}
+          onSelect={onCategorySelect}
+        />
       </div>
 
       <div className="flex items-center gap-4">
+        <Button
+          variant="ghost"
+          onClick={() => setIsDrawerOpen((prev) => !prev)}
+          // className="text-xs font-bold text-muted-foreground hover:text-accent-primary underline underline-offset-4 base-transition mr-2"
+        >
+          임시저장 목록 열기
+        </Button>
+
+        <DraftListDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          onSelect={onDraftSelect}
+        />
+
         <Button
           variant="outline"
           size="md"
