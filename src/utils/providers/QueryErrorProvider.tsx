@@ -17,9 +17,10 @@ const QueryErrorProvider = ({ children }: QueryErrorProviderProps) => {
           fallbackRender={({ error, resetErrorBoundary }) => (
             <ErrorFallback
               error={error}
-              reset={() => {
+              resetErrorBoundary={resetErrorBoundary}
+              customReset={() => {
                 reset(); // TanStack Query 캐시 리셋
-                resetErrorBoundary(); // ErrorBoundary UI 리셋
+                resetErrorBoundary(); // UI 리셋
               }}
             />
           )}
