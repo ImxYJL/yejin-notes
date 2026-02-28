@@ -3,13 +3,13 @@ import "server-only";
 import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { getAuthUser } from "./authService";
 import { AppError } from "@/utils/error";
-import { CATEGORY_MAP } from "@/constants/blog";
-import { CategorySlug } from "@/types/blog";
+import { Category, CategorySlug } from "@/types/blog";
 
 export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
   const user = await getAuthUser();
+  const categories = await getCategories();
 
-  const category = CATEGORY_MAP[categorySlug];
+  const category = categories.find((c) => c.slug === categorySlug);
 
   if (!category) {
     throw AppError.notFound("존재하지 않는 카테고리입니다.");
@@ -20,12 +20,12 @@ export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
   }
 };
 
-export const getCategories = async () => {
+export const getCategories = async (): Promise<Category[]> => {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
     .from("categories")
-    .select("id, name, is_private");
+    .select("id, name, slug, is_private");
 
   if (error) throw AppError.fromSupabase(error);
   if (!data) return [];
@@ -33,6 +33,7 @@ export const getCategories = async () => {
   return data.map((row) => ({
     id: row.id,
     name: row.name,
+    slug: row.slug,
     isPrivate: row.is_private,
   }));
 };

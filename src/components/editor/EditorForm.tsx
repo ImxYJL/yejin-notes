@@ -14,10 +14,10 @@ import { useScrollSync } from "@/hooks/useScrollSync";
 import useSavePost from "@/queries/useSavePost";
 import { EditorToolbar } from "@/app/(editor)/edit/components";
 import useSaveDraft from "@/queries/useSaveDraft";
-import { CATEGORY_MAP } from "@/constants/blog";
 import { useQueryClient } from "@tanstack/react-query";
 import { getPostApi } from "@/apis/posts";
 import { BLOG_QUERY_KEY } from "@/queries/queryKey";
+import useCurrentCategory from "@/hooks/useCurrentCategory";
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -49,9 +49,10 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   const queryClient = useQueryClient();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
   const { mutate: onDraftSave, isPending: isSaveDraftPending } = useSaveDraft();
+  const { categoryMap } = useCurrentCategory();
 
   const isPending = isSavePending || isSaveDraftPending;
-    // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
+  // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
   const deferredContent = useDeferredValue(formData.content);
 
   const handleSave = () => {
@@ -83,10 +84,13 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   };
 
   const handleSelectCategory = (slug: CategorySlug) => {
+    const targetCategory = categoryMap?.[slug];
+    if (!targetCategory) return;
+
     setFormData((prev) => ({
       ...prev,
       categorySlug: slug,
-      isPrivate: CATEGORY_MAP[slug].isPrivate,
+      isPrivate: categoryMap[slug].isPrivate,
     }));
   };
 
@@ -152,6 +156,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   );
 };
 
+// TODO: dev 상수화
 export const convertToPostForm = (data: PostDetailResponse): PostForm => {
   return {
     id: data.id,

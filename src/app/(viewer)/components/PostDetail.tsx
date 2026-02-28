@@ -1,6 +1,5 @@
 import { PostNavigation, PostAction } from "@/app/(viewer)/components";
 import { Divider } from "@/components/common";
-import { CATEGORY_MAP } from "@/constants/blog";
 import { Lock, Clock, Tag } from "lucide-react";
 import { CategorySlug, PostDetailResponse } from "@/types/blog";
 import MarkdownViewer from "@/components/markdown/MarkdownViewer";
@@ -31,17 +30,23 @@ const PostDetail = ({ categorySlug, htmlContent, isAdmin, post }: Props) => {
           </div>
 
           <div className="flex justify-between items-center flex-wrap gap-4 text-sm text-muted-foreground">
-            {/* 왼쪽: 카테고리 태그 */}
             <span className="flex items-center gap-1.5">
-              <Tag size={20} /> {CATEGORY_MAP[categorySlug].name}
-            </span>
-
-            <div className="flex items-center">
               {post.isPrivate && (
                 <span className="text-palette-0 font-bold bg-palette-0/10 px-2 py-0.5 rounded flex items-center justify-center">
                   <Lock size={20} />
                 </span>
               )}
+              {post.tags.length > 0 && (
+                <>
+                  <Tag size={20} />
+                  {post.tags.map((tag, i) => (
+                    <span key={i}>{tag}</span>
+                  ))}
+                </>
+              )}
+            </span>
+
+            <div className="flex items-center">
               {isAdmin && (
                 <PostAction id={post.id} categorySlug={categorySlug} />
               )}

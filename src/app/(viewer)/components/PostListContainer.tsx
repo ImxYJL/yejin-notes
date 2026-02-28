@@ -1,6 +1,5 @@
 "use client";
 
-import { CATEGORY_MAP } from "@/constants/blog";
 import { PAGE_PATH } from "@/constants/paths";
 import { CategorySlug } from "@/types/blog";
 import { Plus } from "lucide-react";
@@ -11,6 +10,7 @@ import PostListPagination from "./PostListPagination";
 import { getButtonStyles } from "@/components/common/Button";
 import PostList from "./PostList";
 import PostSkeleton from "./PostSkeleton";
+import useCurrentCategory from "@/hooks/useCurrentCategory";
 
 type Props = {
   categorySlug: CategorySlug;
@@ -19,6 +19,7 @@ type Props = {
 const PostListContainer = ({ categorySlug }: Props) => {
   const [page, setPage] = useState(1);
 
+  const { categoryMap } = useCurrentCategory();
   const { data, isPending } = usePosts(categorySlug, page);
 
   const handlePageChange = (newPage: number) => {
@@ -32,7 +33,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
       <header className="flex justify-between items-end border-b border-border pb-8">
         <div>
           <h1 className="text-4xl font-black capitalize tracking-tight">
-            {CATEGORY_MAP[categorySlug].name}
+            {categoryMap?.[categorySlug].name}
           </h1>
           {/* <p className="text-muted-foreground mt-3 font-medium">
             <span className="text-accent-primary font-bold">
@@ -44,6 +45,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
         <Link
           href={PAGE_PATH.write}
           className={getButtonStyles("primary", "md", "font-bold")}
+          // prefetch={false}
         >
           <Plus size={24} />
         </Link>
@@ -59,8 +61,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
         <>
           <PostList categorySlug={categorySlug} postItems={data.posts} />
 
-          {/* 페이지네이션: 데이터가 있을 때만 렌더링 */}
-          {data.totalPages === 1 && (
+          {data.totalPages > 1 && (
             <PostListPagination
               currentPage={data.currentPage}
               totalPages={data.totalPages}

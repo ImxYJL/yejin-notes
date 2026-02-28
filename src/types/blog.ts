@@ -66,6 +66,8 @@ export type PostForm = Omit<Post, "createdAt" | "updatedAt" | "category"> & {
   categorySlug: CategorySlug;
 };
 
+export type CategoryMap = Record<CategorySlug, Category>;
+
 export type EditorMode = "create" | "edit";
 
 /** -----------------------------------------------------------
