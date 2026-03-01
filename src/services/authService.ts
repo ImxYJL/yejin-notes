@@ -30,12 +30,15 @@ export const getAuthUser = async () => {
 };
 
 export const checkIsAdmin = async () => {
-  return !!(await getAuthUser());
+  const user = await getAuthUser();
+  if (!user) return false;
+
+  return user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 };
 
 export const validateAuth = async () => {
   const user = await getAuthUser();
-  if (!user) throw AppError.unauthorized(); 
+  if (!user) throw AppError.unauthorized();
 
   return user;
 };
