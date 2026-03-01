@@ -1,7 +1,7 @@
 import EditorForm from "@/components/editor/EditorForm";
 import { INITIAL_POST } from "@/constants/blog";
 
-const WritePage = () => {
+const WritePage = async () => {
   const initialData = {
     ...INITIAL_POST,
     id: crypto.randomUUID(),

@@ -2,38 +2,23 @@
 
 import Link from "next/link";
 import Button from "./Button";
-import { usePathname } from "next/navigation";
-import { Github, Mail, Palette, X, Menu, BookOpen, Code } from "lucide-react";
+import { Github, Mail, Palette, X, Menu, Lock } from "lucide-react";
 import { cn } from "@/utils/styles";
 import useLayoutStore from "@/store/useLayoutStore";
 import useThemeStore from "@/store/useThemeStore";
+import { Category } from "@/types/blog";
+import { PAGE_PATH } from "@/constants/paths";
+import useCurrentCategory from "@/hooks/useCurrentCategory";
+import { CATEGORY_MAP } from "@/constants/blog";
 
-type NavItem = {
-  label: string;
-  href: string;
-  icon: React.ReactNode;
-  textColor: string;
+type Props = {
+  categories: Category[];
 };
 
-const navItems: NavItem[] = [
-  {
-    label: "Reading",
-    href: "/reading/posts",
-    icon: <BookOpen size={20} />,
-    textColor: "text-accent-primary",
-  },
-  {
-    label: "Dev",
-    href: "/dev",
-    icon: <Code size={20} />,
-    textColor: "text-[var(--palette-4)]",
-  },
-];
-
-const Sidebar = () => {
+const Sidebar = ({ categories }: Props) => {
   const { isSidebarOpen, toggleSidebar } = useLayoutStore();
   const { theme, setTheme } = useThemeStore();
-  const pathname = usePathname();
+  const { isActiveCategory } = useCurrentCategory();
 
   return (
     <>
@@ -86,13 +71,15 @@ const Sidebar = () => {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
+          <nav className="flex-1 space-y-1 px-3">
+            {categories.map((category) => {
+              const isActive = isActiveCategory(category.slug);
+              const href = PAGE_PATH.posts(category.slug);
+
               return (
                 <Link
-                  key={item.label}
-                  href={item.href}
+                  key={category.id}
+                  href={href}
                   className={cn(
                     "flex items-center gap-3 p-3 rounded-main base-transition group relative",
                     isActive
@@ -103,15 +90,21 @@ const Sidebar = () => {
                   <span
                     className={cn(
                       "base-transition group-hover:scale-110",
-                      isActive ? item.textColor : "text-muted-foreground/70",
+                      isActive
+                        ? CATEGORY_MAP[category.slug].textColor
+                        : "text-muted-foreground/70",
                     )}
                   >
-                    {item.icon}
+                    {CATEGORY_MAP[category.slug].icon}
                   </span>
-                  <span className="text-sm font-semibold">{item.label}</span>
-                  {isActive && (
-                    <div className="absolute right-3 w-1.5 h-1.5 rounded-full bg-accent-primary animate-in zoom-in" />
-                  )}
+
+                  {/* 라벨 및 비공개 아이콘 */}
+                  <span className="text-sm font-semibold flex items-center gap-2">
+                    {category.name}
+                    {category.isPrivate && (
+                      <Lock size={12} className="text-muted-foreground/40" />
+                    )}
+                  </span>
                 </Link>
               );
             })}
@@ -121,19 +114,19 @@ const Sidebar = () => {
           <div className="pt-6 border-t border-border flex items-center justify-between">
             <div className="flex gap-3 text-muted-foreground">
               <a
-                href="https://github.com"
+                href="https://github.com/ImxYJL"
                 className="hover:text-accent-primary base-transition"
               >
                 <Github size={20} />
               </a>
               <a
-                href="mailto:test@test.com"
+                href="mailto:allensain14@gmail.com"
                 className="hover:text-accent-primary base-transition"
               >
                 <Mail size={20} />
               </a>
             </div>
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               onClick={() =>
@@ -143,7 +136,7 @@ const Sidebar = () => {
             >
               <Palette size={14} className="mr-1.5" />
               {theme.toUpperCase()}
-            </Button>
+            </Button> */}
           </div>
         </div>
       </aside>

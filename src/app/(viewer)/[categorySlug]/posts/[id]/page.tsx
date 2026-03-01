@@ -1,4 +1,3 @@
-import { getPostApi } from "@/apis/posts";
 import { PostDetail, PostDetailSkeleton } from "@/app/(viewer)/components";
 import { checkIsAdmin } from "@/services/authService";
 import { getPost } from "@/services/postService";
@@ -18,9 +17,9 @@ const PostDetailPage = async ({
 }) => {
   const { categorySlug, id } = await params;
 
-  //const post = await getPostApi(id);
   const post = await getPost(id);
   const isAdmin = await checkIsAdmin();
+  
   const htmlContent = await getMarkdownHtml(post.content);
 
   return (

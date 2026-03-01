@@ -1,5 +1,5 @@
 import { CategorySlug } from "@/types/blog";
-import { PostList } from "../../components";
+import { PostListContainer } from "../../components";
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
@@ -12,7 +12,7 @@ const PostListPage = async ({
 }) => {
   const { categorySlug } = await params;
 
-  return <PostList categorySlug={categorySlug} />;
+  return <PostListContainer categorySlug={categorySlug} />;
 };
 
 export default PostListPage;
