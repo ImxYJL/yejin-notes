@@ -3,7 +3,7 @@ import "server-only";
 import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { AppError } from "@/utils/error";
 import { validateCategoryAccess } from "./categoryService";
-import { getAuthUser, validateAuth } from "./authService";
+import { checkIsAdmin, getAuthUser, validateAuth } from "./authService";
 import {
   CategorySlug,
   DraftPost,
@@ -64,8 +64,8 @@ export const getPosts = async (
 
 export const getPost = async (postId: string): Promise<PostDetailResponse> => {
   const supabase = await createServerSupabaseClient();
+  const isAdmin = await checkIsAdmin();
 
-  // 1. 현재 포스트 먼저 가져오기
   const { data: currentPost, error } = await supabase
     .from("posts")
     .select(
@@ -79,45 +79,46 @@ export const getPost = async (postId: string): Promise<PostDetailResponse> => {
 
   if (error || !currentPost) throw AppError.notFound();
 
-  // 2. 권한 및 카테고리 체크
-  await validateCategoryAccess(currentPost.category.slug);
-  const user = await getAuthUser();
-  if (currentPost.is_private && !user) throw AppError.forbidden();
+  const isDraft = !currentPost.is_published;
+  const isPrivate = currentPost.is_private;
 
-  // 3. 이전 글 & 다음 글 가져오기 (병렬 처리)
-  // - 이전 글: 현재보다 작으면서 가장 큰 값 (DESC limit 1)
-  // - 다음 글: 현재보다 크면서 가장 작은 값 (ASC limit 1)
+  if ((isDraft || isPrivate) && !isAdmin) {
+    throw AppError.notFound();
+  }
   const [prevRes, nextRes] = await Promise.all([
-    supabase
-      .from("posts")
-      .select("id, title")
-      .eq("category_id", currentPost.category_id)
-      .lt("created_at", currentPost.created_at)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from("posts")
-      .select("id, title")
-      .gt("created_at", currentPost.created_at)
-      .order("created_at", { ascending: true })
-      .limit(1)
-      .maybeSingle(),
+    applyVisibilityFilter(
+      supabase
+        .from("posts")
+        .select("id, title")
+        .eq("category_id", currentPost.category_id)
+        .lt("created_at", currentPost.created_at)
+        .order("created_at", { ascending: false })
+        .limit(1),
+      isAdmin,
+    ).maybeSingle(),
+    applyVisibilityFilter(
+      supabase
+        .from("posts")
+        .select("id, title")
+        .eq("category_id", currentPost.category_id)
+        .gt("created_at", currentPost.created_at)
+        .order("created_at", { ascending: true })
+        .limit(1),
+      isAdmin,
+    ).maybeSingle(),
   ]);
 
-  // 4. 결과 합쳐서 반환
   return {
-    ...mapPostDetailResponse(currentPost), // 기존 Post 데이터
+    ...mapPostDetailResponse(currentPost),
     prevPost: prevRes.data || null,
     nextPost: nextRes.data || null,
   };
 };
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
-  const user = await validateAuth(); // 작성자 권한 체크
+  const user = await validateAuth();
   const supabase = await createServerSupabaseClient();
 
-  // 💡 categoryId를 가져오는 로직을 더 명확하게 처리
   const categoryId = await getCategoryIdBySlug(formData.categorySlug);
 
   const { data, error } = await supabase
@@ -217,4 +218,15 @@ export const getCategoryIdBySlug = async (slug: string) => {
   }
 
   return data.id;
+};
+
+// TODO: 타입 지정하기
+const applyVisibilityFilter = (query: any, isAdmin: boolean) => {
+  query = query.eq("is_published", true);
+
+  if (!isAdmin) {
+    return query.eq("is_private", false);
+  }
+
+  return query;
 };
