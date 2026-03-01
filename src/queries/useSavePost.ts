@@ -12,11 +12,14 @@ const useSavePost = () => {
   const { showToast } = useToastStore();
 
   return useMutation({
-    mutationFn: (formData: PostForm) => savePostApi({...formData, isPublished: true }),
+    mutationFn: (formData: PostForm) =>
+      savePostApi({ ...formData, isPublished: true }),
     onSuccess: (newPost) => {
       showToast("저장이 완료되었습니다.", "success");
 
-      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });
+      queryClient.invalidateQueries({
+        queryKey: [BLOG_QUERY_KEY.posts, BLOG_QUERY_KEY.drafts],
+      });
 
       router.push(PAGE_PATH.postDetail(newPost.category.slug, newPost.id));
     },
