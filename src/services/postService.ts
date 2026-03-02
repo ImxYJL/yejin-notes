@@ -220,7 +220,8 @@ export const getCategoryIdBySlug = async (slug: string) => {
   return data.id;
 };
 
-// TODO: 타입 지정하기
+// TODO: Supabase 쿼리용 타입 지정하기
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const applyVisibilityFilter = (query: any, isAdmin: boolean) => {
   query = query.eq("is_published", true);
 

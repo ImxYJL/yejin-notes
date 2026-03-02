@@ -17,9 +17,10 @@ const PostDetailPage = async ({
 }) => {
   const { categorySlug, id } = await params;
 
+  // TODO: await 분리
   const post = await getPost(id);
   const isAdmin = await checkIsAdmin();
-  
+
   const htmlContent = await getMarkdownHtml(post.content);
 
   return (
