@@ -2,8 +2,8 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #3f3f46;
 
   /* 🌈 Rainbow Palette (Default) */
   --palette-0: #d32f2f;
@@ -70,7 +70,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* NOTE: 마크다운 라이브러리의 기본 색상 설정을 덮어씌우기 위해 important 사용 필수 */
 @layer base {
+  .prose {
+    --tw-prose-headings: var(--foreground) !important;
+    --tw-prose-body: var(--foreground) !important;
+    --tw-prose-bold: var(--foreground) !important;
+  }
+
   /* 인라인 코드 */
   .prose :not(pre) > code {
     @apply bg-slate-100! dark:bg-slate-800! text-accent-primary! px-1.5! py-0.5! rounded-md! font-mono! text-[0.9em]! font-medium!;

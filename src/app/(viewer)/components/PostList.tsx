@@ -3,6 +3,7 @@
 import { PAGE_PATH } from "@/constants/paths";
 import { CategorySlug, PostItem } from "@/types/blog";
 import Link from "next/link";
+import { formatDate } from "@/utils/date";
 
 type Props = {
   categorySlug: CategorySlug;
@@ -15,7 +16,7 @@ const PostList = ({ postItems, categorySlug }: Props) => (
       <Link
         key={post.id}
         href={PAGE_PATH.postDetail(categorySlug, post.id)}
-        className="block py-10 group"
+        className="block py-8 group border-muted-foreground/40"
       >
         <article className="space-y-4">
           <h2 className="text-2xl font-bold group-hover:text-accent-primary base-transition tracking-tight">
@@ -25,7 +26,7 @@ const PostList = ({ postItems, categorySlug }: Props) => (
             {post.summary}
           </p>
           <div className="flex items-center gap-3 text-sm text-muted-foreground/60 font-mono">
-            <span>{post.createdAt}</span>
+            <span>{formatDate(post.createdAt)}</span>
             <span className="w-1 h-1 rounded-full bg-border" />
           </div>
         </article>

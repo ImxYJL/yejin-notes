@@ -36,7 +36,7 @@ const Sidebar = ({ categories }: Props) => {
       {/* 메인 사이드바 */}
       <aside
         className={cn(
-          "border-r border-border base-transition shrink-0",
+          "border-r border-border base-transition shrink-0 text-muted-foreground",
           "max-md:border-none",
           "md:bg-background/60 md:backdrop-blur-xl",
           "max-md:bg-background max-md:backdrop-blur-none max-md:shadow-2xl",
@@ -52,9 +52,11 @@ const Sidebar = ({ categories }: Props) => {
             <div className="space-y-3">
               <div className="w-16 h-16 rounded-main g-linear-to-tr from-(--palette-0) to-(--palette-2) shadow-inner" />
               <div>
-                <h2 className="font-bold text-xl tracking-tight">Yejin</h2>
+                <h2 className="font-bold text-xl text-foreground tracking-tight">
+                  Yejin
+                </h2>
                 <p className="text-xs text-muted-foreground font-medium">
-                  Frontend Developer
+                  밥 열심히 먹는 사람
                 </p>
               </div>
             </div>
@@ -111,7 +113,7 @@ const Sidebar = ({ categories }: Props) => {
           </nav>
 
           {/* Bottom Tools */}
-          <div className="pt-6 border-t border-border flex items-center justify-between">
+          <div className="pt-6 text-muted-foreground border-t border-border flex items-center justify-between">
             <div className="flex gap-3 text-muted-foreground">
               <a
                 href="https://github.com/ImxYJL"

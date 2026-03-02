@@ -7,6 +7,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeStringify from "rehype-stringify";
 // TODO: 나중에 상수로 변경
 import rosePineDawn from "shiki/themes/rose-pine-dawn.mjs";
+import catppuccinFrappe from "shiki/themes/catppuccin-frappe.mjs";
 
 export const getMarkdownHtml = async (content: string) => {
   const result = await unified()
@@ -15,7 +16,7 @@ export const getMarkdownHtml = async (content: string) => {
     .use(remarkBreaks)
     .use(remarkRehype)
     .use(rehypePrettyCode, {
-      theme: rosePineDawn,
+      theme: catppuccinFrappe,
       keepBackground: true,
     })
     .use(rehypeStringify)

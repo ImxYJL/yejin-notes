@@ -5,80 +5,92 @@ import {
   PostNavigation as PostNavigationType,
 } from "@/types/blog";
 import { PAGE_PATH } from "@/constants/paths";
+import { cn } from "@/utils/styles";
 
 type PostNavigationProps = {
   navigation: PostNavigationType;
   categorySlug: CategorySlug;
 };
 
-const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
-  const { prevPost, nextPost } = navigation;
+type NavItemProps = {
+  direction: "prev" | "next";
+  categorySlug: CategorySlug;
+  post?: { id: string; title: string } | null;
+};
+
+const NavItem = ({ direction, categorySlug, post }: NavItemProps) => {
+  const isPrev = direction === "prev";
+  const Icon = isPrev ? ChevronLeft : ChevronRight;
+  const label = isPrev ? "이전 글" : "다음 글";
+
+  if (!post) {
+    return (
+      <div
+        className={cn(
+          "hidden sm:flex items-center gap-4 p-5 rounded-main opacity-40 grayscale",
+          !isPrev && "justify-end text-right",
+        )}
+      >
+        {isPrev && (
+          <div className="shrink-0 w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+            <Icon size={24} className="text-muted-foreground/50" />
+          </div>
+        )}
+        <div className={cn("flex flex-col", !isPrev && "items-end")}>
+          <p className="text-[11px] uppercase tracking-wider mb-1">{label}</p>
+          <p className="text-sm font-medium">{label}이 없습니다.</p>
+        </div>
+        {!isPrev && (
+          <div className="shrink-0 w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+            <Icon size={24} className="text-muted-foreground/50" />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full py-8">
-      {/* 이전 글 */}
-      {prevPost ? (
-        <Link
-          href={PAGE_PATH.postDetail(categorySlug, prevPost.id)}
-          className="group flex items-center gap-4 p-5 rounded-main border-none hover:bg-secondary/50 transition-all duration-200 text-left"
-        >
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted group-hover:bg-background transition-colors">
-            <ChevronLeft
-              size={24}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-          </div>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-              이전 글
-            </span>
-            <span className="font-medium text-muted-foreground truncate group-hover:text-palette-0 transition-colors">
-              {prevPost.title}
-            </span>
-          </div>
-        </Link>
-      ) : (
-        <div className="hidden sm:flex items-center gap-4 p-5 rounded-main border-none opacity-50 cursor-not-allowed">
-          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-            <ChevronLeft size={24} className="text-muted-foreground/50" />
-          </div>
-          <span className="text-sm text-muted-foreground">
-            이전 포스트가 없습니다.
-          </span>
+    <Link
+      href={PAGE_PATH.postDetail(categorySlug, post.id)}
+      className={cn(
+        "group flex items-center gap-4 p-5 rounded-main transition-all duration-200 overflow-hidden",
+        "text-muted-foreground hover:text-accent-primary hover:bg-accent-primary/10 active:bg-secondary/80",
+        isPrev ? "text-left" : "justify-end text-right",
+      )}
+    >
+      {isPrev && (
+        <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-muted transition-colors group-hover:bg-background">
+          <Icon size={24} className="text-inherit" />
         </div>
       )}
+      <div className={cn("flex flex-col min-w-0", !isPrev && "items-end")}>
+        <p className="text-[11px] uppercase tracking-wider mb-1 opacity-70">
+          {label}
+        </p>
+        <p className="font-medium truncate text-inherit w-full">{post.title}</p>
+      </div>
+      {!isPrev && (
+        <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full bg-muted transition-colors group-hover:bg-background">
+          <Icon size={24} className="text-inherit" />
+        </div>
+      )}
+    </Link>
+  );
+};
 
-      {/* 다음 글 */}
-      {nextPost ? (
-        <Link
-          href={PAGE_PATH.postDetail(categorySlug, nextPost.id)}
-          className="group flex items-center justify-end gap-4 p-5 rounded-main border-none hover:bg-secondary/50 transition-all duration-200 text-right"
-        >
-          <div className="flex flex-col overflow-hidden items-end">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
-              다음 글
-            </span>
-            <span className="font-medium text-muted-foreground truncate group-hover:text-palette-0 transition-colors">
-              {nextPost.title}
-            </span>
-          </div>
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-muted group-hover:bg-background transition-colors">
-            <ChevronRight
-              size={24}
-              className="text-muted-foreground group-hover:text-foreground"
-            />
-          </div>
-        </Link>
-      ) : (
-        <div className="hidden sm:flex items-center justify-end gap-4 p-5 rounded-main border-none opacity-50 cursor-not-allowed text-right">
-          <span className="text-sm text-muted-foreground">
-            다음 포스트가 없습니다.
-          </span>
-          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-            <ChevronRight size={24} className="text-muted-foreground/50" />
-          </div>
-        </div>
-      )}
+const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
+  return (
+    <nav className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+      <NavItem
+        direction="prev"
+        categorySlug={categorySlug}
+        post={navigation.prevPost}
+      />
+      <NavItem
+        direction="next"
+        categorySlug={categorySlug}
+        post={navigation.nextPost}
+      />
     </nav>
   );
 };

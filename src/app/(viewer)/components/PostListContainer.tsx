@@ -30,7 +30,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
 
   return (
     <div className="space-y-4">
-      <header className="flex justify-between items-end border-b border-border pb-8">
+      <header className="flex justify-between items-end border-b-2 border-muted-foreground/30 border-border pb-8">
         <div>
           <h1 className="text-4xl font-black capitalize tracking-tight">
             {categoryMap?.[categorySlug].name}
@@ -45,7 +45,6 @@ const PostListContainer = ({ categorySlug }: Props) => {
         <Link
           href={PAGE_PATH.write}
           className={getButtonStyles("primary", "md", "font-bold")}
-          // prefetch={false}
         >
           <Plus size={24} />
         </Link>
