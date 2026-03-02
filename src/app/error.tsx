@@ -12,13 +12,13 @@ type Props = {
 export default function Error({ error, reset }: Props) {
   const router = useRouter();
 
-  const goChatPage = () => router.push("/chat");
+  const goLandingPage = () => router.push("/");
 
   return (
     <ErrorSection
       errorMessage={error?.message || "알 수 없는 에러가 발생했습니다"}
       handleReload={reset}
-      handleGoOtherPage={goChatPage}
+      handleGoOtherPage={goLandingPage}
     />
   );
 }
