@@ -18,7 +18,7 @@ const MarkdownPreview = ({ content, className }: MarkdownPreviewProps) => {
     <div
       className={cn(
         "prose max-w-none dark:prose-invert",
-        "prose-h1:text-4xl prose-h1:mt-6 prose-h1:mb-2 prose-h1:font-bold",
+        "prose-h1:text-3xl prose-h1:mt-6 prose-h1:mb-2 prose-h1:font-bold",
         className,
       )}
     >

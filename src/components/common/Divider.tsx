@@ -1,5 +1,6 @@
 import { cn } from "@/utils/styles";
 
+// TODO: 수직 / 수평도 자주 쓰여서 별도 타입 분리하면 좋을 듯
 type DividerProps = {
   direction?: "vertical" | "horizontal";
   className?: string;
