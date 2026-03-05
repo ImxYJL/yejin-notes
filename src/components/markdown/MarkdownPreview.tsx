@@ -7,6 +7,7 @@ import remarkBreaks from "remark-breaks";
 import { cn } from "@/utils/styles";
 
 import "highlight.js/styles/base16/brush-trees-dark.css";
+import { Callout } from "../common";
 
 type MarkdownPreviewProps = {
   content: string;
@@ -26,6 +27,7 @@ const MarkdownPreview = ({ content, className }: MarkdownPreviewProps) => {
         remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight]}
         components={{
+          blockquote: Callout,
           // prose의 기본 배경과 여백 제거 (전역과 무관 - 코드 블럭 내 설정)
           pre: ({ children }) => (
             <pre className="bg-transparent p-0 m-0 border-none">{children}</pre>

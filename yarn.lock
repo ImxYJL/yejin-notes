@@ -616,6 +616,13 @@
   dependencies:
     tslib "2.8.1"
 
+"@supabase/postgrest-js@^2.98.0":
+  version "2.98.0"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-2.98.0.tgz#fc011d0adec841d0566e86ad9c51cbdeb2f42665"
+  integrity sha512-v6e9WeZuJijzUut8HyXu6gMqWFepIbaeaMIm1uKzei4yLg9bC9OtEW9O14LE/9ezqNbSAnSLO5GtOLFdm7Bpkg==
+  dependencies:
+    tslib "2.8.1"
+
 "@supabase/realtime-js@2.95.3":
   version "2.95.3"
   resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.95.3.tgz#aff3c95119fb93356971f117605ecec32a6dd0f3"
@@ -3775,6 +3782,15 @@ rehype-pretty-code@^0.14.1:
     rehype-parse "^9.0.0"
     unified "^11.0.5"
     unist-util-visit "^5.0.0"
+
+rehype-react@^8.0.0:
+  version "8.0.0"
+  resolved "https://registry.yarnpkg.com/rehype-react/-/rehype-react-8.0.0.tgz#a3e2fecb10579af7bb065c7b232410a500699ba7"
+  integrity sha512-vzo0YxYbB2HE+36+9HWXVdxNoNDubx63r5LBzpxBGVWM8s9mdnMdbmuJBAX6TTyuGdZjZix6qU3GcSuKCIWivw==
+  dependencies:
+    "@types/hast" "^3.0.0"
+    hast-util-to-jsx-runtime "^2.0.0"
+    unified "^11.0.0"
 
 rehype-stringify@^10.0.1:
   version "10.0.1"

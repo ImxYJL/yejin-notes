@@ -1,11 +1,11 @@
 import { cn } from "@/utils/styles";
 
 type MarkdownViewerProps = {
-  htmlContent: string;
+  contentNode: React.ReactNode;
   className?: string;
 };
 
-const MarkdownViewer = ({ htmlContent, className }: MarkdownViewerProps) => {
+const MarkdownViewer = ({ contentNode, className }: MarkdownViewerProps) => {
   return (
     <div
       className={cn(
@@ -15,8 +15,9 @@ const MarkdownViewer = ({ htmlContent, className }: MarkdownViewerProps) => {
         "[&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-inherit",
         className,
       )}
-      dangerouslySetInnerHTML={{ __html: htmlContent }}
-    />
+    >
+      {contentNode}
+    </div>
   );
 };
 
