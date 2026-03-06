@@ -6,16 +6,20 @@ import { AppError } from "@/utils/error";
 import { Category, CategorySlug } from "@/types/blog";
 
 export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
-  const user = await getAuthUser();
-  const categories = await getCategories();
+  const [user, categories] = await Promise.all([
+    getAuthUser(),
+    getCategories(),
+  ]);
 
   const category = categories.find((c) => c.slug === categorySlug);
 
+  // 존재하지 않는 카테고리 체크
   if (!category) {
     throw AppError.notFound("존재하지 않는 카테고리입니다.");
   }
 
-  if (category.isPrivate && !user) {
+  // 비공개 카테고리 권한 체크
+  if (category.isPrivate && !user?.isAdmin) {
     throw AppError.forbidden("접근 권한이 없습니다.");
   }
 };

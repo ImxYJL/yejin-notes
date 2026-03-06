@@ -3,7 +3,11 @@ import "server-only";
 import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { AppError } from "@/utils/error";
 import { validateCategoryAccess } from "./categoryService";
-import { checkIsAdmin, getAuthUser, validateAuth } from "./authService";
+import {
+  checkIsAdmin,
+  getAuthUser,
+  validateAdmin,
+} from "./authService";
 import {
   CategorySlug,
   DraftPost,
@@ -45,7 +49,7 @@ export const getPosts = async (
     .order("created_at", { ascending: false })
     .range(from, to);
 
-  if (user) {
+  if (user?.isAdmin) {
     query.eq("is_published", true);
   } else {
     query.eq("is_private", false).eq("is_published", true);
@@ -116,7 +120,7 @@ export const getPost = async (postId: string): Promise<PostDetailResponse> => {
 };
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
-  const user = await validateAuth();
+  const user = await validateAdmin();
   const supabase = await createServerSupabaseClient();
 
   const categoryId = await getCategoryIdBySlug(formData.categorySlug);
@@ -148,7 +152,7 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
 };
 
 export const deletePost = async (id: string) => {
-  await validateAuth();
+  await validateAdmin();
 
   const supabase = await createServerSupabaseClient();
 
@@ -158,7 +162,7 @@ export const deletePost = async (id: string) => {
 };
 
 export const getDrafts = async (): Promise<DraftPost[]> => {
-  await validateAuth();
+  await validateAdmin();
 
   const supabase = await createServerSupabaseClient();
 
