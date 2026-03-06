@@ -3,9 +3,9 @@ import { deletePost, getPost, upsertPost } from "@/services/postService";
 import { handleRouteError } from "@/utils/error";
 
 export type PostParams = {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 };
 
 export const GET = async (_request: NextRequest, { params }: PostParams) => {

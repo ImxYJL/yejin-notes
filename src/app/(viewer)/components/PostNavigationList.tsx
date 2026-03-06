@@ -24,10 +24,7 @@ const PostNavigationList = ({ categorySlug, currentPostId, posts }: Props) => {
     <section className="pt-14 pb-20">
       <div className="flex justify-between items-center mb-8">
         <h3 className="text-xl font-bold flex items-center gap-2">
-          <span className="capitalize text-accent-primary">
-            {CATEGORY_MAP[categorySlug].name}
-          </span>
-          카테고리의 다른 글
+          현재 카테고리의 다른 글
         </h3>
         <Link
           href={PAGE_PATH.posts(categorySlug)}
