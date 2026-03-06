@@ -33,7 +33,7 @@ export const checkIsAdmin = async () => {
   const user = await getAuthUser();
   if (!user) return false;
 
-  return user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  return user.email === process.env.ADMIN_EMAIL;
 };
 
 export const validateAuth = async () => {
