@@ -3,11 +3,7 @@ import "server-only";
 import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { AppError } from "@/utils/error";
 import { validateCategoryAccess } from "./categoryService";
-import {
-  checkIsAdmin,
-  getAuthUser,
-  validateAdmin,
-} from "./authService";
+import { checkIsAdmin, getAuthUser, validateAdmin } from "./authService";
 import {
   CategorySlug,
   DraftPost,
@@ -17,107 +13,108 @@ import {
   PostItem,
   PostRow,
 } from "@/types/blog";
+import { cache } from "react";
 
 const DEFAULT_PAGE_LIMIT = 10;
 const MAX_PAGE_LIMIT = 50;
 
-export const getPosts = async (
-  categorySlug: CategorySlug,
-  page: number = 1,
-  limit?: number,
-) => {
-  const supabase = await createServerSupabaseClient();
-  const user = await getAuthUser();
+export const getPosts = cache(
+  async (categorySlug: CategorySlug, page: number = 1, limit?: number) => {
+    const supabase = await createServerSupabaseClient();
+    const user = await getAuthUser();
 
-  await validateCategoryAccess(categorySlug);
+    await validateCategoryAccess(categorySlug);
 
-  const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
-  const from = (page - 1) * LIMIT;
-  const to = from + LIMIT - 1;
+    const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
+    const from = (page - 1) * LIMIT;
+    const to = from + LIMIT - 1;
 
-  const query = supabase
-    .from("posts")
-    .select(
-      `
+    const query = supabase
+      .from("posts")
+      .select(
+        `
       id, title, summary, category_id, tags, 
       is_private, is_published, thumbnail_url, created_at, updated_at,
       category:categories!inner(slug, name)
     `,
-      { count: "exact" },
-    )
-    .eq("category.slug", categorySlug)
-    .order("created_at", { ascending: false })
-    .range(from, to);
+        { count: "exact" },
+      )
+      .eq("category.slug", categorySlug)
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
-  if (user?.isAdmin) {
-    query.eq("is_published", true);
-  } else {
-    query.eq("is_private", false).eq("is_published", true);
-  }
+    if (user?.isAdmin) {
+      query.eq("is_published", true);
+    } else {
+      query.eq("is_private", false).eq("is_published", true);
+    }
 
-  const { data, count, error } = await query;
-  if (error) throw AppError.fromSupabase(error);
+    const { data, count, error } = await query;
+    if (error) throw AppError.fromSupabase(error);
 
-  return {
-    posts: (data || []).map(mapPostItemResponse),
-    totalCount: count || 0,
-    totalPages: Math.ceil((count || 0) / LIMIT),
-    currentPage: page,
-  };
-};
+    return {
+      posts: (data || []).map(mapPostItemResponse),
+      totalCount: count || 0,
+      totalPages: Math.ceil((count || 0) / LIMIT),
+      currentPage: page,
+    };
+  },
+);
 
-export const getPost = async (postId: string): Promise<PostDetailResponse> => {
-  const supabase = await createServerSupabaseClient();
-  const isAdmin = await checkIsAdmin();
+export const getPost = cache(
+  async (postId: string): Promise<PostDetailResponse> => {
+    const supabase = await createServerSupabaseClient();
+    const isAdmin = await checkIsAdmin();
 
-  const { data: currentPost, error } = await supabase
-    .from("posts")
-    .select(
-      `
+    const { data: currentPost, error } = await supabase
+      .from("posts")
+      .select(
+        `
       *,
       category:categories (slug, name)
     `,
-    )
-    .eq("id", postId)
-    .single();
+      )
+      .eq("id", postId)
+      .single();
 
-  if (error || !currentPost) throw AppError.notFound();
+    if (error || !currentPost) throw AppError.notFound();
 
-  const isDraft = !currentPost.is_published;
-  const isPrivate = currentPost.is_private;
+    const isDraft = !currentPost.is_published;
+    const isPrivate = currentPost.is_private;
 
-  if ((isDraft || isPrivate) && !isAdmin) {
-    throw AppError.notFound();
-  }
-  const [prevRes, nextRes] = await Promise.all([
-    applyVisibilityFilter(
-      supabase
-        .from("posts")
-        .select("id, title")
-        .eq("category_id", currentPost.category_id)
-        .lt("created_at", currentPost.created_at)
-        .order("created_at", { ascending: false })
-        .limit(1),
-      isAdmin,
-    ).maybeSingle(),
-    applyVisibilityFilter(
-      supabase
-        .from("posts")
-        .select("id, title")
-        .eq("category_id", currentPost.category_id)
-        .gt("created_at", currentPost.created_at)
-        .order("created_at", { ascending: true })
-        .limit(1),
-      isAdmin,
-    ).maybeSingle(),
-  ]);
+    if ((isDraft || isPrivate) && !isAdmin) {
+      throw AppError.notFound();
+    }
+    const [prevRes, nextRes] = await Promise.all([
+      applyVisibilityFilter(
+        supabase
+          .from("posts")
+          .select("id, title")
+          .eq("category_id", currentPost.category_id)
+          .lt("created_at", currentPost.created_at)
+          .order("created_at", { ascending: false })
+          .limit(1),
+        isAdmin,
+      ).maybeSingle(),
+      applyVisibilityFilter(
+        supabase
+          .from("posts")
+          .select("id, title")
+          .eq("category_id", currentPost.category_id)
+          .gt("created_at", currentPost.created_at)
+          .order("created_at", { ascending: true })
+          .limit(1),
+        isAdmin,
+      ).maybeSingle(),
+    ]);
 
-  return {
-    ...mapPostDetailResponse(currentPost),
-    prevPost: prevRes.data || null,
-    nextPost: nextRes.data || null,
-  };
-};
+    return {
+      ...mapPostDetailResponse(currentPost),
+      prevPost: prevRes.data || null,
+      nextPost: nextRes.data || null,
+    };
+  },
+);
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
   const user = await validateAdmin();

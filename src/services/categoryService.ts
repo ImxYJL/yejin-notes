@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from "@/libs/supabase/server";
 import { getAuthUser } from "./authService";
 import { AppError } from "@/utils/error";
 import { Category, CategorySlug } from "@/types/blog";
+import { cache } from "react";
 
 export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
   const [user, categories] = await Promise.all([
@@ -24,7 +25,7 @@ export const validateCategoryAccess = async (categorySlug: CategorySlug) => {
   }
 };
 
-export const getCategories = async (): Promise<Category[]> => {
+export const getCategories = cache(async (): Promise<Category[]> => {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
@@ -40,4 +41,4 @@ export const getCategories = async (): Promise<Category[]> => {
     slug: row.slug,
     isPrivate: row.is_private,
   }));
-};
+});
