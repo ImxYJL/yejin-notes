@@ -11,6 +11,7 @@ import { getButtonStyles } from "@/components/common/Button";
 import PostList from "./PostList";
 import PostSkeleton from "./PostSkeleton";
 import useCurrentCategory from "@/hooks/useCurrentCategory";
+import useIsAdmin from "@/queries/auth/useIsAdmin";
 
 type Props = {
   categorySlug: CategorySlug;
@@ -21,6 +22,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
 
   const { categoryMap } = useCurrentCategory();
   const { data, isPending } = usePosts(categorySlug, page);
+  const { isAdmin } = useIsAdmin();
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -46,7 +48,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
           href={PAGE_PATH.write}
           className={getButtonStyles("primary", "md", "font-bold")}
         >
-          <Plus size={24} />
+          {isAdmin && <Plus size={24} />}
         </Link>
       </header>
 

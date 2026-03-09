@@ -1,6 +1,7 @@
 import EditorForm from "@/components/editor/EditorForm";
 import { INITIAL_POST } from "@/constants/blog";
 
+// TODO: Write와 Edit 합치기
 const WritePage = async () => {
   const initialData = {
     ...INITIAL_POST,
