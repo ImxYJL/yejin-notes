@@ -104,6 +104,24 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
     [],
   );
 
+  const handleContentChange = useCallback(
+    (val: string) => {
+      handleUpdateField("content", val);
+    },
+    [handleUpdateField],
+  );
+
+  const handleTitleChange = useCallback(
+    (val: string) => {
+      handleUpdateField("title", val);
+    },
+    [handleUpdateField],
+  );
+
+  const handleEditorScroll = useCallback(() => {
+    handleScroll("editor");
+  }, [handleScroll]);
+
   return (
     <div className="p-2 flex flex-col h-full gap-2">
       <EditorToolbar
@@ -118,10 +136,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
         onDraftSelect={handleSelectDraft}
       />
 
-      <TitleInput
-        value={formData.title}
-        onChange={(val) => handleUpdateField("title", val)}
-      />
+      <TitleInput value={formData.title} onChange={handleTitleChange} />
 
       <div className="flex-1 flex min-h-0 gap-6">
         <section
@@ -130,8 +145,8 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
         >
           <ContentEditor
             value={formData.content}
-            onChange={(val) => handleUpdateField("content", val)}
-            onScroll={() => handleScroll("editor")}
+            onChange={handleContentChange}
+            onScroll={handleEditorScroll}
             ref={editorRef}
           />
         </section>

@@ -1,4 +1,4 @@
-import { memo, ChangeEvent, KeyboardEvent } from "react";
+import { ChangeEvent, KeyboardEvent, memo } from "react";
 import { Textarea } from "../common";
 
 type ContentEditorProps = {
@@ -11,21 +11,11 @@ type ContentEditorProps = {
 const ContentEditor = memo(
   ({ value, onChange, onScroll, ref }: ContentEditorProps) => {
     const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === "Tab") {
-        e.preventDefault();
-        const { selectionStart, selectionEnd } = e.currentTarget;
-        const nextValue =
-          value.substring(0, selectionStart) +
-          "  " +
-          value.substring(selectionEnd);
+      handleTabSupport(e, value, onChange);
+    };
 
-        onChange(nextValue);
-
-        setTimeout(() => {
-          e.currentTarget.selectionStart = e.currentTarget.selectionEnd =
-            selectionStart + 2;
-        }, 0);
-      }
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+      onChange(e.target.value);
     };
 
     return (
@@ -33,9 +23,7 @@ const ContentEditor = memo(
         variant="outline"
         placeholder="여기에 입력해주세요"
         value={value}
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-          onChange(e.target.value)
-        }
+        onChange={handleChange}
         onScroll={onScroll}
         onKeyDown={handleKeyDown}
         ref={ref}
@@ -44,6 +32,33 @@ const ContentEditor = memo(
     );
   },
 );
+
+/**
+ * 텍스트 영역에서 Tab 키 입력 시 공백 2개를 삽입하는 핸들러
+ */
+const handleTabSupport = (
+  e: KeyboardEvent<HTMLTextAreaElement>,
+  value: string,
+  onChange: (val: string) => void,
+) => {
+  if (e.key !== "Tab") return;
+
+  e.preventDefault();
+  const { selectionStart, selectionEnd } = e.currentTarget;
+
+  const nextValue =
+    value.substring(0, selectionStart) + "  " + value.substring(selectionEnd);
+
+  onChange(nextValue);
+
+  // 커서 위치 조정을 위해 다음 이벤트 루프에서 실행
+  setTimeout(() => {
+    if (e.currentTarget) {
+      e.currentTarget.selectionStart = e.currentTarget.selectionEnd =
+        selectionStart + 2;
+    }
+  }, 0);
+};
 
 ContentEditor.displayName = "ContentEditor";
 export default ContentEditor;

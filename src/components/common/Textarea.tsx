@@ -21,7 +21,7 @@ const Textarea = ({
   <textarea
     ref={ref}
     className={cn(
-      "w-full min-h-[200px] rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground",
+      "w-full min-h-50 rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground",
       "base-disabled base-transition",
       TEXTAREA_VARIANT[variant],
       className,
