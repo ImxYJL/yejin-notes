@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import Button from "./Button";
-import { Github, Mail, Palette, X, Menu, Lock } from "lucide-react";
+import Button, { getButtonStyles } from "./Button";
+import { Github, Mail, Palette, X, Menu, Lock, Plus } from "lucide-react";
 import { cn } from "@/utils/styles";
 import useLayoutStore from "@/store/useLayoutStore";
 import useThemeStore from "@/store/useThemeStore";
@@ -10,6 +10,7 @@ import { Category } from "@/types/blog";
 import { PAGE_PATH } from "@/constants/paths";
 import useCurrentCategory from "@/hooks/useCurrentCategory";
 import { CATEGORY_MAP } from "@/constants/blog";
+import useIsAdmin from "@/queries/auth/useIsAdmin";
 
 type Props = {
   categories: Category[];
@@ -19,6 +20,7 @@ const Sidebar = ({ categories }: Props) => {
   const { isSidebarOpen, toggleSidebar } = useLayoutStore();
   const { theme, setTheme } = useThemeStore();
   const { isActiveCategory } = useCurrentCategory();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <>
@@ -56,7 +58,7 @@ const Sidebar = ({ categories }: Props) => {
                   Yejin
                 </h2>
                 <p className="text-xs text-muted-foreground font-medium">
-                  밥 열심히 먹는 사람
+                  ㅇㅂㅇ
                 </p>
               </div>
             </div>
@@ -128,6 +130,14 @@ const Sidebar = ({ categories }: Props) => {
                 <Mail size={20} />
               </a>
             </div>
+            {isAdmin && (
+              <Link
+                href={PAGE_PATH.write}
+                className={getButtonStyles("ghost", "md")}
+              >
+                <Plus size={24} />
+              </Link>
+            )}
             {/* <Button
               variant="ghost"
               size="sm"

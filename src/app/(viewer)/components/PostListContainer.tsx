@@ -44,12 +44,14 @@ const PostListContainer = ({ categorySlug }: Props) => {
             의 기록이 있습니다.
           </p> */}
         </div>
-        <Link
-          href={PAGE_PATH.write}
-          className={getButtonStyles("primary", "md", "font-bold")}
-        >
-          {isAdmin && <Plus size={24} />}
-        </Link>
+        {isAdmin && (
+          <Link
+            href={PAGE_PATH.write}
+            className={getButtonStyles("primary", "md", "font-bold")}
+          >
+            <Plus size={24} />
+          </Link>
+        )}
       </header>
 
       {isPending ? (
