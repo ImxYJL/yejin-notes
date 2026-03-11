@@ -1,26 +1,32 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Button, { getButtonStyles } from "./Button";
-import { Github, Mail, Palette, X, Menu, Lock, Plus } from "lucide-react";
-import { cn } from "@/utils/styles";
-import useLayoutStore from "@/store/useLayoutStore";
-import useThemeStore from "@/store/useThemeStore";
-import { Category } from "@/types/blog";
-import { PAGE_PATH } from "@/constants/paths";
-import useCurrentCategory from "@/hooks/useCurrentCategory";
-import { CATEGORY_MAP } from "@/constants/blog";
-import useIsAdmin from "@/queries/auth/useIsAdmin";
+import Link from 'next/link';
+import Button, { getButtonStyles } from './Button';
+import { Github, Mail, Palette, X, Menu, Lock, Plus } from 'lucide-react';
+import { cn } from '@/utils/styles';
+import useLayoutStore from '@/store/useLayoutStore';
+import useThemeStore from '@/store/useThemeStore';
+import { Category } from '@/types/blog';
+import { PAGE_PATH } from '@/constants/paths';
+import useCurrentCategory from '@/hooks/useCurrentCategory';
+import { CATEGORY_MAP } from '@/constants/blog';
+import useIsAdmin from '@/queries/auth/useIsAdmin';
+import useDevice from '@/hooks/useDevice';
 
 type Props = {
   categories: Category[];
 };
 
 const Sidebar = ({ categories }: Props) => {
-  const { isSidebarOpen, toggleSidebar } = useLayoutStore();
+  const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
   const { theme, setTheme } = useThemeStore();
   const { isActiveCategory } = useCurrentCategory();
   const { isAdmin } = useIsAdmin();
+  const { isMobile } = useDevice();
+
+  const handleCategoryClick = () => {
+    if (isMobile) closeSidebar();
+  };
 
   return (
     <>
@@ -38,14 +44,14 @@ const Sidebar = ({ categories }: Props) => {
       {/* 메인 사이드바 */}
       <aside
         className={cn(
-          "border-r border-border base-transition shrink-0 text-muted-foreground",
-          "max-md:border-none",
-          "md:bg-background/60 md:backdrop-blur-xl",
-          "max-md:bg-background max-md:backdrop-blur-none max-md:shadow-2xl",
-          "max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-(--z-sidebar-mobile) max-md:w-sidebar",
-          !isSidebarOpen && "max-md:-translate-x-full",
-          "md:sticky md:top-0 md:h-screen md:overflow-hidden md:z-sidebar",
-          isSidebarOpen ? "md:w-sidebar" : "md:w-0 md:border-none",
+          'border-r border-border base-transition shrink-0 text-muted-foreground',
+          'max-md:border-none',
+          'md:bg-background/60 md:backdrop-blur-xl',
+          'max-md:bg-background max-md:backdrop-blur-none max-md:shadow-2xl',
+          'max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-(--z-sidebar-mobile) max-md:w-sidebar',
+          !isSidebarOpen && 'max-md:-translate-x-full',
+          'md:sticky md:top-0 md:h-screen md:overflow-hidden md:z-sidebar',
+          isSidebarOpen ? 'md:w-sidebar' : 'md:w-0 md:border-none',
         )}
       >
         <div className="w-sidebar p-6 h-full flex flex-col">
@@ -57,9 +63,7 @@ const Sidebar = ({ categories }: Props) => {
                 <h2 className="font-bold text-xl text-foreground tracking-tight">
                   Yejin
                 </h2>
-                <p className="text-xs text-muted-foreground font-medium">
-                  ㅇㅂㅇ
-                </p>
+                <p className="text-xs text-muted-foreground font-medium">ㅇㅂㅇ</p>
               </div>
             </div>
 
@@ -84,19 +88,20 @@ const Sidebar = ({ categories }: Props) => {
                 <Link
                   key={category.id}
                   href={href}
+                  onClick={handleCategoryClick}
                   className={cn(
-                    "flex items-center gap-3 p-3 rounded-main base-transition group relative",
+                    'flex items-center gap-3 p-3 rounded-main base-transition group relative',
                     isActive
-                      ? "bg-white shadow-sm text-foreground"
-                      : "hover:bg-white/50 text-muted-foreground hover:text-foreground",
+                      ? 'bg-white shadow-sm text-foreground'
+                      : 'hover:bg-white/50 text-muted-foreground hover:text-foreground',
                   )}
                 >
                   <span
                     className={cn(
-                      "base-transition group-hover:scale-110",
+                      'base-transition group-hover:scale-110',
                       isActive
                         ? CATEGORY_MAP[category.slug].textColor
-                        : "text-muted-foreground/70",
+                        : 'text-muted-foreground/70',
                     )}
                   >
                     {CATEGORY_MAP[category.slug].icon}
@@ -133,7 +138,7 @@ const Sidebar = ({ categories }: Props) => {
             {isAdmin && (
               <Link
                 href={PAGE_PATH.write}
-                className={getButtonStyles("ghost", "md")}
+                className={getButtonStyles('ghost', 'md')}
               >
                 <Plus size={24} />
               </Link>
