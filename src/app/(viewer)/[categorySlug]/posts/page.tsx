@@ -14,7 +14,7 @@ export const generateStaticParams = async () => {
   }));
 };
 
-export const dynamicParams = 'false';
+export const dynamicParams = false;
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
