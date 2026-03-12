@@ -1,20 +1,26 @@
-import { CategorySlug } from "@/types/blog";
-import { PostListContainer } from "../../components";
-import { makeQueryClient } from "@/libs/tanstack/queryClient";
-import { BLOG_QUERY_KEY } from "@/queries/queryKey";
-import { PAGE_LIMIT } from "@/queries/usePosts";
-import { getPosts } from "@/services/postService";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { CategorySlug } from '@/types/blog';
+import { PostListContainer } from '../../components';
+import { makeQueryClient } from '@/libs/tanstack/queryClient';
+import { BLOG_QUERY_KEY } from '@/queries/queryKey';
+import { PAGE_LIMIT } from '@/queries/usePosts';
+import { getPosts } from '@/services/postService';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { getCategories } from '@/services/categoryService';
+
+export const generateStaticParams = async () => {
+  const categories = await getCategories();
+  return categories.map((cat) => ({
+    categorySlug: cat.slug,
+  }));
+};
+
+export const dynamicParams = 'false';
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
 };
 
-const PostListPage = async ({
-  params,
-}: {
-  params: Promise<PostListPageParams>;
-}) => {
+const PostListPage = async ({ params }: { params: Promise<PostListPageParams> }) => {
   const { categorySlug } = await params;
   const queryClient = makeQueryClient();
   const page = Number(1); // TODO: queryParams를 기준으로 하도록 리팩토링
