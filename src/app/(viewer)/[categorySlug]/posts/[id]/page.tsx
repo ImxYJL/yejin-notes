@@ -22,7 +22,7 @@ export const generateStaticParams = async () => {
 };
 
 // 빌드 타임에 없던 새 글은 요청 시점에 서버에서 생성
-export const dynamicParams = 'blocking';
+export const dynamicParams = true;
 
 type PostDetailPageParams = {
   categorySlug: CategorySlug;
