@@ -1,12 +1,12 @@
-import "@/app/globals.css";
-import { Toast } from "@/components/common";
-import { pretendard } from "@/libs/fonts";
-import ClientProviders from "@/utils/providers/ClientProviders";
-import { makeQueryClient } from "@/libs/tanstack/queryClient";
-import { getAuthUser } from "@/services/authService";
-import { getCategories } from "@/services/categoryService";
-import { ADMIN_QUERY_KEY, BLOG_QUERY_KEY } from "@/queries/queryKey";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import '@/app/globals.css';
+import { Toast } from '@/components/common';
+import { pretendard } from '@/libs/fonts';
+import ClientProviders from '@/utils/providers/ClientProviders';
+import { makeQueryClient } from '@/libs/tanstack/queryClient';
+import { getAuthUser } from '@/services/authService';
+import { getCategories } from '@/services/categoryService';
+import { ADMIN_QUERY_KEY, BLOG_QUERY_KEY } from '@/queries/queryKey';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 export default async function RootLayout({
   children,

@@ -5,16 +5,6 @@ import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import { PAGE_LIMIT } from '@/queries/usePosts';
 import { getPosts } from '@/services/postService';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { getCategories } from '@/services/categoryService';
-
-export const generateStaticParams = async () => {
-  const categories = await getCategories();
-  return categories.map((cat) => ({
-    categorySlug: cat.slug,
-  }));
-};
-
-export const dynamicParams = false;
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
