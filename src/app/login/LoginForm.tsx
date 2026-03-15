@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import { LogIn } from "lucide-react";
-import { Button, Divider } from "@/components/common";
-import useLogin from "@/queries/auth/useLogin";
-import { OAUTH_PARAMS } from "@/constants/system";
-import { useToastStore } from "@/store/useToastStore";
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { LogIn } from 'lucide-react';
+import { Button, Divider } from '@/components/common';
+import useLogin from '@/queries/auth/useLogin';
+import { OAUTH_PARAMS } from '@/constants/system';
+import { useToastStore } from '@/store/useToastStore';
 
 const LoginForm = () => {
   const { showToast } = useToastStore();
@@ -21,7 +21,7 @@ const LoginForm = () => {
 
       // 메시지를 보여준 후 URL에서 쿼리 파라미터를 제거
       const newUrl = window.location.pathname;
-      window.history.replaceState({}, "", newUrl);
+      window.history.replaceState({}, '', newUrl);
     }
   }, [message, showToast]);
 
@@ -29,11 +29,8 @@ const LoginForm = () => {
     <div className="w-full max-w-sm bg-background border border-muted-foreground/30 rounded-main p-8 shadow-sm">
       <header className="text-center space-y-4 mb-4">
         <h1 className="text-2xl font-black tracking-tighter text-muted-foreground">
-          MY PERSONAL BLOG
+          로그인
         </h1>
-        <p className="text-sm text-muted-foreground font-medium">
-          Admin Authentication
-        </p>
       </header>
 
       <Divider direction="horizontal" className="mb-8 opacity-50" />
@@ -54,10 +51,6 @@ const LoginForm = () => {
             </>
           )}
         </Button>
-
-        <p className="text-[11px] text-center text-muted-foreground/60 font-mono tracking-widest uppercase">
-          Restricted Access
-        </p>
       </div>
     </div>
   );
