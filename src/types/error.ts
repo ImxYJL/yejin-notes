@@ -1,11 +1,12 @@
 export type AppErrorCode =
-  | "UNAUTHORIZED"
-  | "FORBIDDEN"
-  | "VALIDATION"
-  | "DUPLICATE"
-  | "NOT_FOUND"
-  | "RATE_LIMIT"
-  | "INTERNAL";
+  | 'UNAUTHORIZED'
+  | 'FORBIDDEN'
+  | 'VALIDATION'
+  | 'DUPLICATE'
+  | 'NOT_FOUND'
+  | 'UPSTREAM'
+  | 'RATE_LIMIT'
+  | 'INTERNAL';
 
 export type AppErrorResponse = {
   success: false;
