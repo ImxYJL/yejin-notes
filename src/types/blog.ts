@@ -1,5 +1,5 @@
-import { CATEGORY_MAP } from "@/constants/blog";
-import { PaginationMeta } from "./page";
+import { CATEGORY_MAP } from '@/constants/blog';
+import { PaginationMeta } from './page';
 
 /** -----------------------------------------------------------
  * 1. Category 관련 (공통)
@@ -60,26 +60,27 @@ export type PostRow = {
  * 4. DTO & Form (생성, 수정, 입력)
  * ----------------------------------------------------------- */
 
-export type DraftPost = Pick<Post, "createdAt" | "title" | "id">;
+export type DraftPost = Pick<Post, 'createdAt' | 'title' | 'id'>;
 
-export type PostForm = Omit<Post, "createdAt" | "updatedAt" | "category"> & {
+export type PostForm = Omit<Post, 'createdAt' | 'updatedAt' | 'category'> & {
   categorySlug: CategorySlug;
 };
+export type PostImg = Pick<Post, 'thumbnailUrl' | 'content'>;
 
 export type CategoryMap = Record<CategorySlug, Category>;
 
-export type EditorMode = "create" | "edit";
+export type EditorMode = 'create' | 'edit';
 
 /** -----------------------------------------------------------
  * 5. Response & Navigation (API 응답)
  * ----------------------------------------------------------- */
 
 // 목록용 미리보기
-export type PostItem = Omit<Post, "content" | "updatedAt" | "category">;
+export type PostItem = Omit<Post, 'content' | 'updatedAt' | 'category'>;
 
 export type PostNavigation = {
-  prevPost: Pick<Post, "id" | "title"> | null;
-  nextPost: Pick<Post, "id" | "title"> | null;
+  prevPost: Pick<Post, 'id' | 'title'> | null;
+  nextPost: Pick<Post, 'id' | 'title'> | null;
 };
 
 export type PostDetailResponse = Post & PostNavigation;
