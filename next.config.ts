@@ -1,5 +1,7 @@
 import type { NextConfig } from 'next';
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 const nextConfig: NextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
@@ -7,7 +9,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+        hostname: supabaseUrl ? new URL(supabaseUrl).hostname : '',
         port: '',
         pathname: '/storage/v1/object/public/**',
       },
