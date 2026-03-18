@@ -1,7 +1,8 @@
 import { insertTextAtCursor } from '@/components/editor/ContentEditor';
 import useSaveImage from '@/queries/useSaveImage';
 import { PostImg } from '@/types/blog';
-import { useMemo, RefObject } from 'react';
+import { extractImages, getThumbnail } from '@/utils/markdowns/regex';
+import { RefObject } from 'react';
 
 type UsePostImageProps = {
   content: string;
@@ -12,15 +13,9 @@ type UsePostImageProps = {
 const usePostImage = ({ content, onUpdateField, editorRef }: UsePostImageProps) => {
   const { mutateAsync: upload, isPending, error } = useSaveImage();
 
-  // 1. 본문 이미지 추출 (자동 썸네일용이나 리스트용)
-  const contentImages = useMemo(() => {
-    const regex = /!\[.*?\]\((.*?)\)/g;
-    const matches = [...content.matchAll(regex)];
+  const contentImages = extractImages(content);
+  const autoThumbnail = getThumbnail(content);
 
-    return matches.map((match) => match[1]);
-  }, [content]);
-
-  // 2. 본문 커서 위치에 이미지 삽입
   const insertImage = async (file: File) => {
     const textarea = editorRef.current;
     if (!textarea) return;
@@ -48,6 +43,7 @@ const usePostImage = ({ content, onUpdateField, editorRef }: UsePostImageProps) 
     insertImage,
     selectThumbnail,
     contentImages,
+    autoThumbnail,
     isProcessing: isPending,
     error,
   };

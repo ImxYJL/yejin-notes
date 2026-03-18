@@ -57,7 +57,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   const queryClient = useQueryClient();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
   const { mutate: onDraftSave, isPending: isSaveDraftPending } = useSaveDraft();
-  const { insertImage } = usePostImage({
+  const { insertImage, autoThumbnail } = usePostImage({
     content: formData.content,
     onUpdateField: handleUpdateField,
     editorRef,
@@ -68,7 +68,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
       insertImage(file);
     },
     [insertImage],
-  ); // 폼 데이터 의존성 주의
+  );
   const { categoryMap } = useCurrentCategory();
 
   const isPending = isSavePending || isSaveDraftPending;
@@ -80,6 +80,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
 
     onSave({
       ...formData,
+      thumbnailUrl: autoThumbnail,
       summary: extractSummary(formData.content),
     });
   };
@@ -192,6 +193,7 @@ export const extractSummary = (content: string, length = 150): string => {
     content
       // 1. 마크다운 특수문자 제거
       .replace(/[#*`>_~]/g, '')
+      .replace(/[!image]/g, '')
       .replace(/\[(.*?)\]\(.*?\)/g, '$1') // [링크텍스트](URL) 에서 링크텍스트만 남김
 
       // 2. 공백 및 줄바꿈 정리
