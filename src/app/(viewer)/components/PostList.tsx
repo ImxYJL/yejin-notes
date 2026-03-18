@@ -1,38 +1,27 @@
-"use client";
+import { CategorySlug, PostItem as PostItemType } from '@/types/blog';
+import PostItem from './PostItem';
 
-import { PAGE_PATH } from "@/constants/paths";
-import { CategorySlug, PostItem } from "@/types/blog";
-import Link from "next/link";
-import { formatDate } from "@/utils/date";
-
-type Props = {
+type PostListProps = {
   categorySlug: CategorySlug;
-  postItems: PostItem[];
+  postItems: PostItemType[];
 };
 
-const PostList = ({ postItems, categorySlug }: Props) => (
-  <div className="divide-y divide-border">
-    {postItems.map((post) => (
-      <Link
-        key={post.id}
-        href={PAGE_PATH.postDetail(categorySlug, post.id)}
-        className="block py-8 group border-muted-foreground/40"
-      >
-        <article className="space-y-4">
-          <h2 className="text-2xl font-bold group-hover:text-accent-primary base-transition tracking-tight">
-            {post.title}
-          </h2>
-          <p className="text-muted-foreground line-clamp-2 leading-relaxed text-base">
-            {post.summary}
-          </p>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground/60 font-mono">
-            <span>{formatDate(post.createdAt)}</span>
-            <span className="w-1 h-1 rounded-full bg-border" />
-          </div>
-        </article>
-      </Link>
-    ))}
-  </div>
-);
+const PostList = ({ postItems, categorySlug }: PostListProps) => {
+  if (postItems.length === 0) {
+    return (
+      <section className="py-20 text-center text-muted-foreground">
+        아직 작성된 글이 없습니다.
+      </section>
+    );
+  }
+
+  return (
+    <ul className="divide-y divide-border/60">
+      {postItems.map((post) => (
+        <PostItem key={post.id} post={post} categorySlug={categorySlug} />
+      ))}
+    </ul>
+  );
+};
 
 export default PostList;
