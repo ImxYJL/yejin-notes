@@ -1,13 +1,13 @@
-import { Fragment, jsx, jsxs } from "react/jsx-runtime";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkGfm from "remark-gfm";
-import remarkBreaks from "remark-breaks";
-import remarkRehype from "remark-rehype";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeReact from "rehype-react";
-import catppuccinFrappe from "shiki/themes/catppuccin-frappe.mjs";
-import { Callout } from "@/components/common";
+import { Fragment, jsx, jsxs } from 'react/jsx-runtime';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import remarkRehype from 'remark-rehype';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeReact from 'rehype-react';
+import catppuccinFrappe from 'shiki/themes/catppuccin-frappe.mjs';
+import { Callout } from '@/components/common';
 
 /**
  * @description 마크다운 원문을 Shiki 하이라이팅과 커스텀 컴포넌트가 적용된 리액트 노드로 변환

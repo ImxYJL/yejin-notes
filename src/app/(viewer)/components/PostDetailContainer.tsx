@@ -1,8 +1,8 @@
-import { CategorySlug } from "@/types/blog";
-import PostDetail from "./PostDetail";
-import { getPost } from "@/services/postService";
-import { checkIsAdmin } from "@/services/authService";
-import { getMarkdownComponent } from "@/utils/markdown";
+import { CategorySlug } from '@/types/blog';
+import PostDetail from './PostDetail';
+import { getPost } from '@/services/postService';
+import { checkIsAdmin } from '@/services/authService';
+import { getMarkdownComponent } from '@/utils/markdowns/style';
 
 type Props = {
   categorySlug: CategorySlug;
