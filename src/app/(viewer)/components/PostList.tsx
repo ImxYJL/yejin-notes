@@ -16,7 +16,7 @@ const PostList = ({ postItems, categorySlug }: PostListProps) => {
   }
 
   return (
-    <ul className="divide-y divide-border/60">
+    <ul className="divide-y divide-muted-foreground/30">
       {postItems.map((post) => (
         <PostItem key={post.id} post={post} categorySlug={categorySlug} />
       ))}

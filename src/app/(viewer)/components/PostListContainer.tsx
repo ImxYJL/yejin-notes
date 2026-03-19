@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { PAGE_PATH } from "@/constants/paths";
-import { CategorySlug } from "@/types/blog";
-import { Plus } from "lucide-react";
-import { useState } from "react";
-import Link from "next/link";
-import usePosts from "@/queries/usePosts";
-import PostListPagination from "./PostListPagination";
-import { getButtonStyles } from "@/components/common/Button";
-import PostList from "./PostList";
-import PostSkeleton from "./PostSkeleton";
-import useCurrentCategory from "@/hooks/useCurrentCategory";
-import useIsAdmin from "@/queries/auth/useIsAdmin";
+import { PAGE_PATH } from '@/constants/paths';
+import { CategorySlug } from '@/types/blog';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import Link from 'next/link';
+import usePosts from '@/queries/usePosts';
+import PostListPagination from './PostListPagination';
+import { getButtonStyles } from '@/components/common/Button';
+import PostList from './PostList';
+import PostSkeleton from './PostSkeleton';
+import useCurrentCategory from '@/hooks/useCurrentCategory';
+import useIsAdmin from '@/queries/auth/useIsAdmin';
 
 type Props = {
   categorySlug: CategorySlug;
@@ -27,11 +27,11 @@ const PostListContainer = ({ categorySlug }: Props) => {
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="space-y-4">
+    <div>
       <header className="flex justify-between items-end border-b-2 border-muted-foreground/30 border-border pb-8">
         <div>
           <h1 className="text-4xl font-black capitalize tracking-tight">
@@ -47,7 +47,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
         {isAdmin && (
           <Link
             href={PAGE_PATH.write}
-            className={getButtonStyles("primary", "md", "font-bold")}
+            className={getButtonStyles('primary', 'md', 'font-bold')}
           >
             <Plus size={24} />
           </Link>

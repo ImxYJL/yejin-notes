@@ -1,9 +1,9 @@
-import { PostNavigation, PostAction } from "@/app/(viewer)/components";
-import { Divider } from "@/components/common";
-import { Lock, Clock, Tag } from "lucide-react";
-import { CategorySlug, PostDetailResponse } from "@/types/blog";
-import MarkdownViewer from "@/components/markdown/MarkdownViewer";
-import { formatDate } from "@/utils/date";
+import { PostNavigation, PostAction } from '@/app/(viewer)/components';
+import { Divider } from '@/components/common';
+import { Lock, Clock, Tag } from 'lucide-react';
+import { CategorySlug, PostDetailResponse } from '@/types/blog';
+import MarkdownViewer from '@/components/markdown/MarkdownViewer';
+import { formatDate } from '@/utils/date';
 
 type Props = {
   contentNode: React.ReactNode;
