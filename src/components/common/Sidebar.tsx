@@ -6,23 +6,19 @@ import { Github, Mail, Palette, X, Menu, Lock, Plus } from 'lucide-react';
 import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
 import useThemeStore from '@/store/useThemeStore';
-import { Category } from '@/types/blog';
 import { PAGE_PATH } from '@/constants/paths';
 import useCurrentCategory from '@/hooks/useCurrentCategory';
 import { CATEGORY_MAP } from '@/constants/blog';
 import useIsAdmin from '@/queries/auth/useIsAdmin';
 import useDevice from '@/hooks/useDevice';
 
-type Props = {
-  categories: Category[];
-};
-
-const Sidebar = ({ categories }: Props) => {
+const Sidebar = () => {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
   const { theme, setTheme } = useThemeStore();
-  const { isActiveCategory } = useCurrentCategory();
-  const { isAdmin } = useIsAdmin();
   const { isMobile } = useDevice();
+
+  const { isActiveCategory, visibleCategories } = useCurrentCategory();
+  const { isAdmin } = useIsAdmin();
 
   const handleCategoryClick = () => {
     if (isMobile) closeSidebar();
@@ -80,7 +76,7 @@ const Sidebar = ({ categories }: Props) => {
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3">
-            {categories.map((category) => {
+            {visibleCategories.map((category) => {
               const isActive = isActiveCategory(category.slug);
               const href = PAGE_PATH.posts(category.slug);
 

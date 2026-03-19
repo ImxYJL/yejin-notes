@@ -1,21 +1,26 @@
-import { usePathname } from "next/navigation";
-import { CategorySlug } from "@/types/blog";
-import useCategories from "@/queries/useCategories";
+import { usePathname } from 'next/navigation';
+import { CategorySlug } from '@/types/blog';
+import useCategories from '@/queries/useCategories';
+import useIsAdmin from '@/queries/auth/useIsAdmin';
 
 const useCurrentCategory = () => {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-  const currentSlug = segments[0] as CategorySlug;
+  const { isAdmin } = useIsAdmin();
+  const { data } = useCategories();
 
-  const { data, isPending } = useCategories();
-  const currentCategory = data?.categoryMap[currentSlug];
+  const segments = pathname.split('/').filter(Boolean);
+  const currentSlug = segments[0] ?? '';
+  const currentCategory = data.categoryMap[currentSlug as CategorySlug] ?? null;
+
+  const visibleCategories = isAdmin
+    ? data.categories
+    : data.categories.filter((category) => !category.isPrivate);
 
   return {
-    isPending,
     currentSlug,
     currentCategory,
-    categoryMap: data?.categoryMap,
-    categories: data?.categories,
+    categoryMap: data.categoryMap,
+    visibleCategories,
     isActiveCategory: (slug: string) => currentSlug === slug,
   };
 };
