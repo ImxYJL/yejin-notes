@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "@tailwindcss/typography";
 
 :root {
@@ -60,11 +60,11 @@
   --width-editor: var(--editor-max-w);
 
   /* 📐 z-index Tokens */
-  --z-sidebar: 50;
-  --z-sidebar-btn: 51;
-  --z-sidebar-mobile: 61;
-  --z-overlay: 60;
-  --z-toast: 900;
+  --z-index-sidebar: 50;
+  --z-index-sidebar-btn: 51;
+  --z-index-sidebar-mobile: 61;
+  --z-index-overlay: 60;
+  --z-index-toast: 900;
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
