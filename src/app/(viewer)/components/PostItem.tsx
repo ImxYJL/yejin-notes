@@ -22,7 +22,7 @@ const PostItem = ({ categorySlug, post }: PostItemProps) => (
               src={post.thumbnailUrl}
               alt={post.title}
               fill
-              className="object-cover group-hover:scale-105 base-transition"
+              className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 200px, 256px"
             />
           </div>
