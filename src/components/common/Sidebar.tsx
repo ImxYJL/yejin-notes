@@ -17,8 +17,10 @@ const Sidebar = () => {
   const { theme, setTheme } = useThemeStore();
   const { isMobile } = useDevice();
 
-  const { isActiveCategory, visibleCategories } = useCurrentCategory();
+  const { isActiveCategory, categories, visibleCategories } = useCurrentCategory();
   const { isAdmin } = useIsAdmin();
+
+  if (!categories || !visibleCategories) return null;
 
   const handleCategoryClick = () => {
     if (isMobile) closeSidebar();
@@ -40,14 +42,20 @@ const Sidebar = () => {
       {/* 메인 사이드바 */}
       <aside
         className={cn(
-          'border-r border-border base-transition shrink-0 text-muted-foreground',
+          'base-transition shrink-0 text-muted-foreground',
+
+          // 모바일 (기본값)
+          'fixed inset-y-0 left-0 z-sidebar-mobile w-sidebar bg-background shadow-2xl',
           'max-md:border-none',
-          'md:bg-background/60 md:backdrop-blur-xl',
-          'max-md:bg-background max-md:backdrop-blur-none max-md:shadow-2xl',
-          'max-md:fixed max-md:inset-y-0 max-md:left-0 max-md:z-(--z-sidebar-mobile) max-md:w-sidebar',
-          !isSidebarOpen && 'max-md:-translate-x-full',
-          'md:sticky md:top-0 md:h-screen md:overflow-hidden md:z-sidebar',
-          isSidebarOpen ? 'md:w-sidebar' : 'md:w-0 md:border-none',
+          !isSidebarOpen && '-translate-x-full',
+
+          // 데스크탑 (md 이상)
+          'md:sticky md:top-0 md:h-screen md:z-sidebar md:overflow-hidden',
+          'md:translate-x-0 md:bg-background/60 md:backdrop-blur-xl md:shadow-none',
+
+          isSidebarOpen
+            ? 'md:w-sidebar md:border-r md:border-solid md:border-muted-foreground/40'
+            : 'md:w-0 md:border-none',
         )}
       >
         <div className="w-sidebar p-6 h-full flex flex-col">
@@ -116,7 +124,7 @@ const Sidebar = () => {
           </nav>
 
           {/* Bottom Tools */}
-          <div className="pt-6 text-muted-foreground border-t border-border flex items-center justify-between">
+          <div className="pt-6 text-muted-foreground border-t border-muted-foreground/40 flex items-center justify-between">
             <div className="flex gap-3 text-muted-foreground">
               <a
                 href="https://github.com/ImxYJL"

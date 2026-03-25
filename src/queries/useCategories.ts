@@ -1,5 +1,5 @@
 import { getCategoriesApi } from '@/apis/category';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { Category, CategoryMap } from '@/types/blog';
 
@@ -9,7 +9,7 @@ type CategoryQueryResult = {
 };
 
 const useCategories = () => {
-  return useSuspenseQuery<Category[], Error, CategoryQueryResult>({
+  return useQuery<Category[], Error, CategoryQueryResult>({
     queryKey: [BLOG_QUERY_KEY.categories],
     queryFn: getCategoriesApi,
 

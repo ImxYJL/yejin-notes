@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Lock, Unlock, Tag, SaveAll } from "lucide-react";
-import { Button } from "@/components/common";
-import { CategorySlug, EditorMode } from "@/types/blog";
-import { cn } from "@/utils/styles";
-import CategorySelector from "./CategorySelector";
-import { useState } from "react";
-import DraftListDrawer from "./DraftListDrawer";
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Save, Lock, Unlock, Tag, SaveAll } from 'lucide-react';
+import { Button } from '@/components/common';
+import { CategorySlug, EditorMode } from '@/types/blog';
+import { cn } from '@/utils/styles';
+import CategorySelector from './CategorySelector';
+import { useState } from 'react';
+import DraftListDrawer from './DraftListDrawer';
 
 type EditorToolbarProps = {
   mode: EditorMode;
@@ -54,18 +54,15 @@ const EditorToolbar = ({
         <button
           onClick={onTogglePrivate}
           className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-xs font-medium",
-            "bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800",
+            'flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-xs font-medium',
+            'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800',
           )}
         >
           {isPrivate ? <Lock size={14} /> : <Unlock size={14} />}
-          <span>{isPrivate ? "비공개" : "공개"}</span>
+          <span>{isPrivate ? '비공개' : '공개'}</span>
         </button>
 
-        <CategorySelector
-          categorySlug={categorySlug}
-          onSelect={onCategorySelect}
-        />
+        <CategorySelector categorySlug={categorySlug} onSelect={onCategorySelect} />
       </div>
 
       <div className="flex items-center gap-4">

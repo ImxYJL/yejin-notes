@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Badge } from "@/components/common";
-import { CATEGORY_KEYS } from "@/constants/blog";
-import useCurrentCategory from "@/hooks/useCurrentCategory";
-import { CategorySlug } from "@/types/blog";
+import { Badge } from '@/components/common';
+import { CATEGORY_KEYS } from '@/constants/blog';
+import useCurrentCategory from '@/hooks/useCurrentCategory';
+import { CategorySlug } from '@/types/blog';
 
 type Props = {
   categorySlug: CategorySlug;
@@ -27,7 +27,7 @@ const CategorySelector = ({ categorySlug, onSelect }: Props) => {
               <Badge
                 label={name}
                 isSelected={isSelected}
-                className={"cursor-pointer"}
+                className={'cursor-pointer'}
               />
             </button>
           </li>

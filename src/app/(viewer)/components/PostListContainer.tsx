@@ -30,19 +30,21 @@ const PostListContainer = ({ categorySlug }: Props) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  if (!categoryMap) return null;
+
   return (
     <div>
       <header className="flex justify-between items-end border-b-2 border-muted-foreground/30 border-border pb-8">
         <div>
-          <h1 className="text-4xl font-black capitalize tracking-tight">
-            {categoryMap?.[categorySlug].name}
+          <h1 className="text-3xl font-black capitalize tracking-tight">
+            {categoryMap[categorySlug].name}
           </h1>
-          {/* <p className="text-muted-foreground mt-3 font-medium">
+          <p className="text-muted-foreground mt-3 font-medium">
             <span className="text-accent-primary font-bold">
               {data.posts.length}개
             </span>
             의 기록이 있습니다.
-          </p> */}
+          </p>
         </div>
         {isAdmin && (
           <Link
