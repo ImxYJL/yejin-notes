@@ -8,14 +8,14 @@ const useIsAdmin = () => {
     queryKey: [ADMIN_QUERY_KEY.isAdmin],
     queryFn: async () => {
       const { data: res } = await axiosInstance.get(API_ENDPOINT.me);
-      return res.data;
+      return res.data.isAdmin;
     },
     staleTime: Infinity,
     gcTime: Infinity,
   });
 
   return {
-    isAdmin: data?.isAdmin ?? false,
+    isAdmin: data ?? false,
     isLogin: !!data,
     isLoading,
   };

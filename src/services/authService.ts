@@ -2,7 +2,6 @@ import 'server-only';
 
 import { createServerSupabaseClient } from '@/libs/supabase/server';
 import { AppError } from '@/utils/error';
-import { cache } from 'react';
 import { AuthUser } from '@/types/auth';
 
 // 구글 로그인 후 받은 코드를 세션으로 교환
@@ -14,7 +13,7 @@ export const exchangeCode = async (code: string) => {
   return data;
 };
 
-export const getAuthUser = cache(async (): Promise<AuthUser | null> => {
+export const getAuthUser = async (): Promise<AuthUser | null> => {
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -27,7 +26,7 @@ export const getAuthUser = cache(async (): Promise<AuthUser | null> => {
     id: user.id,
     isAdmin: user.email === process.env.ADMIN_EMAIL,
   };
-});
+};
 
 export const checkIsAdmin = async () => {
   const user = await getAuthUser();
