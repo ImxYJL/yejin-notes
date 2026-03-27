@@ -1,4 +1,3 @@
-export { default as PostNavigationList } from './PostNavigationList';
 export { default as PostListPagination } from './PostListPagination';
 export { default as PostDetail } from './PostDetail';
 export { default as PostItem } from './PostItem';
