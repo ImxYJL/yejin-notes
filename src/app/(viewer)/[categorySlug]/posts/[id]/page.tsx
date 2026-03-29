@@ -1,5 +1,4 @@
-import { PostDetailSkeleton } from '@/app/(viewer)/components';
-import PostDetailContainer from '@/app/(viewer)/components/PostDetailContainer';
+import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components';
 import { CategorySlug } from '@/types/blog';
 import { Suspense } from 'react';
 
@@ -17,7 +16,7 @@ const PostDetailPage = async ({
 
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
-      <PostDetailContainer categorySlug={categorySlug} id={id} />
+      <PostDetail categorySlug={categorySlug} id={id} />
     </Suspense>
   );
 };
