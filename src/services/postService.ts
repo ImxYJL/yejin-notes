@@ -1,9 +1,9 @@
-import "server-only";
+import 'server-only';
 
-import { createServerSupabaseClient } from "@/libs/supabase/server";
-import { AppError } from "@/utils/error";
-import { validateCategoryAccess } from "./categoryService";
-import { checkIsAdmin, getAuthUser, validateAdmin } from "./authService";
+import { createServerSupabaseClient } from '@/libs/supabase/server';
+import { AppError } from '@/utils/error';
+import { getCategories, validateCategoryAccess } from './categoryService';
+import { checkIsAdmin, getAuthUser, validateAdmin } from './authService';
 import {
   CategorySlug,
   DraftPost,
@@ -12,8 +12,8 @@ import {
   PostForm,
   PostItem,
   PostRow,
-} from "@/types/blog";
-import { cache } from "react";
+} from '@/types/blog';
+import { cache } from 'react';
 
 const DEFAULT_PAGE_LIMIT = 10;
 const MAX_PAGE_LIMIT = 50;
@@ -21,32 +21,32 @@ const MAX_PAGE_LIMIT = 50;
 export const getPosts = cache(
   async (categorySlug: CategorySlug, page: number = 1, limit?: number) => {
     const supabase = await createServerSupabaseClient();
-    const user = await getAuthUser();
+    const [user, categories] = await Promise.all([getAuthUser(), getCategories()]);
 
-    await validateCategoryAccess(categorySlug);
+    validateCategoryAccess(categorySlug, categories, user);
 
     const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
     const from = (page - 1) * LIMIT;
     const to = from + LIMIT - 1;
 
     const query = supabase
-      .from("posts")
+      .from('posts')
       .select(
         `
       id, title, summary, category_id, tags, 
       is_private, is_published, thumbnail_url, created_at, updated_at,
       category:categories!inner(slug, name)
     `,
-        { count: "exact" },
+        { count: 'exact' },
       )
-      .eq("category.slug", categorySlug)
-      .order("created_at", { ascending: false })
+      .eq('category.slug', categorySlug)
+      .order('created_at', { ascending: false })
       .range(from, to);
 
     if (user?.isAdmin) {
-      query.eq("is_published", true);
+      query.eq('is_published', true);
     } else {
-      query.eq("is_private", false).eq("is_published", true);
+      query.eq('is_private', false).eq('is_published', true);
     }
 
     const { data, count, error } = await query;
@@ -61,60 +61,58 @@ export const getPosts = cache(
   },
 );
 
-export const getPost = cache(
-  async (postId: string): Promise<PostDetailResponse> => {
-    const supabase = await createServerSupabaseClient();
-    const isAdmin = await checkIsAdmin();
+export const getPost = cache(async (postId: string): Promise<PostDetailResponse> => {
+  const supabase = await createServerSupabaseClient();
+  const isAdmin = await checkIsAdmin();
 
-    const { data: currentPost, error } = await supabase
-      .from("posts")
-      .select(
-        `
+  const { data: currentPost, error } = await supabase
+    .from('posts')
+    .select(
+      `
       *,
       category:categories (slug, name)
     `,
-      )
-      .eq("id", postId)
-      .single();
+    )
+    .eq('id', postId)
+    .single();
 
-    if (error || !currentPost) throw AppError.notFound();
+  if (error || !currentPost) throw AppError.notFound();
 
-    const isDraft = !currentPost.is_published;
-    const isPrivate = currentPost.is_private;
+  const isDraft = !currentPost.is_published;
+  const isPrivate = currentPost.is_private;
 
-    if ((isDraft || isPrivate) && !isAdmin) {
-      throw AppError.notFound();
-    }
-    const [prevRes, nextRes] = await Promise.all([
-      applyVisibilityFilter(
-        supabase
-          .from("posts")
-          .select("id, title")
-          .eq("category_id", currentPost.category_id)
-          .lt("created_at", currentPost.created_at)
-          .order("created_at", { ascending: false })
-          .limit(1),
-        isAdmin,
-      ).maybeSingle(),
-      applyVisibilityFilter(
-        supabase
-          .from("posts")
-          .select("id, title")
-          .eq("category_id", currentPost.category_id)
-          .gt("created_at", currentPost.created_at)
-          .order("created_at", { ascending: true })
-          .limit(1),
-        isAdmin,
-      ).maybeSingle(),
-    ]);
+  if ((isDraft || isPrivate) && !isAdmin) {
+    throw AppError.notFound();
+  }
+  const [prevRes, nextRes] = await Promise.all([
+    applyVisibilityFilter(
+      supabase
+        .from('posts')
+        .select('id, title')
+        .eq('category_id', currentPost.category_id)
+        .lt('created_at', currentPost.created_at)
+        .order('created_at', { ascending: false })
+        .limit(1),
+      isAdmin,
+    ).maybeSingle(),
+    applyVisibilityFilter(
+      supabase
+        .from('posts')
+        .select('id, title')
+        .eq('category_id', currentPost.category_id)
+        .gt('created_at', currentPost.created_at)
+        .order('created_at', { ascending: true })
+        .limit(1),
+      isAdmin,
+    ).maybeSingle(),
+  ]);
 
-    return {
-      ...mapPostDetailResponse(currentPost),
-      prevPost: prevRes.data || null,
-      nextPost: nextRes.data || null,
-    };
-  },
-);
+  return {
+    ...mapPostDetailResponse(currentPost),
+    prevPost: prevRes.data || null,
+    nextPost: nextRes.data || null,
+  };
+});
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
   const user = await validateAdmin();
@@ -123,7 +121,7 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
   const categoryId = await getCategoryIdBySlug(formData.categorySlug);
 
   const { data, error } = await supabase
-    .from("posts")
+    .from('posts')
     .upsert(
       {
         id: formData.id,
@@ -137,13 +135,13 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
         thumbnail_url: formData.thumbnailUrl,
         user_id: user.id,
       },
-      { onConflict: "id" },
+      { onConflict: 'id' },
     )
     .select(`*, category:categories!inner(slug, name)`)
     .single();
 
   if (error) throw AppError.fromSupabase(error);
-  if (!data) throw AppError.internal("데이터 처리에 실패했습니다.");
+  if (!data) throw AppError.internal('데이터 처리에 실패했습니다.');
 
   return mapPostDetailResponse(data);
 };
@@ -153,7 +151,7 @@ export const deletePost = async (id: string) => {
 
   const supabase = await createServerSupabaseClient();
 
-  const { error } = await supabase.from("posts").delete().eq("id", id);
+  const { error } = await supabase.from('posts').delete().eq('id', id);
 
   if (error) throw AppError.fromSupabase(error);
 };
@@ -164,10 +162,10 @@ export const getDrafts = async (): Promise<DraftPost[]> => {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from("posts")
+    .from('posts')
     .select(`id, title, createdAt:created_at`)
-    .eq("is_published", false)
-    .order("created_at", { ascending: false });
+    .eq('is_published', false)
+    .order('created_at', { ascending: false });
 
   if (error) throw AppError.fromSupabase(error);
 
@@ -179,7 +177,7 @@ export const getDrafts = async (): Promise<DraftPost[]> => {
  */
 
 export const mapPostItemResponse = (
-  row: Omit<PostRow, "content" | "category">,
+  row: Omit<PostRow, 'content' | 'category'>,
 ): PostItem => {
   return {
     id: row.id,
@@ -199,7 +197,7 @@ export const mapPostDetailResponse = (row: PostRow): Post => {
     content: row.content,
     updatedAt: row.updated_at || row.created_at,
     category: {
-      slug: (row.category.slug as CategorySlug) || "dev",
+      slug: (row.category.slug as CategorySlug) || 'dev',
       name: row.category.name,
     },
   };
@@ -209,13 +207,13 @@ export const getCategoryIdBySlug = async (slug: string) => {
   const supabase = await createServerSupabaseClient();
 
   const { data, error } = await supabase
-    .from("categories")
-    .select("id")
-    .eq("slug", slug)
+    .from('categories')
+    .select('id')
+    .eq('slug', slug)
     .single();
 
   if (error || !data) {
-    throw AppError.notFound(null, "존재하지 않는 카테고리입니다.");
+    throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
   }
 
   return data.id;
@@ -224,10 +222,10 @@ export const getCategoryIdBySlug = async (slug: string) => {
 // TODO: Supabase 쿼리용 타입 지정하기
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const applyVisibilityFilter = (query: any, isAdmin: boolean) => {
-  query = query.eq("is_published", true);
+  query = query.eq('is_published', true);
 
   if (!isAdmin) {
-    return query.eq("is_private", false);
+    return query.eq('is_private', false);
   }
 
   return query;

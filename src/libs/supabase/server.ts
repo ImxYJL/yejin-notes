@@ -1,9 +1,10 @@
-import "server-only";
+import 'server-only';
 
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+import { cache } from 'react';
 
-export const createServerSupabaseClient = async () => {
+export const createServerSupabaseClient = cache(async () => {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -24,4 +25,4 @@ export const createServerSupabaseClient = async () => {
       },
     },
   );
-};
+});
