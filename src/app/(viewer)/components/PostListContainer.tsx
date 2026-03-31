@@ -37,7 +37,7 @@ const PostListContainer = ({ categorySlug }: Props) => {
       <header className="flex justify-between items-end border-b-2 border-muted-foreground/30 border-border pb-8">
         <div>
           <h1 className="text-3xl font-black capitalize tracking-tight">
-            {categoryMap[categorySlug].name}
+            {categoryMap[categorySlug]?.name}
           </h1>
           <p className="text-muted-foreground mt-3 font-medium">
             <span className="text-accent-primary font-bold">

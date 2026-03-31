@@ -2,7 +2,7 @@ import EditorForm from '@/components/editor/EditorForm';
 import { INITIAL_POST } from '@/constants/blog';
 import { makeQueryClient } from '@/libs/tanstack/queryClient';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import { getCategories } from '@/services/categoryService';
+import { getAllCategories } from '@/services/categoryService';
 import { HydrationBoundary, dehydrate } from '@tanstack/react-query';
 
 // TODO: Write와 Edit 합치기
@@ -10,7 +10,7 @@ const WritePage = async () => {
   const queryClient = makeQueryClient();
   await queryClient.prefetchQuery({
     queryKey: [BLOG_QUERY_KEY.categories],
-    queryFn: getCategories,
+    queryFn: getAllCategories,
   });
 
   const initialData = {

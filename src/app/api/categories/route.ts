@@ -1,11 +1,11 @@
-import { NextResponse } from "next/server";
-import { getCategories } from "@/services/categoryService";
-import { handleRouteError } from "@/utils/error";
+import { NextResponse } from 'next/server';
+import { getAccessibleCategories } from '@/services/categoryService';
+import { handleRouteError } from '@/utils/error';
 
 export const GET = async () => {
   try {
-    const categories = await getCategories();
-    
+    const categories = await getAccessibleCategories();
+
     return NextResponse.json({
       success: true,
       data: categories,

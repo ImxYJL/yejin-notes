@@ -1,24 +1,18 @@
 import { cn } from '@/utils/styles';
 import Sidebar from '@/components/common/Sidebar';
-import { checkIsAdmin } from '@/services/authService';
-import { getCategories } from '@/services/categoryService';
+import { getPublicCategories } from '@/services/categoryService';
 import { makeQueryClient } from '@/libs/tanstack/queryClient';
-import { ADMIN_QUERY_KEY, BLOG_QUERY_KEY } from '@/queries/queryKey';
+import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { CATEGORY_FILTER } from '@/constants/blog';
 
 const ViewerLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = makeQueryClient();
 
-  await Promise.all([
-    queryClient.prefetchQuery({
-      queryKey: [ADMIN_QUERY_KEY.isAdmin],
-      queryFn: checkIsAdmin,
-    }),
-    queryClient.prefetchQuery({
-      queryKey: [BLOG_QUERY_KEY.categories],
-      queryFn: getCategories,
-    }),
-  ]);
+  await queryClient.prefetchQuery({
+    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
+    queryFn: getPublicCategories,
+  });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
