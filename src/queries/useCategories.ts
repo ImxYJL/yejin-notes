@@ -2,6 +2,8 @@ import { getCategoriesApi } from '@/apis/category';
 import { useQuery } from '@tanstack/react-query';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { Category, CategoryMap } from '@/types/blog';
+import useIsAdmin from './auth/useIsAdmin';
+import { CATEGORY_FILTER } from '@/constants/blog';
 
 type CategoryQueryResult = {
   categories: Category[];
@@ -9,8 +11,13 @@ type CategoryQueryResult = {
 };
 
 const useCategories = () => {
+  const { isAdmin } = useIsAdmin();
+
   return useQuery<Category[], Error, CategoryQueryResult>({
-    queryKey: [BLOG_QUERY_KEY.categories],
+    queryKey: [
+      BLOG_QUERY_KEY.categories,
+      isAdmin ? CATEGORY_FILTER.all : CATEGORY_FILTER.public,
+    ],
     queryFn: getCategoriesApi,
 
     staleTime: Infinity,

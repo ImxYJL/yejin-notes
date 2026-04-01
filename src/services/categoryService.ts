@@ -5,6 +5,7 @@ import { AppError } from '@/utils/error';
 import { Category, CategorySlug } from '@/types/blog';
 import { cache } from 'react';
 import { AuthUser } from '@/types/auth';
+import { checkIsAdmin } from './authService';
 
 export const validateCategoryAccess = (
   categorySlug: CategorySlug,
@@ -21,9 +22,36 @@ export const validateCategoryAccess = (
   }
 };
 
-export const getCategories = cache(async (): Promise<Category[]> => {
-  const supabase = await createServerSupabaseClient();
+export const getAccessibleCategories = async () => {
+  const isAdmin = await checkIsAdmin();
 
+  if (isAdmin) {
+    return getAllCategories();
+  }
+
+  return getPublicCategories();
+};
+
+export const getPublicCategories = cache(async (): Promise<Category[]> => {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('categories')
+    .select('id, name, slug, is_private')
+    .eq('is_private', false);
+
+  if (error) throw AppError.fromSupabase(error);
+  if (!data) return [];
+
+  return data.map((row) => ({
+    id: row.id,
+    name: row.name,
+    slug: row.slug,
+    isPrivate: row.is_private,
+  }));
+});
+
+export const getAllCategories = cache(async (): Promise<Category[]> => {
+  const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('categories')
     .select('id, name, slug, is_private');

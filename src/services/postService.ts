@@ -2,7 +2,7 @@ import 'server-only';
 
 import { createServerSupabaseClient } from '@/libs/supabase/server';
 import { AppError } from '@/utils/error';
-import { getCategories, validateCategoryAccess } from './categoryService';
+import { getAllCategories, validateCategoryAccess } from './categoryService';
 import { checkIsAdmin, getAuthUser, validateAdmin } from './authService';
 import {
   CategorySlug,
@@ -21,7 +21,11 @@ const MAX_PAGE_LIMIT = 50;
 export const getPosts = cache(
   async (categorySlug: CategorySlug, page: number = 1, limit?: number) => {
     const supabase = await createServerSupabaseClient();
-    const [user, categories] = await Promise.all([getAuthUser(), getCategories()]);
+    // TODO: allCategories 호출할지 accessible 호출할지 생각하기
+    const [user, categories] = await Promise.all([
+      getAuthUser(),
+      getAllCategories(),
+    ]);
 
     validateCategoryAccess(categorySlug, categories, user);
 
