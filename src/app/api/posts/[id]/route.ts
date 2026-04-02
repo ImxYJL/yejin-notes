@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { deletePost, getPost, upsertPost } from "@/services/postService";
-import { handleRouteError } from "@/utils/error";
+import { NextRequest, NextResponse } from 'next/server';
+import { deletePost, getPost, upsertPost } from '@/services/postService';
+import { handleRouteError } from '@/utils/error';
 
 export type PostParams = {
   params: Promise<{
@@ -45,7 +45,7 @@ export const DELETE = async (_request: Request, { params }: PostParams) => {
 
     return NextResponse.json({
       success: true,
-      message: "게시글이 삭제되었습니다.",
+      message: '게시글이 삭제되었습니다.',
     });
   } catch (error) {
     return handleRouteError(error);

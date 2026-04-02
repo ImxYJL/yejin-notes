@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type LayoutState = {
   isSidebarOpen: boolean;
@@ -8,8 +8,7 @@ type LayoutState = {
 
 const useLayoutStore = create<LayoutState>((set) => ({
   isSidebarOpen: true,
-  toggleSidebar: () =>
-    set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
+  toggleSidebar: () => set((state) => ({ isSidebarOpen: !state.isSidebarOpen })),
   closeSidebar: () => set({ isSidebarOpen: false }),
 }));
 

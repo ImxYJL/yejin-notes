@@ -2,11 +2,10 @@ import { PostNavigation, PostAction } from '@/app/(viewer)/components';
 import { Divider } from '@/components/common';
 import { Lock, Clock, Tag } from 'lucide-react';
 import { CategorySlug } from '@/types/blog';
-import MarkdownViewer from '@/components/markdown/MarkdownViewer';
 import { formatDate } from '@/utils/date';
 import { getPost } from '@/services/postService';
-import { checkIsAdmin } from '@/services/authService';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
+import { MarkdownViewer } from '@/components/markdown';
 
 type Props = {
   categorySlug: CategorySlug;
@@ -14,8 +13,7 @@ type Props = {
 };
 
 const PostDetail = async ({ categorySlug, id }: Props) => {
-  const [post, isAdmin] = await Promise.all([getPost(id), checkIsAdmin()]);
-
+  const post = await getPost(id);
   const contentNode = await getMarkdownComponent(post.content);
 
   return (
@@ -51,9 +49,7 @@ const PostDetail = async ({ categorySlug, id }: Props) => {
               )}
             </span>
 
-            <div className="flex items-center">
-              {isAdmin && <PostAction id={post.id} categorySlug={categorySlug} />}
-            </div>
+            <PostAction id={post.id} categorySlug={categorySlug} />
           </div>
         </header>
 

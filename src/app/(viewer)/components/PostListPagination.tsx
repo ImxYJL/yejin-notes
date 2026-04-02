@@ -1,5 +1,5 @@
-import { Button } from "@/components/common";
-import { getPaginationRange } from "@/utils/pagination";
+import { Button } from '@/components/common';
+import { getPaginationRange } from '@/utils/pagination';
 
 type Props = {
   currentPage: number;
@@ -7,18 +7,11 @@ type Props = {
   onPageChange: (page: number) => void;
 };
 
-const PostListPagination = ({
-  currentPage,
-  totalPages,
-  onPageChange,
-}: Props) => {
+const PostListPagination = ({ currentPage, totalPages, onPageChange }: Props) => {
   const pageRange = getPaginationRange(currentPage, totalPages);
 
   return (
-    <nav
-      className="flex flex-col items-center gap-6 pt-12"
-      aria-label="Pagination"
-    >
+    <nav className="flex flex-col items-center gap-6 pt-12" aria-label="Pagination">
       {/* 숫자 버튼 리스트 */}
       <div className="flex items-center gap-2">
         {pageRange.map((pageNum) => (
@@ -27,8 +20,8 @@ const PostListPagination = ({
             onClick={() => onPageChange(pageNum)}
             className={`w-8 h-8 text-sm font-mono transition-colors ${
               currentPage === pageNum
-                ? "text-accent-primary font-bold border-b-2 border-accent-primary"
-                : "text-muted-foreground hover:text-foreground"
+                ? 'text-accent-primary font-bold border-b-2 border-accent-primary'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {pageNum.toString()}
@@ -49,8 +42,7 @@ const PostListPagination = ({
         </Button>
 
         <span className="text-sm font-bold font-mono tracking-widest">
-          <span className="text-accent-primary">{currentPage}</span> /{" "}
-          {totalPages}
+          <span className="text-accent-primary">{currentPage}</span> / {totalPages}
         </span>
 
         <Button

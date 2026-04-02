@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { BLOG_QUERY_KEY } from "./queryKey";
-import { getDraftsApi } from "@/apis/posts";
+import { useQuery } from '@tanstack/react-query';
+import { BLOG_QUERY_KEY } from './queryKey';
+import { getDraftsApi } from '@/apis/posts';
 
 const useDrafts = (isOpen: boolean) => {
   return useQuery({

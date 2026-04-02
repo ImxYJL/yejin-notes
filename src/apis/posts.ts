@@ -1,4 +1,4 @@
-import { API_ENDPOINT } from "@/constants/paths";
+import { API_ENDPOINT } from '@/constants/paths';
 import type {
   CategorySlug,
   DraftPost,
@@ -6,10 +6,10 @@ import type {
   PostDetailResponse,
   PostForm,
   PostsResponse,
-} from "@/types/blog";
-import axiosInstance from "@/libs/axios/axios";
-import { PaginationParams } from "@/types/page";
-import { QUERY_PARAMS } from "@/constants/system";
+} from '@/types/blog';
+import axiosInstance from '@/libs/axios/axios';
+import { PaginationParams } from '@/types/page';
+import { QUERY_PARAMS } from '@/constants/system';
 
 export const getPostsApi = async (
   categorySlug: CategorySlug,

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { ErrorBoundary } from "react-error-boundary";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
-import { type ReactNode } from "react";
-import ErrorFallback from "@/components/common/ErrorFallback";
+import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
+import { type ReactNode } from 'react';
+import ErrorFallback from '@/components/common/ErrorFallback';
 
 type QueryErrorProviderProps = {
   children: ReactNode;

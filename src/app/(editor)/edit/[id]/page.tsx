@@ -1,7 +1,7 @@
-import { PostDetailResponse, PostForm } from "@/types/blog";
-import EditorContainer from "../components/EditorContainer";
-import { INITIAL_POST } from "@/constants/blog";
-import { getPost } from "@/services/postService";
+import { PostDetailResponse, PostForm } from '@/types/blog';
+import EditorContainer from '../components/EditorContainer';
+import { INITIAL_POST } from '@/constants/blog';
+import { getPost } from '@/services/postService';
 
 type EditPageParams = {
   id: string;

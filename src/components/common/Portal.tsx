@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ReactNode, useSyncExternalStore } from "react";
-import { createPortal } from "react-dom";
+import { ReactNode, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 
 type PortalProps = {
   children: ReactNode;
@@ -13,11 +13,7 @@ const getSnapshot = () => true;
 const getServerSnapshot = () => false;
 
 const Portal = ({ children }: PortalProps) => {
-  const isClient = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const isClient = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   if (!isClient) return null;
 

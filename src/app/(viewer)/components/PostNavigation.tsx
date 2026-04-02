@@ -1,11 +1,8 @@
-import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  CategorySlug,
-  PostNavigation as PostNavigationType,
-} from "@/types/blog";
-import { PAGE_PATH } from "@/constants/paths";
-import { cn } from "@/utils/styles";
+import Link from 'next/link';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { CategorySlug, PostNavigation as PostNavigationType } from '@/types/blog';
+import { PAGE_PATH } from '@/constants/paths';
+import { cn } from '@/utils/styles';
 
 type PostNavigationProps = {
   navigation: PostNavigationType;
@@ -13,22 +10,22 @@ type PostNavigationProps = {
 };
 
 type NavItemProps = {
-  direction: "prev" | "next";
+  direction: 'prev' | 'next';
   categorySlug: CategorySlug;
   post?: { id: string; title: string } | null;
 };
 
 const NavItem = ({ direction, categorySlug, post }: NavItemProps) => {
-  const isPrev = direction === "prev";
+  const isPrev = direction === 'prev';
   const Icon = isPrev ? ChevronLeft : ChevronRight;
-  const label = isPrev ? "이전 글" : "다음 글";
+  const label = isPrev ? '이전 글' : '다음 글';
 
   if (!post) {
     return (
       <div
         className={cn(
-          "hidden sm:flex items-center gap-4 p-5 rounded-main opacity-40 grayscale",
-          !isPrev && "justify-end text-right",
+          'hidden sm:flex items-center gap-4 p-5 rounded-main opacity-40 grayscale',
+          !isPrev && 'justify-end text-right',
         )}
       >
         {isPrev && (
@@ -36,7 +33,7 @@ const NavItem = ({ direction, categorySlug, post }: NavItemProps) => {
             <Icon size={24} className="text-muted-foreground/50" />
           </div>
         )}
-        <div className={cn("flex flex-col", !isPrev && "items-end")}>
+        <div className={cn('flex flex-col', !isPrev && 'items-end')}>
           <p className="text-[11px] uppercase tracking-wider mb-1">{label}</p>
           <p className="text-sm font-medium">{label}이 없습니다.</p>
         </div>
@@ -53,9 +50,9 @@ const NavItem = ({ direction, categorySlug, post }: NavItemProps) => {
     <Link
       href={PAGE_PATH.postDetail(categorySlug, post.id)}
       className={cn(
-        "group flex items-center gap-4 p-5 rounded-main transition-all duration-200 overflow-hidden",
-        "text-muted-foreground hover:text-accent-primary hover:bg-accent-primary/10 active:bg-secondary/80",
-        isPrev ? "text-left" : "justify-end text-right",
+        'group flex items-center gap-4 p-5 rounded-main transition-all duration-200 overflow-hidden',
+        'text-muted-foreground hover:text-accent-primary hover:bg-accent-primary/10 active:bg-secondary/80',
+        isPrev ? 'text-left' : 'justify-end text-right',
       )}
     >
       {isPrev && (
@@ -63,7 +60,7 @@ const NavItem = ({ direction, categorySlug, post }: NavItemProps) => {
           <Icon size={24} className="text-inherit" />
         </div>
       )}
-      <div className={cn("flex flex-col min-w-0", !isPrev && "items-end")}>
+      <div className={cn('flex flex-col min-w-0', !isPrev && 'items-end')}>
         <p className="text-[11px] uppercase tracking-wider mb-1 opacity-70">
           {label}
         </p>

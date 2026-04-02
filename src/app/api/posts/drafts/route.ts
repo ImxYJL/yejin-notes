@@ -1,6 +1,6 @@
-import { getDrafts } from "@/services/postService";
-import { handleRouteError } from "@/utils/error";
-import { NextResponse } from "next/server";
+import { getDrafts } from '@/services/postService';
+import { handleRouteError } from '@/utils/error';
+import { NextResponse } from 'next/server';
 
 export const GET = async () => {
   try {

@@ -1,28 +1,27 @@
-import { cn } from "@/utils/styles";
-import { ButtonHTMLAttributes, ReactNode } from "react";
+import { cn } from '@/utils/styles';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 export const BUTTON_VARIANT = {
   primary:
-    "bg-accent-primary text-white shadow-sm hover:opacity-90 active:scale-[0.98]",
-  outline:
-    "border border-border bg-transparent text-foreground hover:bg-gray-50",
-  ghost: "text-muted-foreground hover:bg-gray-100 hover:text-foreground",
+    'bg-accent-primary text-white shadow-sm hover:opacity-90 active:scale-[0.98]',
+  outline: 'border border-border bg-transparent text-foreground hover:bg-gray-50',
+  ghost: 'text-muted-foreground hover:bg-gray-100 hover:text-foreground',
 } as const;
 
 export const BUTTON_SIZE = {
-  sm: "h-8 px-3 text-xs",
-  md: "h-10 px-4 text-sm",
-  lg: "h-12 px-6 text-base",
+  sm: 'h-8 px-3 text-xs',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-6 text-base',
 } as const;
 
 export const getButtonStyles = (
-  variant: keyof typeof BUTTON_VARIANT = "primary",
-  size: keyof typeof BUTTON_SIZE = "md",
+  variant: keyof typeof BUTTON_VARIANT = 'primary',
+  size: keyof typeof BUTTON_SIZE = 'md',
   className?: string,
 ) => {
   return cn(
-    "inline-flex items-center justify-center rounded-main font-medium whitespace-nowrap",
-    "base-focus base-disabled base-transition",
+    'inline-flex items-center justify-center rounded-main font-medium whitespace-nowrap',
+    'base-focus base-disabled base-transition',
     BUTTON_VARIANT[variant],
     BUTTON_SIZE[size],
     className,
@@ -37,9 +36,9 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const Button = ({
   children,
-  type = "button",
-  variant = "primary",
-  size = "md",
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
   icon,
   className,
   ...props

@@ -1,10 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter, usePathname } from "next/navigation";
-import { useToastStore } from "@/store/useToastStore";
-import { PostForm } from "@/types/blog";
-import { savePostApi } from "@/apis/posts";
-import { PAGE_PATH } from "@/constants/paths";
-import { BLOG_QUERY_KEY } from "./queryKey";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter, usePathname } from 'next/navigation';
+import { useToastStore } from '@/store/useToastStore';
+import { PostForm } from '@/types/blog';
+import { savePostApi } from '@/apis/posts';
+import { PAGE_PATH } from '@/constants/paths';
+import { BLOG_QUERY_KEY } from './queryKey';
 
 const useSaveDraft = () => {
   const router = useRouter();
@@ -18,15 +18,15 @@ const useSaveDraft = () => {
     mutationFn: (formData: PostForm) =>
       savePostApi({ ...formData, isPublished: false }),
     onSuccess: (newPost) => {
-      showToast("임시저장에 성공했습니다.", "success");
+      showToast('임시저장에 성공했습니다.', 'success');
 
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.drafts] });
 
-      if (pathname.includes("write")) {
+      if (pathname.includes('write')) {
         router.replace(PAGE_PATH.edit(newPost.id));
       }
     },
-    onError: () => showToast("임시저장에 실패했습니다.", "error"),
+    onError: () => showToast('임시저장에 실패했습니다.', 'error'),
   });
 };
 

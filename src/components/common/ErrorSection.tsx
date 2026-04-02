@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import clsx from "clsx";
-import Button from "./Button";
+import clsx from 'clsx';
+import Button from './Button';
 
 export type ErrorSectionProps = {
   title?: string;
@@ -11,7 +11,7 @@ export type ErrorSectionProps = {
 };
 
 const ErrorSection = ({
-  title = "문제가 발생했습니다",
+  title = '문제가 발생했습니다',
   errorMessage,
   handleReload,
   handleGoOtherPage,
@@ -19,12 +19,12 @@ const ErrorSection = ({
   return (
     <section
       className={clsx(
-        "flex min-h-screen items-center justify-center bg-gray-50 p-4",
+        'flex min-h-screen items-center justify-center bg-gray-50 p-4',
       )}
     >
       <div
         className={clsx(
-          "w-full max-w-md rounded-xl bg-white p-8 text-center shadow-md",
+          'w-full max-w-md rounded-xl bg-white p-8 text-center shadow-md',
         )}
       >
         <svg

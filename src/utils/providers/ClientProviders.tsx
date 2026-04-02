@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import QueryErrorProvider from "./QueryErrorProvider";
-import QueryProvider from "./QueryProvider";
+import QueryErrorProvider from './QueryErrorProvider';
+import QueryProvider from './QueryProvider';
 
 type ClientProvidersProps = {
   children: React.ReactNode;

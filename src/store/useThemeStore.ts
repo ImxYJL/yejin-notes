@@ -1,7 +1,7 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-type ThemeName = "rainbow" | "ocean" | "forest";
+type ThemeName = 'rainbow' | 'ocean' | 'forest';
 
 type ThemeState = {
   theme: ThemeName;
@@ -11,15 +11,15 @@ type ThemeState = {
 const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: "rainbow",
+      theme: 'rainbow',
       setTheme: (theme) => {
         set({ theme });
-        if (typeof window !== "undefined") {
-          document.documentElement.setAttribute("data-theme", theme);
+        if (typeof window !== 'undefined') {
+          document.documentElement.setAttribute('data-theme', theme);
         }
       },
     }),
-    { name: "theme-storage" },
+    { name: 'theme-storage' },
   ),
 );
 

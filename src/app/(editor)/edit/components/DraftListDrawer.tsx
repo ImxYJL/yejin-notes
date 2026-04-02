@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { Portal } from "@/components/common";
-import useDrafts from "@/queries/useDrafts";
-import { formatDate } from "@/utils/date";
-import { cn } from "@/utils/styles";
-import { X, FileText, Loader2 } from "lucide-react";
+import { Portal } from '@/components/common';
+import useDrafts from '@/queries/useDrafts';
+import { formatDate } from '@/utils/date';
+import { cn } from '@/utils/styles';
+import { X, FileText, Loader2 } from 'lucide-react';
 
 type DraftListDrawerProps = {
   isOpen: boolean;
@@ -12,11 +12,7 @@ type DraftListDrawerProps = {
   onSelect: (id: string) => void;
 };
 
-const DraftListDrawer = ({
-  isOpen,
-  onClose,
-  onSelect,
-}: DraftListDrawerProps) => {
+const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) => {
   const { data: drafts, isLoading, isError } = useDrafts(isOpen);
 
   return (
@@ -24,8 +20,8 @@ const DraftListDrawer = ({
       {/* 1. 오버레이 */}
       <div
         className={cn(
-          "fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-[80]",
-          isOpen ? "opacity-100 visible" : "opacity-0 invisible",
+          'fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-[80]',
+          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
         )}
         onClick={onClose}
       />
@@ -33,9 +29,9 @@ const DraftListDrawer = ({
       {/* 2. 드로어 본체 */}
       <aside
         className={cn(
-          "fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-[90] isolation-isolate",
-          "transition-transform duration-300 ease-in-out border-l border-black/[0.03]",
-          isOpen ? "translate-x-0" : "translate-x-full",
+          'fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-[90] isolation-isolate',
+          'transition-transform duration-300 ease-in-out border-l border-black/[0.03]',
+          isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
         <div className="flex flex-col h-full p-6">
@@ -74,9 +70,9 @@ const DraftListDrawer = ({
                     onClose();
                   }}
                   className={cn(
-                    "w-full text-left p-4 rounded-main border border-transparent",
-                    "bg-[#f2f9f9]/50 hover:bg-[#f5f3f7] hover:border-accent-primary/20",
-                    "group base-transition shadow-sm",
+                    'w-full text-left p-4 rounded-main border border-transparent',
+                    'bg-[#f2f9f9]/50 hover:bg-[#f5f3f7] hover:border-accent-primary/20',
+                    'group base-transition shadow-sm',
                   )}
                 >
                   <div className="flex gap-3">
@@ -86,7 +82,7 @@ const DraftListDrawer = ({
                     />
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-bold text-[#575279] truncate group-hover:text-accent-primary">
-                        {draft.title || "제목 없는 글"}
+                        {draft.title || '제목 없는 글'}
                       </h3>
                       <p className="text-[11px] text-muted-foreground mt-1.5 font-medium uppercase tracking-wider">
                         {formatDate(draft.createdAt)}

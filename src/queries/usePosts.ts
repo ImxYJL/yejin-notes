@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { BLOG_QUERY_KEY } from "./queryKey";
-import { getPostsApi } from "@/apis/posts";
-import { CategorySlug } from "@/types/blog";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { BLOG_QUERY_KEY } from './queryKey';
+import { getPostsApi } from '@/apis/posts';
+import { CategorySlug } from '@/types/blog';
 
 export const PAGE_LIMIT = 10;
 

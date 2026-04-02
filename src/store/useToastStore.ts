@@ -1,6 +1,6 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
-type ToastType = "success" | "error" | "info";
+type ToastType = 'success' | 'error' | 'info';
 
 type ToastState = {
   message: string;
@@ -14,12 +14,12 @@ type ToastState = {
 const TOAST_TIMER = 3000;
 
 export const useToastStore = create<ToastState>((set, get) => ({
-  message: "",
+  message: '',
   isVisible: false,
-  type: "info",
+  type: 'info',
   timeoutId: null,
 
-  showToast: (message, type = "info") => {
+  showToast: (message, type = 'info') => {
     const currentTimeout = get().timeoutId;
     if (currentTimeout) {
       clearTimeout(currentTimeout);

@@ -1,5 +1,5 @@
-import { PostForm } from "@/types/blog";
-import EditorForm from "@/components/editor/EditorForm";
+import { PostForm } from '@/types/blog';
+import EditorForm from '@/components/editor/EditorForm';
 
 type props = {
   post: PostForm;

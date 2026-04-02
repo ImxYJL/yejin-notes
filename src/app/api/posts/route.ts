@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getPosts, upsertPost } from "@/services/postService";
-import { handleRouteError } from "@/utils/error";
-import { QUERY_PARAMS } from "@/constants/system";
-import { isCategorySlug } from "@/utils/type";
+import { NextRequest, NextResponse } from 'next/server';
+import { getPosts, upsertPost } from '@/services/postService';
+import { handleRouteError } from '@/utils/error';
+import { QUERY_PARAMS } from '@/constants/system';
+import { isCategorySlug } from '@/utils/type';
 
 export const GET = async (request: NextRequest) => {
   try {
@@ -14,7 +14,7 @@ export const GET = async (request: NextRequest) => {
 
     if (!isCategorySlug(categorySlug)) {
       return NextResponse.json(
-        { success: false, message: "유효하지 않은 카테고리입니다." },
+        { success: false, message: '유효하지 않은 카테고리입니다.' },
         { status: 400 },
       );
     }

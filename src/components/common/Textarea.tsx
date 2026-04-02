@@ -1,10 +1,10 @@
-import { TextareaHTMLAttributes } from "react";
-import { cn } from "@/utils/styles";
+import { TextareaHTMLAttributes } from 'react';
+import { cn } from '@/utils/styles';
 
 const TEXTAREA_VARIANT = {
   outline:
-    "border border-border bg-background focus:border-accent-primary focus:ring-0",
-  ghost: "border-none bg-transparent",
+    'border border-border bg-background focus:border-accent-primary focus:ring-0',
+  ghost: 'border-none bg-transparent',
 } as const;
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -14,15 +14,15 @@ type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
 
 const Textarea = ({
   className,
-  variant = "outline",
+  variant = 'outline',
   ref,
   ...props
 }: TextareaProps) => (
   <textarea
     ref={ref}
     className={cn(
-      "w-full min-h-50 rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground",
-      "base-disabled base-transition",
+      'w-full min-h-50 rounded-main px-4 py-6 text-base leading-none outline-none placeholder:text-muted-foreground',
+      'base-disabled base-transition',
       TEXTAREA_VARIANT[variant],
       className,
     )}

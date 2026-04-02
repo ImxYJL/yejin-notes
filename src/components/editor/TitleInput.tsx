@@ -1,5 +1,5 @@
-import { memo, ChangeEvent } from "react";
-import { Input } from "../common";
+import { memo, ChangeEvent } from 'react';
+import { Input } from '../common';
 
 type TitleInputProps = {
   value: string;
@@ -20,5 +20,5 @@ const TitleInput = memo(({ value, onChange }: TitleInputProps) => {
   );
 });
 
-TitleInput.displayName = "TitleInput";
+TitleInput.displayName = 'TitleInput';
 export default TitleInput;

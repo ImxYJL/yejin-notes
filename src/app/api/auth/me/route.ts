@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import { checkIsAdmin } from "@/services/authService";
-import { handleRouteError } from "@/utils/error";
+import { NextResponse } from 'next/server';
+import { checkIsAdmin } from '@/services/authService';
+import { handleRouteError } from '@/utils/error';
 
 export const GET = async () => {
   try {

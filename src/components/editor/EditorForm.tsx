@@ -1,6 +1,5 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useState, useDeferredValue, useCallback } from 'react';
 import { Divider } from '@/components/common';
 import {
@@ -19,6 +18,7 @@ import { getPostApi } from '@/apis/posts';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import useCurrentCategory from '@/hooks/useCurrentCategory';
 import usePostImage from '@/hooks/usePostImage';
+import { MarkdownPreview } from '../markdown';
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -28,16 +28,6 @@ type EditorFormProps = {
 export const EDITOR_LAYOUT = {
   bottomPadding: 4,
 } as const;
-
-const MarkdownPreview = dynamic(
-  () => import('@/components/markdown/MarkdownPreview'),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="p-4 text-muted-foreground font-mono">미리보기 준비 중...</div>
-    ),
-  },
-);
 
 const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   const [formData, setFormData] = useState<PostForm>(initialData);

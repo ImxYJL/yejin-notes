@@ -1,6 +1,6 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { BLOG_QUERY_KEY } from "./queryKey";
-import { getPostApi } from "@/apis/posts";
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { BLOG_QUERY_KEY } from './queryKey';
+import { getPostApi } from '@/apis/posts';
 
 const usePost = (postId: string) => {
   return useSuspenseQuery({
