@@ -10,28 +10,45 @@ type CategoryQueryResult = {
   categoryMap: CategoryMap;
 };
 
+const usePublicCategories = () => {
+  const { data: publicData } = useQuery<Category[], Error, CategoryQueryResult>({
+    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
+    queryFn: getCategoriesApi,
+    staleTime: Infinity,
+    select: selectCategories,
+  });
+
+  return publicData;
+};
+
+const useAllCategories = (enabled: boolean) => {
+  const { data: allData } = useQuery<Category[], Error, CategoryQueryResult>({
+    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.all],
+    queryFn: getCategoriesApi,
+    enabled: enabled === true,
+    staleTime: Infinity,
+    select: selectCategories,
+  });
+
+  return allData;
+};
+
+const selectCategories = (categories: Category[]): CategoryQueryResult => {
+  const categoryMap = categories.reduce((acc, category) => {
+    acc[category.slug] = category;
+    return acc;
+  }, {} as CategoryMap);
+
+  return { categories, categoryMap };
+};
+
 const useCategories = () => {
   const { isAdmin } = useIsAdmin();
 
-  return useQuery<Category[], Error, CategoryQueryResult>({
-    queryKey: [
-      BLOG_QUERY_KEY.categories,
-      isAdmin ? CATEGORY_FILTER.all : CATEGORY_FILTER.public,
-    ],
-    queryFn: getCategoriesApi,
+  const publicData = usePublicCategories();
+  const allData = useAllCategories(isAdmin);
 
-    staleTime: Infinity,
-    gcTime: Infinity,
-
-    select: (categories: Category[]) => {
-      const categoryMap = categories.reduce((acc, category) => {
-        acc[category.slug] = category;
-        return acc;
-      }, {} as CategoryMap);
-
-      return { categories, categoryMap };
-    },
-  });
+  return { data: allData ?? publicData };
 };
 
 export default useCategories;
