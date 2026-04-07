@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPublicPosts, upsertPost } from '@/services/postService';
+import { getAdminPosts, upsertPost } from '@/services/postService';
 import { handleRouteError } from '@/utils/error';
 import { QUERY_PARAMS } from '@/constants/system';
 import { isCategorySlug } from '@/utils/type';
@@ -19,7 +19,7 @@ export const GET = async (request: NextRequest) => {
       );
     }
 
-    const result = await getPublicPosts(categorySlug, page, limit);
+    const result = await getAdminPosts(categorySlug, page, limit);
 
     return NextResponse.json({
       success: true,
@@ -40,17 +40,6 @@ export const POST = async (request: Request) => {
       success: true,
       data: post,
     });
-  } catch (error) {
-    return handleRouteError(error);
-  }
-};
-
-// patch 담당 (로직은 위와 동일함!)
-export const PATCH = async (request: Request) => {
-  try {
-    const body = await request.json();
-    const post = await upsertPost(body);
-    return NextResponse.json({ success: true, data: post });
   } catch (error) {
     return handleRouteError(error);
   }

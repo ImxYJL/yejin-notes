@@ -3,8 +3,17 @@ import { PostListContainer } from '../../components';
 import { makeQueryClient } from '@/libs/tanstack/queryClient';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import { PAGE_LIMIT } from '@/queries/usePosts';
-import { getPosts } from '@/services/postService';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { getPublicCategories } from '@/services/categoryService';
+import { getPublicPosts } from '@/services/postService';
+
+export async function generateStaticParams() {
+  const categories = await getPublicCategories();
+
+  return categories.map((c) => ({
+    categorySlug: c.slug,
+  }));
+}
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
@@ -17,7 +26,7 @@ const PostListPage = async ({ params }: { params: Promise<PostListPageParams> })
 
   await queryClient.prefetchQuery({
     queryKey: [BLOG_QUERY_KEY.posts, categorySlug, page],
-    queryFn: () => getPosts(categorySlug, page, PAGE_LIMIT),
+    queryFn: () => getPublicPosts(categorySlug, page, PAGE_LIMIT),
   });
 
   return (

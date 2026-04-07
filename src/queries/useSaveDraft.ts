@@ -23,7 +23,7 @@ const useSaveDraft = () => {
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.drafts] });
 
       if (pathname.includes('write')) {
-        router.replace(PAGE_PATH.edit(newPost.id));
+        router.replace(PAGE_PATH.admin.edit(newPost.id));
       }
     },
     onError: () => showToast('임시저장에 실패했습니다.', 'error'),

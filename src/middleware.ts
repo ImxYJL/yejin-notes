@@ -53,12 +53,10 @@ export const middleware = async (request: NextRequest) => {
   } = await supabase.auth.getUser();
 
   // 5. 보호된 경로 체크 (어드민 전용 페이지 등)
-  const isProtectedPath = PAGE_PATH.adminOnly.some((path) =>
-    pathname.startsWith(path),
-  );
+  const isAdminPath = (pathname: string) => pathname.startsWith('/admin');
 
   // 6. [리다이렉트 로직] 로그인이 필요한 페이지에 비로그인 유저 접근 시
-  if (isProtectedPath && !user) {
+  if (isAdminPath(pathname) && !user) {
     // 만약 API 요청이라면 리다이렉트 대신 401 상태코드를 반환
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });

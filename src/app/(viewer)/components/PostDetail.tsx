@@ -1,19 +1,17 @@
 import { PostNavigation, PostAction } from '@/app/(viewer)/components';
 import { Divider } from '@/components/common';
 import { Lock, Clock, Tag } from 'lucide-react';
-import { CategorySlug } from '@/types/blog';
+import { CategorySlug, Post, PostDetailResponse, PostsResponse } from '@/types/blog';
 import { formatDate } from '@/utils/date';
-import { getPost } from '@/services/postService';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
 import { MarkdownViewer } from '@/components/markdown';
 
 type Props = {
   categorySlug: CategorySlug;
-  id: string;
+  post: PostDetailResponse;
 };
 
-const PostDetail = async ({ categorySlug, id }: Props) => {
-  const post = await getPost(id);
+const PostDetail = async ({ categorySlug, post }: Props) => {
   const contentNode = await getMarkdownComponent(post.content);
 
   return (

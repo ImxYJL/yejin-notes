@@ -32,7 +32,7 @@ const PostAction = ({ id, categorySlug }: Props) => {
     <div className="flex items-center gap-3">
       <div className="flex gap-1">
         <Link
-          href={PAGE_PATH.edit(id)}
+          href={PAGE_PATH.admin.edit(id)}
           className={getButtonStyles('ghost', 'sm', 'p-1')}
         >
           <Edit2 size={18} />

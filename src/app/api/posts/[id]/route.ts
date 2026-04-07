@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deletePost, getPost, upsertPost } from '@/services/postService';
+import { deletePost, getPublicPost, upsertPost } from '@/services/postService';
 import { handleRouteError } from '@/utils/error';
 
 export type PostParams = {
@@ -11,7 +11,7 @@ export type PostParams = {
 export const GET = async (_request: NextRequest, { params }: PostParams) => {
   try {
     const { id } = await params;
-    const post = await getPost(id);
+    const post = await getPublicPost(id);
 
     return NextResponse.json({
       success: true,

@@ -23,6 +23,11 @@ export const CATEGORY_FILTER = {
   public: 'public',
 } as const;
 
+export const POST_FILTER = {
+  public: 'public',
+  all: 'all',
+} as const;
+
 export const INITIAL_POST: Omit<PostForm, 'id'> = {
   title: '',
   content: '',

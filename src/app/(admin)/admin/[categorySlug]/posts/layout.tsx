@@ -1,6 +1,6 @@
 import { cn } from '@/utils/styles';
 import Sidebar from '@/components/common/Sidebar';
-import { getPublicCategories } from '@/services/categoryService';
+import { getAllCategories } from '@/services/categoryService';
 import { makeQueryClient } from '@/libs/tanstack/queryClient';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
@@ -12,8 +12,8 @@ const ViewerLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = makeQueryClient();
 
   const categories = await queryClient.fetchQuery<Category[]>({
-    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
-    queryFn: getPublicCategories,
+    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.all],
+    queryFn: getAllCategories,
   });
   const categoriesWithHref = categories.map((c) => ({
     ...c,

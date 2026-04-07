@@ -6,21 +6,22 @@ import { Github, Mail, Palette, X, Menu, Lock, Plus } from 'lucide-react';
 import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
 import useThemeStore from '@/store/useThemeStore';
-import { PAGE_PATH } from '@/constants/paths';
-import useCurrentCategory from '@/hooks/useCurrentCategory';
 import { CATEGORY_MAP } from '@/constants/blog';
-import useIsAdmin from '@/queries/auth/useIsAdmin';
 import useDevice from '@/hooks/useDevice';
+import { Category } from '@/types/blog';
+import useCurrentSlug from '@/hooks/useCurrentSlug';
 
-const Sidebar = () => {
+type CategoryWithHref = Category & { href: string };
+
+type Props = {
+  categories: CategoryWithHref[];
+};
+
+const Sidebar = ({ categories }: Props) => {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
   const { theme, setTheme } = useThemeStore();
+  const { isActiveCategory } = useCurrentSlug();
   const { isMobile } = useDevice();
-
-  const { isActiveCategory, categories, visibleCategories } = useCurrentCategory();
-  const { isAdmin } = useIsAdmin();
-
-  if (!categories || !visibleCategories) return null;
 
   const handleCategoryClick = () => {
     if (isMobile) closeSidebar();
@@ -84,14 +85,13 @@ const Sidebar = () => {
 
           {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3">
-            {visibleCategories.map((category) => {
+            {categories.map((category) => {
               const isActive = isActiveCategory(category.slug);
-              const href = PAGE_PATH.posts(category.slug);
 
               return (
                 <Link
                   key={category.id}
-                  href={href}
+                  href={category.href}
                   onClick={handleCategoryClick}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-main base-transition group relative',
@@ -139,14 +139,14 @@ const Sidebar = () => {
                 <Mail size={20} />
               </a>
             </div>
-            {isAdmin && (
+            {/* {isAdmin && (
               <Link
                 href={PAGE_PATH.write}
                 className={getButtonStyles('ghost', 'md')}
               >
                 <Plus size={24} />
               </Link>
-            )}
+            )} */}
             {/* <Button
               variant="ghost"
               size="sm"

@@ -11,7 +11,7 @@ import {
 import { ContentEditor, TitleInput } from '.';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import useSavePost from '@/queries/useSavePost';
-import { EditorToolbar } from '@/app/(editor)/edit/components';
+import { EditorToolbar } from '@/app/(admin)/edit/components';
 import useSaveDraft from '@/queries/useSaveDraft';
 import { useQueryClient } from '@tanstack/react-query';
 import { getPostApi } from '@/apis/posts';

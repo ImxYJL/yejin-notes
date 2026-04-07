@@ -2,18 +2,22 @@
 
 import { CategorySlug } from '@/types/blog';
 import { useState } from 'react';
+import { Plus } from 'lucide-react';
+import Link from 'next/link';
 import useCurrentCategory from '@/hooks/useCurrentCategory';
+import { PAGE_PATH } from '@/constants/paths';
+import { getButtonStyles } from '@/components/common/Button';
 import PostListLayout from './PostListLayout';
-import { usePublicPosts } from '@/queries/usePosts';
+import { useAdminPosts } from '@/queries/usePosts';
 
 type Props = {
   categorySlug: CategorySlug;
 };
 
-const PostListContainer = ({ categorySlug }: Props) => {
+const AdminPostListContainer = ({ categorySlug }: Props) => {
   const [page, setPage] = useState(1);
   const { categoryMap } = useCurrentCategory();
-  const { data, isPending } = usePublicPosts(categorySlug, page);
+  const { data, isPending } = useAdminPosts(categorySlug, page);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -32,8 +36,16 @@ const PostListContainer = ({ categorySlug }: Props) => {
       currentPage={page}
       totalPages={data?.totalPages ?? 1}
       onPageChange={handlePageChange}
+      actions={
+        <Link
+          href={PAGE_PATH.admin.write}
+          className={getButtonStyles('primary', 'md', 'font-bold')}
+        >
+          <Plus size={24} />
+        </Link>
+      }
     />
   );
 };
 
-export default PostListContainer;
+export default AdminPostListContainer;

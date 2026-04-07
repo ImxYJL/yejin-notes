@@ -1,7 +1,7 @@
 import { PostDetailResponse, PostForm } from '@/types/blog';
 import EditorContainer from '../components/EditorContainer';
 import { INITIAL_POST } from '@/constants/blog';
-import { getPost } from '@/services/postService';
+import { getAdminPost } from '@/services/postService';
 
 type EditPageParams = {
   id: string;
@@ -9,7 +9,7 @@ type EditPageParams = {
 
 const EditPage = async ({ params }: { params: Promise<EditPageParams> }) => {
   const { id } = await params;
-  const data = await getPost(id).catch(() => null);
+  const data = await getAdminPost(id).catch(() => null);
 
   const initialPost: PostForm = {
     ...INITIAL_POST,

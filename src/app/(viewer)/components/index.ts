@@ -6,3 +6,5 @@ export { default as PostListContainer } from './PostListContainer';
 export { default as PostNavigation } from './PostNavigation';
 export { default as PostDetailSkeleton } from './PostDetailSkeleton';
 export { default as PostAction } from './PostAction';
+export { default as PostListLayout } from './PostListLayout';
+export { default as AdminPostListContainer } from './AdminPostListContainer';
