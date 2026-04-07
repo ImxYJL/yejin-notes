@@ -6,6 +6,7 @@ import { Category, CategorySlug } from '@/types/blog';
 import { cache } from 'react';
 import { AuthUser } from '@/types/auth';
 import { checkIsAdmin } from './authService';
+import { publicSupabase } from '@/libs/supabase/client';
 
 export const validateCategoryAccess = (
   categorySlug: CategorySlug,
@@ -33,8 +34,7 @@ export const getAccessibleCategories = async () => {
 };
 
 export const getPublicCategories = cache(async (): Promise<Category[]> => {
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
+  const { data, error } = await publicSupabase
     .from('categories')
     .select('id, name, slug, is_private')
     .eq('is_private', false);
