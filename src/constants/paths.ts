@@ -28,9 +28,10 @@ export const API_ENDPOINT = {
 
   // admin
   admin: {
-    posts: (slug: CategorySlug) => `/admin/posts?categorySlug=${slug}`,
-    post: (id: string, categorySlug: CategorySlug) => `/posts/${categorySlug}/${id}`,
-    drafts: '/admin/posts/drafts',
+    posts: (slug: CategorySlug) => `${ADMIN_PREFIX}/posts?categorySlug=${slug}`,
+    post: (id: string, categorySlug: CategorySlug) =>
+      `${ADMIN_PREFIX}/posts/${categorySlug}/${id}`,
+    drafts: `${ADMIN_PREFIX}/posts/drafts`,
   },
 
   me: '/auth/me',
