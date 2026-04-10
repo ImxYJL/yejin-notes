@@ -29,7 +29,7 @@ export const API_ENDPOINT = {
   // admin
   admin: {
     posts: (slug: CategorySlug) => `/admin/posts?categorySlug=${slug}`,
-    post: (id: string) => `/admin/posts/${id}`,
+    post: (id: string, categorySlug: CategorySlug) => `/posts/${categorySlug}/${id}`,
     drafts: '/admin/posts/drafts',
   },
 

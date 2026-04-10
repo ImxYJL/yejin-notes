@@ -5,19 +5,18 @@ import { makeQueryClient } from '@/libs/tanstack/queryClient';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { CATEGORY_FILTER } from '@/constants/blog';
-import { Category } from '@/types/blog';
 import { PAGE_PATH } from '@/constants/paths';
 
 const ViewerLayout = async ({ children }: { children: React.ReactNode }) => {
   const queryClient = makeQueryClient();
 
-  const categories = await queryClient.fetchQuery<Category[]>({
+  const categories = await queryClient.fetchQuery({
     queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.all],
     queryFn: getAllCategories,
   });
   const categoriesWithHref = categories.map((c) => ({
     ...c,
-    href: c.isPrivate ? PAGE_PATH.admin.posts(c.slug) : PAGE_PATH.posts(c.slug),
+    href: PAGE_PATH.admin.posts(c.slug),
   }));
 
   return (

@@ -1,11 +1,10 @@
 import { CategorySlug } from '@/types/blog';
 import { makeQueryClient } from '@/libs/tanstack/queryClient';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import { PAGE_LIMIT } from '@/queries/usePosts';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getAdminPosts } from '@/services/postService';
-import { AdminPostListContainer } from '@/app/(viewer)/components';
-import { POST_FILTER } from '@/constants/blog';
+import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
+import { AdminPostListContainer } from '@/app/(viewer)/components/client';
 
 type PostListPageParams = {
   categorySlug: CategorySlug;
@@ -17,6 +16,7 @@ export default async function AdminPostListPage({
   params: Promise<PostListPageParams>;
 }) {
   const { categorySlug } = await params;
+
   const queryClient = makeQueryClient();
 
   await queryClient.prefetchQuery({

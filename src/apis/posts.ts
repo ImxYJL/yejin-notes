@@ -56,7 +56,7 @@ export const getAdminPostsApi = async (
  */
 export const savePostApi = async (formData: PostForm): Promise<Post> => {
   const { data } = await axiosInstance.patch(
-    API_ENDPOINT.admin.post(formData.id),
+    API_ENDPOINT.admin.post(formData.id, formData.categorySlug),
     formData,
   );
   return data.data;
@@ -65,8 +65,11 @@ export const savePostApi = async (formData: PostForm): Promise<Post> => {
 /**
  * [Admin] 포스트 삭제
  */
-export const deletePostApi = async (id: string): Promise<void> => {
-  await axiosInstance.delete(API_ENDPOINT.admin.post(id));
+export const deletePostApi = async (
+  id: string,
+  categorySlug: CategorySlug,
+): Promise<void> => {
+  await axiosInstance.delete(API_ENDPOINT.admin.post(id, categorySlug));
 };
 
 /**

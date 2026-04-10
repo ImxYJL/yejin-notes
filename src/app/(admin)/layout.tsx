@@ -1,7 +1,9 @@
 import { validateAdmin } from '@/services/authService';
 
+export const dynamic = 'force-dynamic';
+
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
-  await validateAdmin(); // 관리자 아니면 redirect or throw
+  await validateAdmin();
 
   return <>{children}</>;
 };
