@@ -33,7 +33,7 @@ export const getAccessibleCategories = async () => {
   return getPublicCategories();
 };
 
-export const getPublicCategories = cache(async (): Promise<Category[]> => {
+export const getPublicCategories = async (): Promise<Category[]> => {
   const { data, error } = await publicSupabase
     .from('categories')
     .select('id, name, slug, is_private')
@@ -48,9 +48,9 @@ export const getPublicCategories = cache(async (): Promise<Category[]> => {
     slug: row.slug,
     isPrivate: row.is_private,
   }));
-});
+};
 
-export const getAllCategories = cache(async (): Promise<Category[]> => {
+export const getAllCategories = async (): Promise<Category[]> => {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('categories')
@@ -65,4 +65,4 @@ export const getAllCategories = cache(async (): Promise<Category[]> => {
     slug: row.slug,
     isPrivate: row.is_private,
   }));
-});
+};

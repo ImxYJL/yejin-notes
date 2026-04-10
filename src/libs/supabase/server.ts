@@ -2,7 +2,6 @@ import 'server-only';
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
-import { cache } from 'react';
 
 /**
  * createServerSupabaseClient (SSR)
@@ -11,7 +10,7 @@ import { cache } from 'react';
  * - 요청마다 다른 사용자 데이터를 반환
  * - cookies() 사용 → 해당 route는 무조건 dynamic 강제
  */
-export const createServerSupabaseClient = cache(async () => {
+export const createServerSupabaseClient = async () => {
   const cookieStore = await cookies();
 
   return createServerClient(
@@ -32,4 +31,4 @@ export const createServerSupabaseClient = cache(async () => {
       },
     },
   );
-});
+};
