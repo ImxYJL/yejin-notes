@@ -4,15 +4,15 @@ import { CategorySlug, PostDetailResponse } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
 import { MarkdownViewer } from '@/components/markdown';
-import { PostAction } from '@/app/(viewer)/components/client';
 import PostNavigation from './PostNavigation';
 
 type Props = {
   categorySlug: CategorySlug;
   post: PostDetailResponse;
+  actions?: React.ReactNode;
 };
 
-const PostDetail = async ({ categorySlug, post }: Props) => {
+const PostDetail = async ({ categorySlug, post, actions }: Props) => {
   const contentNode = await getMarkdownComponent(post.content);
 
   return (
@@ -48,7 +48,7 @@ const PostDetail = async ({ categorySlug, post }: Props) => {
               )}
             </span>
 
-            <PostAction id={post.id} categorySlug={categorySlug} />
+            {actions}
           </div>
         </header>
 

@@ -1,3 +1,4 @@
+import { PostAction } from '@/app/(viewer)/components/client';
 import { PostDetail } from '@/app/(viewer)/components/server';
 import { checkIsAdmin } from '@/services/authService';
 import { getAdminPost } from '@/services/postService';
@@ -23,7 +24,13 @@ const AdminPostDetailPage = async ({
 
   const post = await getAdminPost(id);
 
-  return <PostDetail post={post} categorySlug={categorySlug} />;
+  return (
+    <PostDetail
+      post={post}
+      categorySlug={categorySlug}
+      actions={<PostAction id={post.id} categorySlug={categorySlug} />}
+    />
+  );
 };
 
 export default AdminPostDetailPage;
