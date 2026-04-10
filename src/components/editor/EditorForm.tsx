@@ -2,16 +2,11 @@
 
 import { useState, useDeferredValue, useCallback } from 'react';
 import { Divider } from '@/components/common';
-import {
-  CategorySlug,
-  EditorMode,
-  PostDetailResponse,
-  PostForm,
-} from '@/types/blog';
+import { CategorySlug, EditorMode, PostForm } from '@/types/blog';
 import { ContentEditor, TitleInput } from '.';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import useSavePost from '@/queries/useSavePost';
-import { EditorToolbar } from '@/app/(admin)/edit/components';
+import { EditorToolbar } from '@/app/(admin)/admin/edit/components';
 import useSaveDraft from '@/queries/useSaveDraft';
 import { useQueryClient } from '@tanstack/react-query';
 import { getPostApi } from '@/apis/posts';
@@ -19,6 +14,7 @@ import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import useCurrentCategory from '@/hooks/useCurrentCategory';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';
+import { convertToPostForm } from '@/utils/posts';
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -193,21 +189,6 @@ export const extractSummary = (content: string, length = 150): string => {
       .slice(0, length)
       .trim()
   );
-};
-
-// TODO: dev 상수화
-export const convertToPostForm = (data: PostDetailResponse): PostForm => {
-  return {
-    id: data.id,
-    title: data.title ?? '',
-    content: data.content ?? '',
-    summary: data.content ?? '',
-    tags: data.tags,
-    thumbnailUrl: data.thumbnailUrl,
-    categorySlug: data.category?.slug ?? 'dev',
-    isPrivate: data.isPrivate,
-    isPublished: data.isPublished,
-  };
 };
 
 export default EditorForm;
