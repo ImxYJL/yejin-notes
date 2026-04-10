@@ -13,6 +13,7 @@ const PostItem = ({ categorySlug, post }: PostItemProps) => (
   <li>
     <Link
       href={PAGE_PATH.postDetail(categorySlug, post.id)}
+      prefetch={false}
       className="block py-10 group border-muted-foreground/40"
     >
       <article className="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center">

@@ -3,7 +3,7 @@
 import { CategorySlug } from '@/types/blog';
 import { useState } from 'react';
 import useCurrentCategory from '@/hooks/useCurrentCategory';
-import PostListLayout from './PostListLayout';
+import PostListLayout from '../server/PostListLayout';
 import { usePublicPosts } from '@/queries/usePosts';
 
 type Props = {

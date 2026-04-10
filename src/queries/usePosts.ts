@@ -2,9 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { CategorySlug } from '@/types/blog';
 import { getAdminPostsApi, getPublicPostsApi } from '@/apis/posts';
-import { POST_FILTER } from '@/constants/blog';
-
-export const PAGE_LIMIT = 10;
+import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
 
 /**
  * 일반 사용자용 공개 포스트 목록 조회 훅

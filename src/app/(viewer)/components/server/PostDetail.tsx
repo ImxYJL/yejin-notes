@@ -1,10 +1,11 @@
-import { PostNavigation, PostAction } from '@/app/(viewer)/components';
 import { Divider } from '@/components/common';
 import { Lock, Clock, Tag } from 'lucide-react';
-import { CategorySlug, Post, PostDetailResponse, PostsResponse } from '@/types/blog';
+import { CategorySlug, PostDetailResponse } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
 import { MarkdownViewer } from '@/components/markdown';
+import { PostAction } from '@/app/(viewer)/components/client';
+import PostNavigation from './PostNavigation';
 
 type Props = {
   categorySlug: CategorySlug;

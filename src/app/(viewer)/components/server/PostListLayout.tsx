@@ -1,9 +1,7 @@
-'use client';
-
 import { CategorySlug } from '@/types/blog';
 import { PostItem } from '@/types/blog';
-import PostList from './PostList';
 import PostSkeleton from './PostSkeleton';
+import PostList from './PostList';
 import PostListPagination from './PostListPagination';
 
 type Props = {

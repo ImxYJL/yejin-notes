@@ -1,6 +1,8 @@
 import { CategorySlug, PostForm } from '@/types/blog';
 import { BookOpen, Code, Coffee } from 'lucide-react';
 
+export const PAGE_LIMIT = 10;
+
 export const CATEGORY_MAP = {
   dev: {
     icon: <Code size={20} />,
@@ -38,3 +40,16 @@ export const INITIAL_POST: Omit<PostForm, 'id'> = {
   isPrivate: false,
   isPublished: false,
 };
+
+export const NEXT_CACHE_KEY = {
+  posts: 'public-posts',
+  post: (id: string) => `post-${id}`,
+  categories: 'categories',
+} as const;
+
+export const NEXT_CACHE_TAG = {
+  posts: 'posts',
+  categories: 'categories',
+  post: (id: string) => `post-${id}`,
+  categoryPosts: (slug: string) => `posts-${slug}`,
+} as const;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAdminPosts, upsertPost } from '@/services/postService';
-import { handleRouteError } from '@/utils/error';
+import { AppError, handleRouteError } from '@/utils/error';
 import { QUERY_PARAMS } from '@/constants/system';
 import { isCategorySlug } from '@/utils/type';
 
@@ -13,10 +13,7 @@ export const GET = async (request: NextRequest) => {
     const limit = Number(searchParams.get(QUERY_PARAMS.limit)) || undefined;
 
     if (!isCategorySlug(categorySlug)) {
-      return NextResponse.json(
-        { success: false, message: '유효하지 않은 카테고리입니다.' },
-        { status: 400 },
-      );
+      throw AppError.notFound();
     }
 
     const result = await getAdminPosts(categorySlug, page, limit);

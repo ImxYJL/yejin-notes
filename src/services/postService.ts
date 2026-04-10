@@ -238,9 +238,9 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
   if (error) throw AppError.fromSupabase(error);
   if (!data) throw AppError.internal('데이터 처리에 실패했습니다.');
 
-  revalidateTag(NEXT_CACHE_TAG.post(formData.id));
-  revalidateTag(NEXT_CACHE_TAG.categoryPosts(formData.categorySlug));
-  revalidateTag(NEXT_CACHE_TAG.posts);
+  revalidateTag(NEXT_CACHE_TAG.post(formData.id), 'default');
+  revalidateTag(NEXT_CACHE_TAG.categoryPosts(formData.categorySlug), 'default');
+  revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 
   return mapPostDetailResponse(data);
 };
@@ -251,9 +251,9 @@ export const deletePost = async (id: string, categorySlug: CategorySlug) => {
   const { error } = await supabase.from('posts').delete().eq('id', id);
   if (error) throw AppError.fromSupabase(error);
 
-  revalidateTag(NEXT_CACHE_TAG.post(id));
-  revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug));
-  revalidateTag(NEXT_CACHE_TAG.posts);
+  revalidateTag(NEXT_CACHE_TAG.post(id), 'default');
+  revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug), 'default');
+  revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 };
 
 export const getDrafts = async (): Promise<DraftPost[]> => {

@@ -2,7 +2,6 @@ import { getCategoriesApi } from '@/apis/category';
 import { useQuery } from '@tanstack/react-query';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { Category, CategoryMap } from '@/types/blog';
-import useIsAdmin from './auth/useIsAdmin';
 import { CATEGORY_FILTER } from '@/constants/blog';
 
 type CategoryQueryResult = {
@@ -10,7 +9,7 @@ type CategoryQueryResult = {
   categoryMap: CategoryMap;
 };
 
-const usePublicCategories = () => {
+export const usePublicCategories = () => {
   const { data: publicData } = useQuery<Category[], Error, CategoryQueryResult>({
     queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
     queryFn: getCategoriesApi,
@@ -21,11 +20,10 @@ const usePublicCategories = () => {
   return publicData;
 };
 
-const useAllCategories = (enabled: boolean) => {
+export const useAllCategories = () => {
   const { data: allData } = useQuery<Category[], Error, CategoryQueryResult>({
     queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.all],
     queryFn: getCategoriesApi,
-    enabled: enabled === true,
     staleTime: Infinity,
     select: selectCategories,
   });
@@ -41,14 +39,3 @@ const selectCategories = (categories: Category[]): CategoryQueryResult => {
 
   return { categories, categoryMap };
 };
-
-const useCategories = () => {
-  const { isAdmin } = useIsAdmin();
-
-  const publicData = usePublicCategories();
-  const allData = useAllCategories(isAdmin);
-
-  return { data: allData ?? publicData };
-};
-
-export default useCategories;

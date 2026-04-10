@@ -6,13 +6,19 @@ import { useRouter } from 'next/navigation';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { CategorySlug } from '@/types/blog';
 
+type DeleteParams = {
+  id: string;
+  categorySlug: CategorySlug;
+};
+
 const useDeletePost = (slug: CategorySlug) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showToast } = useToastStore();
 
   return useMutation({
-    mutationFn: (postId: string) => deletePostApi(postId),
+    mutationFn: ({ id, categorySlug }: DeleteParams) =>
+      deletePostApi(id, categorySlug),
     onSuccess: () => {
       showToast('게시글이 삭제되었습니다.', 'success');
 

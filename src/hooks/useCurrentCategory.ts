@@ -1,18 +1,19 @@
 import { CategorySlug } from '@/types/blog';
-import useCategories from '@/queries/useCategories';
+import { usePublicCategories } from '@/queries/useCategories';
 import useCurrentSlug from './useCurrentSlug';
 
 const useCurrentCategory = () => {
   const { currentSlug, isActiveCategory } = useCurrentSlug();
-  const { data } = useCategories();
+  const publicData = usePublicCategories();
 
-  const currentCategory = data?.categoryMap[currentSlug as CategorySlug] ?? null;
+  const currentCategory =
+    publicData?.categoryMap[currentSlug as CategorySlug] ?? null;
 
   return {
     currentSlug,
     currentCategory,
-    categoryMap: data?.categoryMap,
-    categories: data?.categories,
+    categoryMap: publicData?.categoryMap,
+    categories: publicData?.categories,
     isActiveCategory,
   };
 };
