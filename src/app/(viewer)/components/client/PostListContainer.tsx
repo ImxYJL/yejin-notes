@@ -28,7 +28,6 @@ const PostListContainer = ({ categorySlug }: Props) => {
       categoryName={categoryMap[categorySlug]?.name}
       postCount={data?.posts.length ?? 0}
       posts={data?.posts ?? []}
-      isPending={isPending}
       currentPage={page}
       totalPages={data?.totalPages ?? 1}
       onPageChange={handlePageChange}

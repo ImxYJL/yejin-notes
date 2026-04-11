@@ -34,7 +34,6 @@ const AdminPostListContainer = ({ categorySlug }: Props) => {
       categoryName={categoryMap[categorySlug]?.name}
       postCount={data?.posts.length ?? 0}
       posts={data?.posts ?? []}
-      isPending={isLoading}
       currentPage={page}
       totalPages={data?.totalPages ?? 1}
       onPageChange={handlePageChange}

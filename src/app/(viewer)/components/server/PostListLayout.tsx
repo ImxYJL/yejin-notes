@@ -1,6 +1,5 @@
 import { CategorySlug } from '@/types/blog';
 import { PostItem } from '@/types/blog';
-import PostSkeleton from './PostSkeleton';
 import PostList from './PostList';
 import PostListPagination from './PostListPagination';
 
@@ -9,7 +8,6 @@ type Props = {
   categoryName?: string;
   postCount: number;
   posts: PostItem[];
-  isPending: boolean;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
@@ -21,7 +19,6 @@ const PostListLayout = ({
   categoryName,
   postCount,
   posts,
-  isPending,
   currentPage,
   totalPages,
   onPageChange,
@@ -42,24 +39,16 @@ const PostListLayout = ({
         {actions}
       </header>
 
-      {isPending ? (
-        <div className="divide-y divide-border">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <PostSkeleton key={i} />
-          ))}
-        </div>
-      ) : (
-        <>
-          <PostList categorySlug={categorySlug} postItems={posts} />
-          {totalPages > 1 && (
-            <PostListPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={onPageChange}
-            />
-          )}
-        </>
-      )}
+      <div>
+        <PostList categorySlug={categorySlug} postItems={posts} />
+        {totalPages > 1 && (
+          <PostListPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={onPageChange}
+          />
+        )}
+      </div>
     </div>
   );
 };
