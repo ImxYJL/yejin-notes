@@ -2,7 +2,7 @@
 
 import { Badge } from '@/components/common';
 import { CATEGORY_KEYS } from '@/constants/blog';
-import useCurrentCategory from '@/hooks/useCurrentCategory';
+import { useAllCategories } from '@/queries/useCategories';
 import { CategorySlug } from '@/types/blog';
 
 type Props = {
@@ -11,7 +11,8 @@ type Props = {
 };
 
 const CategorySelector = ({ categorySlug, onSelect }: Props) => {
-  const { categoryMap } = useCurrentCategory();
+  const allData = useAllCategories();
+  const categoryMap = allData?.categoryMap;
 
   if (!categoryMap) return null;
 
