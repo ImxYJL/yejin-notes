@@ -13,7 +13,7 @@ type Props = {
 const PostListContainer = ({ categorySlug }: Props) => {
   const [page, setPage] = useState(1);
   const { categoryMap } = useCurrentCategory();
-  const { data, isPending } = usePublicPosts(categorySlug, page);
+  const { data } = usePublicPosts(categorySlug, page);
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
