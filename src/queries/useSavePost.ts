@@ -21,7 +21,7 @@ const useSavePost = () => {
         queryKey: [BLOG_QUERY_KEY.posts, BLOG_QUERY_KEY.drafts],
       });
 
-      router.push(PAGE_PATH.postDetail(newPost.category.slug, newPost.id));
+      router.push(PAGE_PATH.admin.postDetail(newPost.category.slug, newPost.id));
     },
     onError: (error: Error) => showToast(error.message, 'error'),
   });

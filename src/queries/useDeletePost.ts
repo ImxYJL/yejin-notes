@@ -24,7 +24,7 @@ const useDeletePost = (slug: CategorySlug) => {
 
       queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts, slug] });
 
-      router.push(PAGE_PATH.posts(slug));
+      router.push(PAGE_PATH.admin.posts(slug));
     },
     onError: (error: Error) => showToast(error.message, 'error'),
   });
