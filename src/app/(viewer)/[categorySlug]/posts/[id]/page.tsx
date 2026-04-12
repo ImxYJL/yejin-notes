@@ -2,7 +2,7 @@ import { getPublicCategories } from '@/services/categoryService';
 import { getPublicPost, getPublicPosts } from '@/services/postService';
 import { CategorySlug, PostDetailResponse } from '@/types/blog';
 import { Suspense } from 'react';
-import { PostDetail } from '@/app/(viewer)/components/server';
+import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
 import { redirect } from 'next/navigation';
 import { PAGE_PATH } from '@/constants/paths';
 
@@ -44,7 +44,11 @@ const PostDetailPage = async ({
     redirect(PAGE_PATH.admin.postDetail(categorySlug, id));
   }
 
-  return <PostDetail post={post} categorySlug={categorySlug} />;
+  return (
+    <Suspense fallback={<PostDetailSkeleton />}>
+      <PostDetail post={post} categorySlug={categorySlug} />;
+    </Suspense>
+  );
 };
 
 export default PostDetailPage;
