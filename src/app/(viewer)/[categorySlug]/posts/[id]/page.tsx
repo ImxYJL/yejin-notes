@@ -46,7 +46,7 @@ const PostDetailPage = async ({
 
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
-      <PostDetail post={post} categorySlug={categorySlug} />;
+      <PostDetail post={post} categorySlug={categorySlug} />
     </Suspense>
   );
 };
