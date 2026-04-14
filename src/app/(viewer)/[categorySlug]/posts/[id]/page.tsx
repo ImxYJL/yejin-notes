@@ -22,8 +22,6 @@ export async function generateStaticParams() {
   return results.flat();
 }
 
-export const dynamicParams = true;
-
 type PostDetailPageParams = {
   categorySlug: CategorySlug;
   id: string;
