@@ -9,6 +9,7 @@ import { savePostApi } from '@/apis/posts';
 const useSavePost = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
+
   const { showToast } = useToastStore();
 
   return useMutation({
@@ -17,8 +18,11 @@ const useSavePost = () => {
     onSuccess: (newPost) => {
       showToast('저장이 완료되었습니다.', 'success');
 
+      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts] });
+      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.drafts] });
+
       queryClient.invalidateQueries({
-        queryKey: [BLOG_QUERY_KEY.posts, BLOG_QUERY_KEY.drafts],
+        queryKey: [BLOG_QUERY_KEY.post, newPost.id],
       });
 
       router.push(PAGE_PATH.admin.postDetail(newPost.category.slug, newPost.id));
