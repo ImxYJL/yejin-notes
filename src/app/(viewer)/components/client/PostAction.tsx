@@ -16,7 +16,7 @@ type Props = {
 
 const PostAction = ({ id, categorySlug }: Props) => {
   const { isAdmin } = useIsAdmin();
-  const { mutate: deletePost, isPending } = useDeletePost(categorySlug);
+  const { mutate: deletePost, isPending } = useDeletePost();
 
   const handleDelete = () => {
     if (isPending) return;

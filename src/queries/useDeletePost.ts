@@ -11,7 +11,7 @@ type DeleteParams = {
   categorySlug: CategorySlug;
 };
 
-const useDeletePost = (slug: CategorySlug) => {
+const useDeletePost = () => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { showToast } = useToastStore();
@@ -19,12 +19,18 @@ const useDeletePost = (slug: CategorySlug) => {
   return useMutation({
     mutationFn: ({ id, categorySlug }: DeleteParams) =>
       deletePostApi(id, categorySlug),
-    onSuccess: () => {
+    onSuccess: (_, { id, categorySlug }) => {
       showToast('게시글이 삭제되었습니다.', 'success');
 
-      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.posts, slug] });
+      queryClient.invalidateQueries({
+        queryKey: [BLOG_QUERY_KEY.posts, categorySlug],
+      });
 
-      router.push(PAGE_PATH.admin.posts(slug));
+      queryClient.removeQueries({
+        queryKey: [BLOG_QUERY_KEY.post, id],
+      });
+
+      router.push(PAGE_PATH.admin.posts(categorySlug));
     },
     onError: (error: Error) => showToast(error.message, 'error'),
   });
