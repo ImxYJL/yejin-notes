@@ -1,11 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import Button, { getButtonStyles } from './Button';
-import { Github, Mail, Palette, X, Menu, Lock, Plus } from 'lucide-react';
+import Button from './Button';
+import { Github, Mail, X, Menu, Lock } from 'lucide-react';
 import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
-import useThemeStore from '@/store/useThemeStore';
 import { CATEGORY_MAP } from '@/constants/blog';
 import useDevice from '@/hooks/useDevice';
 import { Category } from '@/types/blog';
@@ -19,7 +18,6 @@ type Props = {
 
 const Sidebar = ({ categories }: Props) => {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
-  const { theme, setTheme } = useThemeStore();
   const { isActiveCategory } = useCurrentSlug();
   const { isMobile } = useDevice();
 
@@ -29,12 +27,27 @@ const Sidebar = ({ categories }: Props) => {
 
   return (
     <>
+      {/* 1. 모바일용: 상단 가로 바 (md 미만에서만 노출) */}
+      {!isSidebarOpen && (
+        <header className="fixed top-0 left-0 right-0 h-12 z-sidebar-btn bg-background/80 backdrop-blur-md flex items-center px-4 animate-in fade-in slide-in-from-top-2 md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleSidebar}
+            className="hover:bg-accent-primary/10 text-accent-primary"
+          >
+            <Menu size={20} />
+          </Button>
+        </header>
+      )}
+
+      {/* 2. 데스크탑용: 둥둥 떠 있는 햄버거 버튼 (md 이상에서만 노출) */}
       {!isSidebarOpen && (
         <Button
           variant="ghost"
           size="sm"
           onClick={toggleSidebar}
-          className="fixed left-4 top-4 z-sidebar-btn bg-background/80 backdrop-blur-md rounded-main animate-in fade-in slide-in-from-left-5 hover:bg-accent-primary/10"
+          className="fixed left-4 top-4 z-sidebar-btn bg-background/80 backdrop-blur-md rounded-main animate-in fade-in slide-in-from-left-5 hover:bg-accent-primary/10 hidden md:flex"
         >
           <Menu size={20} className="text-accent-primary" />
         </Button>
@@ -72,7 +85,6 @@ const Sidebar = ({ categories }: Props) => {
               </div>
             </div>
 
-            {/* 닫기 버튼 (모바일/데스크탑 모두 사이드바 내부에서는 닫기 기능만 수행) */}
             <Button
               variant="ghost"
               size="sm"
@@ -111,7 +123,6 @@ const Sidebar = ({ categories }: Props) => {
                     {CATEGORY_MAP[category.slug].icon}
                   </span>
 
-                  {/* 라벨 및 비공개 아이콘 */}
                   <span className="text-sm font-semibold flex items-center gap-2">
                     {category.name}
                     {category.isPrivate && (
@@ -139,30 +150,11 @@ const Sidebar = ({ categories }: Props) => {
                 <Mail size={20} />
               </a>
             </div>
-            {/* {isAdmin && (
-              <Link
-                href={PAGE_PATH.write}
-                className={getButtonStyles('ghost', 'md')}
-              >
-                <Plus size={24} />
-              </Link>
-            )} */}
-            {/* <Button
-              variant="ghost"
-              size="sm"
-              onClick={() =>
-                setTheme(theme === "rainbow" ? "ocean" : "rainbow")
-              }
-              className="text-[10px] h-7 px-2 font-bold border border-border/50 bg-background/50"
-            >
-              <Palette size={14} className="mr-1.5" />
-              {theme.toUpperCase()}
-            </Button> */}
           </div>
         </div>
       </aside>
 
-      {/*  모바일 전용 오버레이 */}
+      {/* 모바일 전용 오버레이 */}
       {isSidebarOpen && (
         <div
           onClick={toggleSidebar}
