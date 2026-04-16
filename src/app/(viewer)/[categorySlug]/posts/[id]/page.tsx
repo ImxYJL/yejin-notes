@@ -1,6 +1,6 @@
 import { getPublicCategories } from '@/services/categoryService';
 import { getPublicPost, getPublicPosts } from '@/services/postService';
-import { CategorySlug, PostDetailResponse } from '@/types/blog';
+import { CategorySlug } from '@/types/blog';
 import { Suspense } from 'react';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
 import { redirect } from 'next/navigation';
@@ -34,13 +34,9 @@ const PostDetailPage = async ({
 }) => {
   const { categorySlug, id } = await params;
 
-  let post: PostDetailResponse | null = null;
-
-  try {
-    post = await getPublicPost(id);
-  } catch {
+  const post = await getPublicPost(id).catch(() => {
     redirect(PAGE_PATH.admin.postDetail(categorySlug, id));
-  }
+  });
 
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
