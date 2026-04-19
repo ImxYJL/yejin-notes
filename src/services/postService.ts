@@ -7,7 +7,7 @@ import {
   getPublicCategories,
   validateCategoryAccess,
 } from './categoryService';
-import { validateAdmin } from './authService';
+import { getAuthUser, validateAdmin } from './authService';
 import {
   CategorySlug,
   DraftPost,
@@ -15,11 +15,13 @@ import {
   PostDetailResponse,
   PostForm,
   PostItem,
+  PostNavigation,
   PostRow,
 } from '@/types/blog';
 import { publicSupabase } from '@/libs/supabase/client';
 import { revalidateTag, unstable_cache } from 'next/cache';
 import { NEXT_CACHE_KEY, NEXT_CACHE_TAG } from '@/constants/blog';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 const DEFAULT_PAGE_LIMIT = 10;
 const MAX_PAGE_LIMIT = 50;
@@ -75,8 +77,7 @@ export const getPublicPosts = (
 
 export const getPublicPost = (postId: string) =>
   unstable_cache(
-    async (postId: string): Promise<PostDetailResponse> => {
-      // RLS가 비공개 글/카테고리 차단 → error or null 반환
+    async (postId: string): Promise<Post> => {
       const { data: currentPost, error } = await publicSupabase
         .from('posts')
         .select('*, category:categories(slug, name)')
@@ -85,41 +86,56 @@ export const getPublicPost = (postId: string) =>
 
       if (error || !currentPost) throw AppError.notFound();
 
-      const [prevRes, nextRes] = await Promise.all([
-        publicSupabase
-          .from('posts')
-          .select('id, title')
-          .eq('category_id', currentPost.category_id)
-          .eq('is_published', true)
-          .eq('is_private', false)
-          .lt('created_at', currentPost.created_at)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-        publicSupabase
-          .from('posts')
-          .select('id, title')
-          .eq('category_id', currentPost.category_id)
-          .eq('is_published', true)
-          .eq('is_private', false)
-          .gt('created_at', currentPost.created_at)
-          .order('created_at', { ascending: true })
-          .limit(1)
-          .maybeSingle(),
-      ]);
-
       return {
         ...mapPostDetailResponse(currentPost),
-        prevPost: prevRes.data || null,
-        nextPost: nextRes.data || null,
       };
     },
     [NEXT_CACHE_KEY.post(postId)],
     {
-      tags: [NEXT_CACHE_TAG.post(postId), NEXT_CACHE_TAG.posts],
+      tags: [NEXT_CACHE_TAG.post(postId)],
     },
   )(postId);
 
+export const getPublicPostNavigation = (
+  categorySlug: CategorySlug,
+  createdAt: string,
+) =>
+  unstable_cache(
+    async (
+      categorySlug: CategorySlug,
+      createdAt: string,
+    ): Promise<PostNavigation> => {
+      return getPostNavigation({
+        supabase: publicSupabase,
+        categorySlug,
+        createdAt,
+        includePrivate: false,
+      });
+    },
+    [NEXT_CACHE_KEY.postNavigation(categorySlug, createdAt)],
+    {
+      tags: [
+        NEXT_CACHE_TAG.postNavigation(categorySlug),
+        NEXT_CACHE_TAG.categoryPosts(categorySlug),
+      ],
+    },
+  )(categorySlug, createdAt);
+
+export const getPublicPostDetail = async (
+  postId: string,
+): Promise<PostDetailResponse> => {
+  const post = await getPublicPost(postId);
+
+  const navigation = await getPublicPostNavigation(
+    post.category.slug,
+    post.createdAt,
+  );
+
+  return {
+    ...post,
+    ...navigation,
+  };
+};
 // ----------------------------------------------------------------
 // Admin (serverSupabase, SSR)
 // RLS: auth.uid() = user_id (full access)
@@ -132,15 +148,14 @@ export const getAdminPosts = async (
 ) => {
   await validateAdmin();
 
-  const supabase = await createServerSupabaseClient();
-  const categories = await getAllCategories();
-  // 관리자는 비공개 카테고리도 접근 가능하므로 user 넘김
-  validateCategoryAccess(categorySlug, categories, { isAdmin: true, id: '' });
+  const [categories, user] = await Promise.all([getAllCategories(), getAuthUser()]);
+  validateCategoryAccess(categorySlug, categories, user);
 
   const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
   const from = (page - 1) * LIMIT;
   const to = from + LIMIT - 1;
 
+  const supabase = await createServerSupabaseClient();
   const { data, count, error } = await supabase
     .from('posts')
     .select(
@@ -166,7 +181,7 @@ export const getAdminPosts = async (
   };
 };
 
-export const getAdminPost = async (postId: string): Promise<PostDetailResponse> => {
+export const getAdminPost = async (postId: string): Promise<Post> => {
   await validateAdmin();
 
   const supabase = await createServerSupabaseClient();
@@ -179,32 +194,40 @@ export const getAdminPost = async (postId: string): Promise<PostDetailResponse> 
 
   if (error || !currentPost) throw AppError.notFound();
 
-  const [prevRes, nextRes] = await Promise.all([
-    supabase
-      .from('posts')
-      .select('id, title')
-      .eq('category_id', currentPost.category_id)
-      .eq('is_published', true)
-      .lt('created_at', currentPost.created_at)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from('posts')
-      .select('id, title')
-      .eq('category_id', currentPost.category_id)
-      .eq('is_published', true)
-      .gt('created_at', currentPost.created_at)
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle(),
-  ]);
-
   return {
     ...mapPostDetailResponse(currentPost),
-    prevPost: prevRes.data || null,
-    nextPost: nextRes.data || null,
   };
+};
+
+export const getAdminPostDetail = async (
+  postId: string,
+): Promise<PostDetailResponse> => {
+  const post = await getAdminPost(postId);
+
+  const navigation = await getAdminPostNavigation(
+    post.category.slug,
+    post.createdAt,
+  );
+
+  return {
+    ...post,
+    ...navigation,
+  };
+};
+
+export const getAdminPostNavigation = async (
+  categorySlug: CategorySlug,
+  createdAt: string,
+): Promise<PostNavigation> => {
+  await validateAdmin();
+  const supabase = await createServerSupabaseClient();
+
+  return getPostNavigation({
+    supabase,
+    categorySlug,
+    createdAt,
+    includePrivate: true,
+  });
 };
 
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
@@ -240,6 +263,7 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
 
   revalidateTag(NEXT_CACHE_TAG.post(formData.id), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(formData.categorySlug), 'default');
+  revalidateTag(NEXT_CACHE_TAG.postNavigation(formData.categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 
   return mapPostDetailResponse(data);
@@ -253,6 +277,7 @@ export const deletePost = async (id: string, categorySlug: CategorySlug) => {
 
   revalidateTag(NEXT_CACHE_TAG.post(id), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug), 'default');
+  revalidateTag(NEXT_CACHE_TAG.postNavigation(categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 };
 
@@ -284,6 +309,64 @@ export const getCategoryIdBySlug = async (slug: string) => {
 
   if (error || !data) throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
   return data.id;
+};
+
+type GetPostNavigationParams = {
+  supabase: SupabaseClient;
+  categorySlug: CategorySlug;
+  createdAt: string;
+  includePrivate: boolean;
+};
+
+export const getPostNavigation = async ({
+  supabase,
+  categorySlug,
+  createdAt,
+  includePrivate,
+}: GetPostNavigationParams): Promise<PostNavigation> => {
+  const { data: category, error: categoryError } = await supabase
+    .from('categories')
+    .select('id')
+    .eq('slug', categorySlug)
+    .single();
+
+  if (categoryError || !category) throw AppError.notFound();
+
+  const basePrevQuery = supabase
+    .from('posts')
+    .select('id, title')
+    .eq('category_id', category.id)
+    .eq('is_published', true)
+    .lt('created_at', createdAt)
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  const baseNextQuery = supabase
+    .from('posts')
+    .select('id, title')
+    .eq('category_id', category.id)
+    .eq('is_published', true)
+    .gt('created_at', createdAt)
+    .order('created_at', { ascending: true })
+    .limit(1);
+
+  const prevQuery = includePrivate
+    ? basePrevQuery
+    : basePrevQuery.eq('is_private', false);
+
+  const nextQuery = includePrivate
+    ? baseNextQuery
+    : baseNextQuery.eq('is_private', false);
+
+  const [prevRes, nextRes] = await Promise.all([
+    prevQuery.maybeSingle(),
+    nextQuery.maybeSingle(),
+  ]);
+
+  return {
+    prevPost: prevRes.data || null,
+    nextPost: nextRes.data || null,
+  };
 };
 
 export const mapPostItemResponse = (

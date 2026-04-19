@@ -1,5 +1,5 @@
 import { getPublicCategories } from '@/services/categoryService';
-import { getPublicPost, getPublicPosts } from '@/services/postService';
+import { getPublicPostDetail, getPublicPosts } from '@/services/postService';
 import { CategorySlug } from '@/types/blog';
 import { Suspense } from 'react';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
@@ -34,7 +34,7 @@ const PostDetailPage = async ({
 }) => {
   const { categorySlug, id } = await params;
 
-  const post = await getPublicPost(id).catch(() => {
+  const post = await getPublicPostDetail(id).catch(() => {
     redirect(PAGE_PATH.admin.postDetail(categorySlug, id));
   });
 

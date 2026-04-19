@@ -1,7 +1,7 @@
 import { PostAction } from '@/app/(viewer)/components/client';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
 import { checkIsAdmin } from '@/services/authService';
-import { getAdminPost } from '@/services/postService';
+import { getAdminPostDetail } from '@/services/postService';
 import { CategorySlug } from '@/types/blog';
 import { AppError } from '@/utils/error';
 import { Suspense } from 'react';
@@ -23,7 +23,7 @@ const AdminPostDetailPage = async ({
   const isAdmin = await checkIsAdmin();
   if (!isAdmin) throw AppError.notFound();
 
-  const post = await getAdminPost(id);
+  const post = await getAdminPostDetail(id);
 
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
