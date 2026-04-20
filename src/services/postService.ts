@@ -269,6 +269,7 @@ export const deletePost = async (id: string, categorySlug: CategorySlug) => {
   const supabase = await createServerSupabaseClient();
 
   const targetPost = await getAdminPost(id);
+  await revalidateAdjacentPosts(categorySlug, targetPost.createdAt);
 
   const { error } = await supabase.from('posts').delete().eq('id', id);
   if (error) throw AppError.fromSupabase(error);
@@ -276,7 +277,6 @@ export const deletePost = async (id: string, categorySlug: CategorySlug) => {
   revalidateTag(NEXT_CACHE_TAG.post(id), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
-  await revalidateAdjacentPosts(categorySlug, targetPost.createdAt);
 };
 
 export const getDrafts = async (): Promise<DraftPost[]> => {
