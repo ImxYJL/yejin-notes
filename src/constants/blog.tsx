@@ -45,8 +45,7 @@ export const NEXT_CACHE_KEY = {
   posts: 'public-posts',
   post: (id: string) => `post-${id}`,
   categories: 'categories',
-  postNavigation: (slug: string, createdAt: string) =>
-    `post-navigation-${slug}-${createdAt}`,
+  postNavigation: (id: string) => `post-navigation-${id}`,
 } as const;
 
 export const NEXT_CACHE_TAG = {
@@ -54,5 +53,5 @@ export const NEXT_CACHE_TAG = {
   categories: 'categories',
   post: (id: string) => `post-${id}`,
   categoryPosts: (slug: string) => `posts-${slug}`,
-  postNavigation: (slug: string) => `post-navigation-${slug}`,
+  postNavigation: (id: string) => `post-navigation-${id}`,
 } as const;

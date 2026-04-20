@@ -96,30 +96,17 @@ export const getPublicPost = (postId: string) =>
     },
   )(postId);
 
-export const getPublicPostNavigation = (
+export const getPublicPostNavigation = async (
   categorySlug: CategorySlug,
   createdAt: string,
-) =>
-  unstable_cache(
-    async (
-      categorySlug: CategorySlug,
-      createdAt: string,
-    ): Promise<PostNavigation> => {
-      return getPostNavigation({
-        supabase: publicSupabase,
-        categorySlug,
-        createdAt,
-        includePrivate: false,
-      });
-    },
-    [NEXT_CACHE_KEY.postNavigation(categorySlug, createdAt)],
-    {
-      tags: [
-        NEXT_CACHE_TAG.postNavigation(categorySlug),
-        NEXT_CACHE_TAG.categoryPosts(categorySlug),
-      ],
-    },
-  )(categorySlug, createdAt);
+): Promise<PostNavigation> => {
+  return getPostNavigation({
+    supabase: publicSupabase,
+    categorySlug,
+    createdAt,
+    includePrivate: false,
+  });
+};
 
 export const getPublicPostDetail = async (
   postId: string,
@@ -136,6 +123,7 @@ export const getPublicPostDetail = async (
     ...navigation,
   };
 };
+
 // ----------------------------------------------------------------
 // Admin (serverSupabase, SSR)
 // RLS: auth.uid() = user_id (full access)
@@ -238,6 +226,11 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
     getCategoryIdBySlug(formData.categorySlug),
   ]);
 
+  const oldPost = await getAdminPost(formData.id).catch(() => null);
+  if (oldPost) {
+    await revalidateAdjacentPosts(oldPost.category.slug, oldPost.createdAt);
+  }
+
   const { data, error } = await supabase
     .from('posts')
     .upsert(
@@ -263,8 +256,10 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
 
   revalidateTag(NEXT_CACHE_TAG.post(formData.id), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(formData.categorySlug), 'default');
-  revalidateTag(NEXT_CACHE_TAG.postNavigation(formData.categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
+
+  const newPost = mapPostDetailResponse(data);
+  await revalidateAdjacentPosts(newPost.category.slug, newPost.createdAt);
 
   return mapPostDetailResponse(data);
 };
@@ -272,13 +267,16 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
 export const deletePost = async (id: string, categorySlug: CategorySlug) => {
   await validateAdmin();
   const supabase = await createServerSupabaseClient();
+
+  const targetPost = await getAdminPost(id);
+
   const { error } = await supabase.from('posts').delete().eq('id', id);
   if (error) throw AppError.fromSupabase(error);
 
   revalidateTag(NEXT_CACHE_TAG.post(id), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug), 'default');
-  revalidateTag(NEXT_CACHE_TAG.postNavigation(categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
+  await revalidateAdjacentPosts(categorySlug, targetPost.createdAt);
 };
 
 export const getDrafts = async (): Promise<DraftPost[]> => {
@@ -309,6 +307,19 @@ export const getCategoryIdBySlug = async (slug: string) => {
 
   if (error || !data) throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
   return data.id;
+};
+
+const revalidateAdjacentPosts = async (
+  categorySlug: CategorySlug,
+  createdAt: string,
+) => {
+  const navigation = await getAdminPostNavigation(categorySlug, createdAt);
+  if (navigation.prevPost) {
+    revalidateTag(NEXT_CACHE_TAG.post(navigation.prevPost.id), 'default');
+  }
+  if (navigation.nextPost) {
+    revalidateTag(NEXT_CACHE_TAG.post(navigation.nextPost.id), 'default');
+  }
 };
 
 type GetPostNavigationParams = {
