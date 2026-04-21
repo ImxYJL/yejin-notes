@@ -11,7 +11,7 @@ export default async function Home() {
   const queryClient = makeQueryClient();
 
   const categories = await queryClient.fetchQuery({
-    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.all],
+    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
     queryFn: getPublicCategories,
   });
   const categoriesWithHref = categories.map((c) => ({
