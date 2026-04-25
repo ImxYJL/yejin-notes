@@ -5,6 +5,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const nextConfig: NextConfig = {
   reactCompiler: true,
   reactStrictMode: true,
+  cacheComponents: true,
   images: {
     remotePatterns: [
       {

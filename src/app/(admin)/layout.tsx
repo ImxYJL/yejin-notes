@@ -1,11 +1,7 @@
-import { validateAdmin } from '@/services/authService';
-
-export const dynamic = 'force-dynamic';
+import { Suspense } from 'react';
 
 const AdminLayout = async ({ children }: { children: React.ReactNode }) => {
-  await validateAdmin();
-
-  return <>{children}</>;
+  return <Suspense>{children}</Suspense>;
 };
 
 export default AdminLayout;

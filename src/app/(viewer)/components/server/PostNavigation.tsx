@@ -92,4 +92,19 @@ const PostNavigation = ({ navigation, categorySlug }: PostNavigationProps) => {
   );
 };
 
+// components/post/PostNavigationServer.tsx
+import { getPublicPost, getPublicPostNavigation } from '@/services/postService';
+
+export async function PostNavigationServer({ postId }: { postId: string }) {
+  const post = await getPublicPost(postId);
+  const nav = await getPublicPostNavigation(post.category.slug, post.createdAt);
+
+  return (
+    <PostNavigation
+      navigation={{ prevPost: nav.prevPost, nextPost: nav.nextPost }}
+      categorySlug={post.category.slug}
+    />
+  );
+}
+
 export default PostNavigation;

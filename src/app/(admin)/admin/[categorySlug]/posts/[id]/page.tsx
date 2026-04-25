@@ -6,8 +6,6 @@ import { CategorySlug } from '@/types/blog';
 import { AppError } from '@/utils/error';
 import { Suspense } from 'react';
 
-export const dynamic = 'force-dynamic';
-
 type PostDetailPageParams = {
   categorySlug: CategorySlug;
   id: string;

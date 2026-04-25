@@ -4,7 +4,8 @@ import { CategorySlug, PostDetailResponse } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
 import { MarkdownViewer } from '@/components/markdown';
-import PostNavigation from './PostNavigation';
+import PostNavigation, { PostNavigationServer } from './PostNavigation';
+import { Suspense } from 'react';
 
 type Props = {
   categorySlug: CategorySlug;
@@ -61,10 +62,13 @@ const PostDetail = async ({ categorySlug, post, actions }: Props) => {
 
       <Divider direction="horizontal" className="opacity-80" />
 
-      <PostNavigation
+      {/* <PostNavigation
         navigation={{ prevPost: post.prevPost, nextPost: post.nextPost }}
         categorySlug={categorySlug}
-      />
+      /> */}
+      <Suspense fallback={null}>
+        <PostNavigationServer postId={post.id} />
+      </Suspense>
     </div>
   );
 };
