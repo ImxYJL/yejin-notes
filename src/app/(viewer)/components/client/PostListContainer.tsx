@@ -1,35 +1,32 @@
 'use client';
 
 import { CategorySlug } from '@/types/blog';
-import { useState } from 'react';
-import useCurrentCategory from '@/hooks/useCurrentCategory';
 import PostListLayout from '../server/PostListLayout';
 import { usePublicPosts } from '@/queries/usePosts';
+import useCurrentPage from '@/hooks/useCurrentPage';
+import { usePublicCategories } from '@/queries/useCategories';
 
 type Props = {
   categorySlug: CategorySlug;
 };
 
 const PostListContainer = ({ categorySlug }: Props) => {
-  const [page, setPage] = useState(1);
-  const { categoryMap } = useCurrentCategory();
+  const publicData = usePublicCategories();
+  const categoryMap = publicData?.categoryMap;
+
+  const { page, handlePageChange } = useCurrentPage();
   const { data } = usePublicPosts(categorySlug, page);
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  if (!categoryMap) return null;
+  if (!categoryMap || !data) return null;
 
   return (
     <PostListLayout
       categorySlug={categorySlug}
-      categoryName={categoryMap[categorySlug]?.name}
-      postCount={data?.posts.length ?? 0}
-      posts={data?.posts ?? []}
+      categoryName={categoryMap[categorySlug]?.name ?? ''}
+      postCount={data.posts.length}
+      posts={data.posts}
       currentPage={page}
-      totalPages={data?.totalPages ?? 1}
+      totalPages={data.totalPages}
       onPageChange={handlePageChange}
     />
   );

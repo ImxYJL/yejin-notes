@@ -1,7 +1,6 @@
 'use client';
 
 import { CategorySlug } from '@/types/blog';
-import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import { PAGE_PATH } from '@/constants/paths';
@@ -9,33 +8,29 @@ import { getButtonStyles } from '@/components/common/Button';
 import PostListLayout from '@/app/(viewer)/components/server/PostListLayout';
 import { useAdminPosts } from '@/queries/usePosts';
 import { useAllCategories } from '@/queries/useCategories';
+import useCurrentPage from '@/hooks/useCurrentPage';
 
 type Props = {
   categorySlug: CategorySlug;
 };
 
 const AdminPostListContainer = ({ categorySlug }: Props) => {
-  const [page, setPage] = useState(1);
-
   const allData = useAllCategories();
   const categoryMap = allData?.categoryMap;
-  const { data, isLoading } = useAdminPosts(categorySlug, page);
 
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const { page, handlePageChange } = useCurrentPage();
+  const { data } = useAdminPosts(categorySlug, page);
 
-  if (!categoryMap || (!data && isLoading)) return null;
+  if (!categoryMap || !data) return null;
 
   return (
     <PostListLayout
       categorySlug={categorySlug}
-      categoryName={categoryMap[categorySlug]?.name}
-      postCount={data?.posts.length ?? 0}
-      posts={data?.posts ?? []}
+      categoryName={categoryMap[categorySlug]?.name ?? ''}
+      postCount={data.posts.length}
+      posts={data.posts}
       currentPage={page}
-      totalPages={data?.totalPages ?? 1}
+      totalPages={data.totalPages}
       onPageChange={handlePageChange}
       actions={
         <Link

@@ -5,24 +5,36 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getAdminPosts } from '@/services/postService';
 import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
 import { AdminPostListContainer } from '@/app/(viewer)/components/client';
-
-type PostListPageParams = {
-  categorySlug: CategorySlug;
-};
+import { getValidatedPage, validatePageBounds } from '@/utils/page';
+import { PAGE_PATH } from '@/constants/paths';
 
 export default async function AdminPostListPage({
   params,
+  searchParams,
 }: {
-  params: Promise<PostListPageParams>;
+  params: Promise<{ categorySlug: CategorySlug }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const { categorySlug } = await params;
+  const [{ categorySlug }, { page: rawPage }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const page = getValidatedPage(rawPage);
+
+  const postsRes = await getAdminPosts(categorySlug, page, PAGE_LIMIT);
+
+  validatePageBounds({
+    postsLength: postsRes.posts.length,
+    totalPages: postsRes.totalPages,
+    currentPage: page,
+    basePath: PAGE_PATH.admin.posts(categorySlug),
+  });
 
   const queryClient = makeQueryClient();
-
-  await queryClient.prefetchQuery({
-    queryKey: [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.all, 1],
-    queryFn: () => getAdminPosts(categorySlug, 1, PAGE_LIMIT),
-  });
+  await queryClient.setQueryData(
+    [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.all, page],
+    postsRes,
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

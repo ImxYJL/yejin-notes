@@ -1,4 +1,6 @@
 import { CategorySlug } from '@/types/blog';
+import { QUERY_PARAMS } from './system';
+import { START_PAGE_NUM } from '@/utils/page';
 
 const ADMIN_PREFIX = '/admin';
 
@@ -7,14 +9,16 @@ export const PAGE_PATH = {
   login: '/login',
 
   // public
-  posts: (slug: CategorySlug) => `/${slug}/posts`,
+  posts: (slug: CategorySlug, page: number = START_PAGE_NUM) =>
+    `/${slug}/posts?${QUERY_PARAMS.page}=${page}`,
   postDetail: (slug: CategorySlug, postId: string) => `/${slug}/posts/${postId}`,
 
   // admin
   admin: {
     write: `${ADMIN_PREFIX}/write`,
     edit: (postId: string) => `${ADMIN_PREFIX}/edit/${postId}`,
-    posts: (slug: CategorySlug) => `${ADMIN_PREFIX}/${slug}/posts`,
+    posts: (slug: CategorySlug, page: number = START_PAGE_NUM) =>
+      `${ADMIN_PREFIX}/${slug}/posts?${QUERY_PARAMS.page}=${page}`,
     postDetail: (slug: CategorySlug, postId: string) =>
       `${ADMIN_PREFIX}/${slug}/posts/${postId}`,
   },
@@ -23,12 +27,13 @@ export const PAGE_PATH = {
 export const API_ENDPOINT = {
   // public
   categories: '/categories',
-  posts: (slug: CategorySlug) => `/posts?categorySlug=${slug}`,
+  posts: (slug: CategorySlug) => `/posts?${QUERY_PARAMS.categorySlug}=${slug}`,
   post: (id: string) => `/posts/${id}`,
 
   // admin
   admin: {
-    posts: (slug: CategorySlug) => `${ADMIN_PREFIX}/posts?categorySlug=${slug}`,
+    posts: (slug: CategorySlug) =>
+      `${ADMIN_PREFIX}/posts?${QUERY_PARAMS.categorySlug}=${slug}`,
     post: (id: string, categorySlug: CategorySlug) =>
       `${ADMIN_PREFIX}/posts/${categorySlug}/${id}`,
     drafts: `${ADMIN_PREFIX}/posts/drafts`,

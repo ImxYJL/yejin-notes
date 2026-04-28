@@ -6,6 +6,8 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getPublicCategories } from '@/services/categoryService';
 import { getPublicPosts } from '@/services/postService';
 import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
+import { getValidatedPage, validatePageBounds } from '@/utils/page';
+import { PAGE_PATH } from '@/constants/paths';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -15,19 +17,33 @@ export async function generateStaticParams() {
   }));
 }
 
-type PostListPageParams = {
-  categorySlug: CategorySlug;
-};
+const PostListPage = async ({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ categorySlug: CategorySlug }>;
+  searchParams: Promise<{ page?: string }>;
+}) => {
+  const [{ categorySlug }, { page: rawPage }] = await Promise.all([
+    params,
+    searchParams,
+  ]);
+  const page = getValidatedPage(rawPage);
 
-const PostListPage = async ({ params }: { params: Promise<PostListPageParams> }) => {
-  const { categorySlug } = await params;
-  const queryClient = makeQueryClient();
-  const page = Number(1); // TODO: queryParams를 기준으로 하도록 리팩토링
+  const postsRes = await getPublicPosts(categorySlug, page, PAGE_LIMIT);
 
-  await queryClient.prefetchQuery({
-    queryKey: [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.public, page],
-    queryFn: () => getPublicPosts(categorySlug, page, PAGE_LIMIT),
+  validatePageBounds({
+    postsLength: postsRes.posts.length,
+    totalPages: postsRes.totalPages,
+    currentPage: page,
+    basePath: PAGE_PATH.posts(categorySlug),
   });
+
+  const queryClient = makeQueryClient();
+  await queryClient.setQueryData(
+    [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.public, page],
+    postsRes,
+  );
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
