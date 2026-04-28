@@ -16,7 +16,7 @@ export default async function Home() {
   });
   const categoriesWithHref = categories.map((c) => ({
     ...c,
-    href: PAGE_PATH.admin.posts(c.slug),
+    href: PAGE_PATH.posts(c.slug),
   }));
 
   return (
