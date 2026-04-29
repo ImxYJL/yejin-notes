@@ -6,15 +6,12 @@ export const PAGE_LIMIT = 10;
 export const CATEGORY_MAP = {
   dev: {
     icon: <Code size={20} />,
-    textColor: 'text-accent-primary',
   },
   reading: {
     icon: <BookOpen size={20} />,
-    textColor: 'text-[var(--palette-4)]',
   },
   life: {
     icon: <Coffee size={20} />,
-    textColor: 'text-orange-500',
   },
 } as const;
 

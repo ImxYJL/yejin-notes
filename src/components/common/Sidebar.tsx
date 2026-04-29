@@ -106,18 +106,20 @@ const Sidebar = ({ categories }: Props) => {
                   href={category.href}
                   onClick={handleCategoryClick}
                   className={cn(
-                    'flex items-center gap-3 p-3 rounded-main base-transition group relative',
+                    'flex items-center gap-3 p-3 rounded-main transition-all duration-300 group relative overflow-hidden',
                     isActive
-                      ? 'bg-white shadow-sm text-foreground'
-                      : 'hover:bg-white/50 text-muted-foreground hover:text-foreground',
+                      ? 'text-foreground font-medium pl-5'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-white/40 hover:pl-5',
                   )}
                 >
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-primary animate-in fade-in slide-in-from-left-1 duration-300" />
+                  )}
+
                   <span
                     className={cn(
-                      'base-transition group-hover:scale-110',
-                      isActive
-                        ? CATEGORY_MAP[category.slug].textColor
-                        : 'text-muted-foreground/70',
+                      'transition-transform duration-300 group-hover:scale-110',
+                      isActive ? 'text-accent-primary' : 'text-muted-foreground/70',
                     )}
                   >
                     {CATEGORY_MAP[category.slug].icon}
