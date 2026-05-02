@@ -1,12 +1,13 @@
 import { CategorySlug } from '@/types/blog';
-import { makeQueryClient } from '@/libs/tanstack/queryClient';
-import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getAdminPosts } from '@/services/postService';
-import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
-import { AdminPostListContainer } from '@/app/(viewer)/components/client';
+import { PAGE_LIMIT } from '@/constants/blog';
 import { getValidatedPage, validatePageBounds } from '@/utils/page';
 import { PAGE_PATH } from '@/constants/paths';
+import { getAllCategories } from '@/services/categoryService';
+import { buildCategoryMap } from '@/utils/posts/category';
+import { PostListLayout } from '@/app/(viewer)/components/server';
+import { createUrl } from '@/utils/url';
+import AdminPostListActions from '@/app/(viewer)/components/server/AdminPostListActions';
 
 export default async function AdminPostListPage({
   params,
@@ -21,7 +22,12 @@ export default async function AdminPostListPage({
   ]);
   const page = getValidatedPage(rawPage);
 
-  const postsRes = await getAdminPosts(categorySlug, page, PAGE_LIMIT);
+  const [categories, postsRes] = await Promise.all([
+    getAllCategories(),
+    getAdminPosts(categorySlug, page, PAGE_LIMIT),
+  ]);
+  const categoryMap = buildCategoryMap(categories);
+  const categoryName = categoryMap[categorySlug]?.name ?? '';
 
   validatePageBounds({
     postsLength: postsRes.posts.length,
@@ -30,15 +36,20 @@ export default async function AdminPostListPage({
     basePath: PAGE_PATH.admin.posts(categorySlug),
   });
 
-  const queryClient = makeQueryClient();
-  await queryClient.setQueryData(
-    [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.all, page],
-    postsRes,
-  );
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <AdminPostListContainer categorySlug={categorySlug} />
-    </HydrationBoundary>
+    <PostListLayout
+      categoryName={categoryName}
+      postCount={postsRes.posts.length}
+      postItems={postsRes.posts}
+      currentPage={page}
+      totalPages={postsRes.totalPages}
+      getPostHref={(post) => PAGE_PATH.admin.postDetail(categorySlug, post.id)}
+      getPageHref={(nextPage) =>
+        createUrl(PAGE_PATH.admin.posts(categorySlug), {
+          page: nextPage,
+        })
+      }
+      headerActions={<AdminPostListActions />}
+    />
   );
 }

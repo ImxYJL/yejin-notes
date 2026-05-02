@@ -1,13 +1,12 @@
 import { CategorySlug } from '@/types/blog';
-import { PostListContainer } from '../../components/client';
-import { makeQueryClient } from '@/libs/tanstack/queryClient';
-import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { getPublicCategories } from '@/services/categoryService';
 import { getPublicPosts } from '@/services/postService';
-import { PAGE_LIMIT, POST_FILTER } from '@/constants/blog';
+import { PAGE_LIMIT } from '@/constants/blog';
 import { getValidatedPage, validatePageBounds } from '@/utils/page';
 import { PAGE_PATH } from '@/constants/paths';
+import { createUrl } from '@/utils/url';
+import { PostListLayout } from '../../components/server';
+import { buildCategoryMap } from '@/utils/posts/category';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -30,7 +29,12 @@ const PostListPage = async ({
   ]);
   const page = getValidatedPage(rawPage);
 
-  const postsRes = await getPublicPosts(categorySlug, page, PAGE_LIMIT);
+  const [categories, postsRes] = await Promise.all([
+    getPublicCategories(),
+    getPublicPosts(categorySlug, page, PAGE_LIMIT),
+  ]);
+  const categoryMap = buildCategoryMap(categories);
+  const categoryName = categoryMap[categorySlug]?.name ?? '';
 
   validatePageBounds({
     postsLength: postsRes.posts.length,
@@ -39,16 +43,20 @@ const PostListPage = async ({
     basePath: PAGE_PATH.posts(categorySlug),
   });
 
-  const queryClient = makeQueryClient();
-  await queryClient.setQueryData(
-    [BLOG_QUERY_KEY.posts, categorySlug, POST_FILTER.public, page],
-    postsRes,
-  );
-
   return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <PostListContainer categorySlug={categorySlug} />
-    </HydrationBoundary>
+    <PostListLayout
+      categoryName={categoryName}
+      postCount={postsRes.posts.length}
+      postItems={postsRes.posts}
+      currentPage={page}
+      totalPages={postsRes.totalPages}
+      getPostHref={(post) => PAGE_PATH.postDetail(categorySlug, post.id)}
+      getPageHref={(nextPage) =>
+        createUrl(PAGE_PATH.posts(categorySlug), {
+          page: nextPage,
+        })
+      }
+    />
   );
 };
 

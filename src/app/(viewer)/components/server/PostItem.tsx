@@ -1,21 +1,16 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { CategorySlug, PostItem as PostItemType } from '@/types/blog';
-import { PAGE_PATH } from '@/constants/paths';
+import { PostItem as PostItemType } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 
 type PostItemProps = {
-  categorySlug: CategorySlug;
+  href: string;
   post: PostItemType;
 };
 
-const PostItem = ({ categorySlug, post }: PostItemProps) => (
+const PostItem = ({ href, post }: PostItemProps) => (
   <li>
-    <Link
-      href={PAGE_PATH.postDetail(categorySlug, post.id)}
-      prefetch={false}
-      className="block py-10 group border-muted-foreground/40"
-    >
+    <Link href={href} className="block py-10 group border-muted-foreground/40">
       <article className="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center">
         {post.thumbnailUrl && (
           <div className="relative w-full md:w-48 lg:w-64 aspect-video overflow-hidden rounded-main shrink-0 md:order-last">

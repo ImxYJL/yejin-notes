@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { BLOG_QUERY_KEY } from './queryKey';
 import { Category, CategoryMap } from '@/types/blog';
 import { CATEGORY_FILTER } from '@/constants/blog';
+import { buildCategoryMap } from '@/utils/posts/category';
 
 type CategoryQueryResult = {
   categories: Category[];
@@ -32,10 +33,5 @@ export const useAllCategories = () => {
 };
 
 const selectCategories = (categories: Category[]): CategoryQueryResult => {
-  const categoryMap = categories.reduce((acc, category) => {
-    acc[category.slug] = category;
-    return acc;
-  }, {} as CategoryMap);
-
-  return { categories, categoryMap };
+  return { categories, categoryMap: buildCategoryMap(categories) };
 };

@@ -1,12 +1,12 @@
-import { CategorySlug, PostItem as PostItemType } from '@/types/blog';
+import { PostItem as PostItemType } from '@/types/blog';
 import PostItem from './PostItem';
 
 type PostListProps = {
-  categorySlug: CategorySlug;
   postItems: PostItemType[];
+  getPostHref: (post: PostItemType) => string;
 };
 
-const PostList = ({ postItems, categorySlug }: PostListProps) => {
+const PostList = ({ postItems, getPostHref }: PostListProps) => {
   if (postItems.length === 0) {
     return (
       <section className="py-20 text-center text-muted-foreground">
@@ -18,7 +18,7 @@ const PostList = ({ postItems, categorySlug }: PostListProps) => {
   return (
     <ul className="divide-y divide-muted-foreground/30">
       {postItems.map((post) => (
-        <PostItem key={post.id} post={post} categorySlug={categorySlug} />
+        <PostItem key={post.id} post={post} href={getPostHref(post)} />
       ))}
     </ul>
   );

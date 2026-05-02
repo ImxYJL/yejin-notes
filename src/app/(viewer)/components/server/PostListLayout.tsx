@@ -1,28 +1,28 @@
-import { CategorySlug } from '@/types/blog';
-import { PostItem } from '@/types/blog';
+import { PostItem as PostItemType } from '@/types/blog';
+import { ReactNode } from 'react';
 import PostList from './PostList';
 import PostListPagination from './PostListPagination';
 
 type Props = {
-  categorySlug: CategorySlug;
   categoryName?: string;
   postCount: number;
-  posts: PostItem[];
+  postItems: PostItemType[];
   currentPage: number;
   totalPages: number;
-  onPageChange: (page: number) => void;
-  actions?: React.ReactNode;
+  getPostHref: (post: PostItemType) => string;
+  getPageHref: (page: number) => string;
+  headerActions?: ReactNode;
 };
 
 const PostListLayout = ({
-  categorySlug,
   categoryName,
   postCount,
-  posts,
+  postItems,
   currentPage,
   totalPages,
-  onPageChange,
-  actions,
+  getPostHref,
+  getPageHref,
+  headerActions,
 }: Props) => {
   return (
     <div>
@@ -31,21 +31,24 @@ const PostListLayout = ({
           <h1 className="text-3xl font-black capitalize tracking-tight">
             {categoryName}
           </h1>
+
           <p className="text-muted-foreground mt-3 font-medium">
             <span className="text-accent-primary font-bold">{postCount}개</span>의
             기록이 있습니다.
           </p>
         </div>
-        {actions}
+
+        {headerActions}
       </header>
 
       <div>
-        <PostList categorySlug={categorySlug} postItems={posts} />
+        <PostList postItems={postItems} getPostHref={getPostHref} />
+
         {totalPages > 1 && (
           <PostListPagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={onPageChange}
+            getPageHref={getPageHref}
           />
         )}
       </div>
