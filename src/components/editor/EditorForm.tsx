@@ -2,7 +2,7 @@
 
 import { useState, useDeferredValue, useCallback } from 'react';
 import { Divider } from '@/components/common';
-import { CategorySlug, EditorMode, PostForm } from '@/types/blog';
+import { Category, CategorySlug, EditorMode, PostForm } from '@/types/blog';
 import { ContentEditor, TitleInput } from '.';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import useSavePost from '@/queries/useSavePost';
@@ -11,21 +11,22 @@ import useSaveDraft from '@/queries/useSaveDraft';
 import { useQueryClient } from '@tanstack/react-query';
 import { getPostApi } from '@/apis/posts';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import useCurrentCategory from '@/hooks/useCurrentCategory';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';
 import { convertToPostForm } from '@/utils/posts';
+import { buildCategoryMap } from '@/utils/posts/category';
 
 type EditorFormProps = {
   mode: EditorMode;
   initialData: PostForm;
+  categories: Category[];
 };
 
 export const EDITOR_LAYOUT = {
   bottomPadding: 4,
 } as const;
 
-const EditorForm = ({ mode, initialData }: EditorFormProps) => {
+const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   const [formData, setFormData] = useState<PostForm>(initialData);
 
   const handleUpdateField = useCallback(
@@ -39,6 +40,7 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
   );
 
   const { editorRef, previewRef, handleScroll, handleMouseEnter } = useScrollSync();
+  const categoryMap = buildCategoryMap(categories);
 
   const queryClient = useQueryClient();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
@@ -55,7 +57,6 @@ const EditorForm = ({ mode, initialData }: EditorFormProps) => {
     },
     [insertImage],
   );
-  const { categoryMap } = useCurrentCategory();
 
   const isPending = isSavePending || isSaveDraftPending;
   // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)

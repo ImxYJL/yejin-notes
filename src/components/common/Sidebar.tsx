@@ -7,18 +7,17 @@ import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
 import { CATEGORY_MAP } from '@/constants/blog';
 import useDevice from '@/hooks/useDevice';
-import { Category } from '@/types/blog';
-import useCurrentSlug from '@/hooks/useCurrentSlug';
+import { Category, CategorySlug } from '@/types/blog';
 
 type CategoryWithHref = Category & { href: string };
 
 type Props = {
   categories: CategoryWithHref[];
+  selectedSlug: CategorySlug | null;
 };
 
-const Sidebar = ({ categories }: Props) => {
+const Sidebar = ({ categories, selectedSlug }: Props) => {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
-  const { isActiveCategory } = useCurrentSlug();
   const { isMobile } = useDevice();
 
   const handleCategoryClick = () => {
@@ -98,7 +97,7 @@ const Sidebar = ({ categories }: Props) => {
           {/* Navigation */}
           <nav className="flex-1 space-y-1 px-3">
             {categories.map((category) => {
-              const isActive = isActiveCategory(category.slug);
+              const isSelected = category.slug === selectedSlug;
 
               return (
                 <Link
@@ -107,19 +106,21 @@ const Sidebar = ({ categories }: Props) => {
                   onClick={handleCategoryClick}
                   className={cn(
                     'flex items-center gap-3 p-3 rounded-main transition-all duration-300 group relative overflow-hidden',
-                    isActive
+                    isSelected
                       ? 'text-foreground font-medium pl-5'
                       : 'text-muted-foreground hover:text-foreground hover:bg-white/40 hover:pl-5',
                   )}
                 >
-                  {isActive && (
+                  {isSelected && (
                     <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-primary animate-in fade-in slide-in-from-left-1 duration-300" />
                   )}
 
                   <span
                     className={cn(
                       'transition-transform duration-300 group-hover:scale-110',
-                      isActive ? 'text-accent-primary' : 'text-muted-foreground/70',
+                      isSelected
+                        ? 'text-accent-primary'
+                        : 'text-muted-foreground/70',
                     )}
                   >
                     {CATEGORY_MAP[category.slug].icon}

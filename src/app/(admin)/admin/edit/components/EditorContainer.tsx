@@ -1,13 +1,15 @@
-import { PostForm } from '@/types/blog';
+import { Category, PostForm } from '@/types/blog';
 import EditorForm from '@/components/editor/EditorForm';
 
 type props = {
   post: PostForm;
+  categories: Category[];
 };
 
-const EditorContainer = async ({ post }: props) => (
+const EditorContainer = async ({ post, categories }: props) => (
   <EditorForm
     mode="edit"
+    categories={categories}
     initialData={{
       id: post.id,
       title: post.title,
