@@ -1,42 +1,45 @@
 import { cn } from '@/utils/styles';
 import Sidebar from '@/components/common/Sidebar';
-import { getPublicCategories } from '@/services/categoryService';
-import { makeQueryClient } from '@/libs/tanstack/queryClient';
-import { BLOG_QUERY_KEY } from '@/queries/queryKey';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
-import { CATEGORY_FILTER } from '@/constants/blog';
-import { Category } from '@/types/blog';
+import {
+  getPublicCategories,
+  getPublicCategoryBySlug,
+} from '@/services/categoryService';
 import { PAGE_PATH } from '@/constants/paths';
+import { AppError } from '@/utils/error';
 
-const ViewerLayout = async ({ children }: { children: React.ReactNode }) => {
-  const queryClient = makeQueryClient();
-
-  const categories = await queryClient.fetchQuery<Category[]>({
-    queryKey: [BLOG_QUERY_KEY.categories, CATEGORY_FILTER.public],
-    queryFn: getPublicCategories,
-  });
+const ViewerLayout = async ({
+  params,
+  children,
+}: {
+  params: Promise<{ categorySlug: string }>;
+  children: React.ReactNode;
+}) => {
+  const categories = await getPublicCategories();
   const categoriesWithHref = categories.map((c) => ({
     ...c,
-    href: c.isPrivate ? PAGE_PATH.admin.posts(c.slug) : PAGE_PATH.posts(c.slug),
+    href: PAGE_PATH.posts(c.slug),
   }));
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <div className="flex min-h-screen bg-background">
-        <Sidebar categories={categoriesWithHref} />
+  const { categorySlug } = await params;
 
-        <main
-          className={cn(
-            'flex-1 min-w-0 min-h-screen base-transition flex flex-col overflow-y-auto',
-            'mx-auto pb-20 pt-20',
-            'max-w-content w-full',
-            'px-6 md:px-16 lg:px-24 xl:px-32',
-          )}
-        >
-          {children}
-        </main>
-      </div>
-    </HydrationBoundary>
+  const category = await getPublicCategoryBySlug(categorySlug);
+  if (!category) throw AppError.notFound();
+
+  return (
+    <div className="flex min-h-screen bg-background">
+      <Sidebar categories={categoriesWithHref} selectedSlug={category.slug} />
+
+      <main
+        className={cn(
+          'flex-1 min-w-0 min-h-screen base-transition flex flex-col overflow-y-auto',
+          'mx-auto pb-20 pt-20',
+          'max-w-content w-full',
+          'px-6 md:px-16 lg:px-24 xl:px-32',
+        )}
+      >
+        {children}
+      </main>
+    </div>
   );
 };
 

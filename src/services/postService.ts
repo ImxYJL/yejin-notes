@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/libs/supabase/server';
 import { AppError } from '@/utils/error';
 import {
   getAllCategories,
+  getCategoryBySlug,
   getPublicCategories,
   validateCategoryAccess,
 } from './categoryService';
@@ -221,9 +222,9 @@ export const getAdminPostNavigation = async (
 export const upsertPost = async (formData: PostForm): Promise<Post> => {
   const supabase = await createServerSupabaseClient();
 
-  const [user, categoryId] = await Promise.all([
+  const [user, category] = await Promise.all([
     validateAdmin(),
-    getCategoryIdBySlug(formData.categorySlug),
+    getCategoryBySlug(formData.categorySlug),
   ]);
 
   const oldPost = await getAdminPost(formData.id).catch(() => null);
@@ -239,7 +240,7 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
         title: formData.title,
         content: formData.content,
         summary: formData.summary,
-        category_id: categoryId,
+        category_id: category.id,
         tags: formData.tags,
         is_private: formData.isPrivate,
         is_published: formData.isPublished,
@@ -296,18 +297,6 @@ export const getDrafts = async (): Promise<DraftPost[]> => {
 // ----------------------------------------------------------------
 // 공통 유틸
 // ----------------------------------------------------------------
-
-export const getCategoryIdBySlug = async (slug: string) => {
-  const supabase = await createServerSupabaseClient();
-  const { data, error } = await supabase
-    .from('categories')
-    .select('id')
-    .eq('slug', slug)
-    .single();
-
-  if (error || !data) throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
-  return data.id;
-};
 
 const revalidateAdjacentPosts = async (
   categorySlug: CategorySlug,

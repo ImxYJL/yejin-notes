@@ -1,18 +1,30 @@
 import { cn } from '@/utils/styles';
 import Sidebar from '@/components/common/Sidebar';
-import { getAllCategories } from '@/services/categoryService';
+import { getAllCategories, getCategoryBySlug } from '@/services/categoryService';
 import { PAGE_PATH } from '@/constants/paths';
+import { AppError } from '@/utils/error';
 
-const ViewerLayout = async ({ children }: { children: React.ReactNode }) => {
+const ViewerLayout = async ({
+  params,
+  children,
+}: {
+  params: Promise<{ categorySlug: string }>;
+  children: React.ReactNode;
+}) => {
   const categories = await getAllCategories();
   const categoriesWithHref = categories.map((c) => ({
     ...c,
     href: PAGE_PATH.admin.posts(c.slug),
   }));
 
+  const { categorySlug } = await params;
+
+  const category = await getCategoryBySlug(categorySlug);
+  if (!category) throw AppError.notFound();
+
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar categories={categoriesWithHref} />
+      <Sidebar categories={categoriesWithHref} selectedSlug={category.slug} />
 
       <main
         className={cn(

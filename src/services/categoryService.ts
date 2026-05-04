@@ -8,6 +8,7 @@ import { AuthUser } from '@/types/auth';
 import { checkIsAdmin } from './authService';
 import { publicSupabase } from '@/libs/supabase/client';
 
+// TODO: 리팩토링, 필요성 생각해보기
 export const validateCategoryAccess = (
   categorySlug: CategorySlug,
   categories: Category[],
@@ -65,4 +66,30 @@ export const getAllCategories = async (): Promise<Category[]> => {
     slug: row.slug,
     isPrivate: row.is_private,
   }));
+};
+
+export const getPublicCategoryBySlug = async (slug: string) => {
+  const { data, error } = await publicSupabase
+    .from('categories')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_private', false)
+    .maybeSingle();
+
+  if (error || !data) throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
+
+  return data;
+};
+
+export const getCategoryBySlug = async (slug: string) => {
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle();
+
+  if (error || !data) throw AppError.notFound(null, '존재하지 않는 카테고리입니다.');
+
+  return data;
 };
