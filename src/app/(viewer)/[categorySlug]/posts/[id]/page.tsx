@@ -1,10 +1,13 @@
-import { getPublicCategories } from '@/services/categoryService';
+import {
+  getPublicCategories,
+  getPublicCategoryBySlug,
+} from '@/services/categoryService';
 import { getPublicPostDetail, getPublicPosts } from '@/services/postService';
-import { CategorySlug } from '@/types/blog';
 import { Suspense } from 'react';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
 import { redirect } from 'next/navigation';
 import { PAGE_PATH } from '@/constants/paths';
+import { AppError } from '@/utils/error';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -23,7 +26,7 @@ export async function generateStaticParams() {
 }
 
 type PostDetailPageParams = {
-  categorySlug: CategorySlug;
+  categorySlug: string;
   id: string;
 };
 
@@ -32,15 +35,18 @@ const PostDetailPage = async ({
 }: {
   params: Promise<PostDetailPageParams>;
 }) => {
-  const { categorySlug, id } = await params;
+  const { categorySlug: rawCategorySlug, id } = await params;
+
+  const category = await getPublicCategoryBySlug(rawCategorySlug);
+  if (!category) throw AppError.notFound();
 
   const post = await getPublicPostDetail(id).catch(() => {
-    redirect(PAGE_PATH.admin.postDetail(categorySlug, id));
+    redirect(PAGE_PATH.admin.postDetail(category.slug, id));
   });
 
   return (
     <Suspense fallback={<PostDetailSkeleton />}>
-      <PostDetail post={post} categorySlug={categorySlug} />
+      <PostDetail post={post} categorySlug={category.slug} />
     </Suspense>
   );
 };

@@ -68,7 +68,7 @@ export const getAllCategories = async (): Promise<Category[]> => {
   }));
 };
 
-export const getPublicCategoryBySlug = async (slug: string) => {
+export const getPublicCategoryBySlug = async (slug: string): Promise<Category> => {
   const { data, error } = await publicSupabase
     .from('categories')
     .select('*')
@@ -81,7 +81,7 @@ export const getPublicCategoryBySlug = async (slug: string) => {
   return data;
 };
 
-export const getCategoryBySlug = async (slug: string) => {
+export const getCategoryBySlug = async (slug: string): Promise<Category> => {
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase
     .from('categories')
