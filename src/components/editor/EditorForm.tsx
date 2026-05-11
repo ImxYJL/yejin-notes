@@ -9,7 +9,7 @@ import useSavePost from '@/queries/useSavePost';
 import { EditorToolbar } from '@/app/(admin)/admin/edit/components';
 import useSaveDraft from '@/queries/useSaveDraft';
 import { useQueryClient } from '@tanstack/react-query';
-import { getPostApi } from '@/apis/posts';
+import { getAdminPostApi } from '@/apis/posts';
 import { BLOG_QUERY_KEY } from '@/queries/queryKey';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';
@@ -81,7 +81,7 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   const handleSelectDraft = async (id: string) => {
     const data = await queryClient.fetchQuery({
       queryKey: [BLOG_QUERY_KEY.post, id],
-      queryFn: () => getPostApi(id),
+      queryFn: () => getAdminPostApi(id),
     });
 
     setFormData(convertToPostForm(data));

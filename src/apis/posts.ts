@@ -36,6 +36,14 @@ export const getPostApi = async (id: string): Promise<PostDetailResponse> => {
 };
 
 /**
+ * [Admin] 포스트 상세 조회
+ */
+export const getAdminPostApi = async (id: string): Promise<PostDetailResponse> => {
+  const { data } = await axiosInstance.get(API_ENDPOINT.admin.post(id));
+  return data.data;
+};
+
+/**
  * [Admin] 특정 카테고리의 관리자용 포스트 목록 조회 (비공개 포함)
  */
 export const getAdminPostsApi = async (
@@ -56,7 +64,7 @@ export const getAdminPostsApi = async (
  */
 export const savePostApi = async (formData: PostForm): Promise<Post> => {
   const { data } = await axiosInstance.patch(
-    API_ENDPOINT.admin.post(formData.id, formData.categorySlug),
+    API_ENDPOINT.admin.post(formData.id),
     formData,
   );
   return data.data;
@@ -65,11 +73,8 @@ export const savePostApi = async (formData: PostForm): Promise<Post> => {
 /**
  * [Admin] 포스트 삭제
  */
-export const deletePostApi = async (
-  id: string,
-  categorySlug: CategorySlug,
-): Promise<void> => {
-  await axiosInstance.delete(API_ENDPOINT.admin.post(id, categorySlug));
+export const deletePostApi = async (id: string): Promise<void> => {
+  await axiosInstance.delete(API_ENDPOINT.admin.post(id));
 };
 
 /**
@@ -78,4 +83,11 @@ export const deletePostApi = async (
 export const getDraftsApi = async (): Promise<DraftPost[]> => {
   const { data } = await axiosInstance.get(API_ENDPOINT.admin.drafts);
   return data.data;
+};
+
+/**
+ * [Admin] 임시 저장된 포스트 삭제
+ */
+export const deleteDraftApi = async (id: string): Promise<void> => {
+  await axiosInstance.delete(API_ENDPOINT.admin.draft(id));
 };

@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deletePost, getAdminPost, upsertPost } from '@/services/postService';
-import { AppError, handleRouteError } from '@/utils/error';
-import { CategorySlug } from '@/types/blog';
-import { isCategorySlug } from '@/utils/type';
+import { handleRouteError } from '@/utils/error';
 
 export type PostParams = {
   params: Promise<{
     id: string;
-    categorySlug: string;
   }>;
 };
 
@@ -27,11 +24,7 @@ export const GET = async (_request: NextRequest, { params }: PostParams) => {
 
 export const PATCH = async (request: Request, { params }: PostParams) => {
   try {
-    const { id, categorySlug } = await params;
-
-    if (!isCategorySlug(categorySlug)) {
-      throw AppError.notFound();
-    }
+    const { id } = await params;
 
     const body = await request.json();
     const updatedPost = await upsertPost({ ...body, id });
@@ -47,13 +40,9 @@ export const PATCH = async (request: Request, { params }: PostParams) => {
 
 export const DELETE = async (_request: Request, { params }: PostParams) => {
   try {
-    const { id, categorySlug } = await params;
+    const { id } = await params;
 
-    if (!isCategorySlug(categorySlug)) {
-      throw AppError.notFound();
-    }
-
-    await deletePost(id, categorySlug);
+    await deletePost(id);
 
     return NextResponse.json({
       success: true,

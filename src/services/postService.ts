@@ -265,18 +265,18 @@ export const upsertPost = async (formData: PostForm): Promise<Post> => {
   return mapPostDetailResponse(data);
 };
 
-export const deletePost = async (id: string, categorySlug: CategorySlug) => {
+export const deletePost = async (id: string) => {
   await validateAdmin();
   const supabase = await createServerSupabaseClient();
 
   const targetPost = await getAdminPost(id);
-  await revalidateAdjacentPosts(categorySlug, targetPost.createdAt);
+  await revalidateAdjacentPosts(targetPost.category.slug, targetPost.createdAt);
 
   const { error } = await supabase.from('posts').delete().eq('id', id);
   if (error) throw AppError.fromSupabase(error);
 
   revalidateTag(NEXT_CACHE_TAG.post(id), 'default');
-  revalidateTag(NEXT_CACHE_TAG.categoryPosts(categorySlug), 'default');
+  revalidateTag(NEXT_CACHE_TAG.categoryPosts(targetPost.category.slug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 };
 
@@ -292,6 +292,14 @@ export const getDrafts = async (): Promise<DraftPost[]> => {
 
   if (error) throw AppError.fromSupabase(error);
   return (data as DraftPost[]) || [];
+};
+
+export const deleteDraft = async (id: string) => {
+  await validateAdmin();
+  const supabase = await createServerSupabaseClient();
+
+  const { error } = await supabase.from('posts').delete().eq('id', id);
+  if (error) throw AppError.fromSupabase(error);
 };
 
 // ----------------------------------------------------------------

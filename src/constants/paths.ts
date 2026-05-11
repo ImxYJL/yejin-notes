@@ -34,9 +34,9 @@ export const API_ENDPOINT = {
   admin: {
     posts: (slug: CategorySlug) =>
       `${ADMIN_PREFIX}/posts?${QUERY_PARAMS.categorySlug}=${slug}`,
-    post: (id: string, categorySlug: CategorySlug) =>
-      `${ADMIN_PREFIX}/posts/${categorySlug}/${id}`,
+    post: (id: string) => `${ADMIN_PREFIX}/posts/${id}`,
     drafts: `${ADMIN_PREFIX}/posts/drafts`,
+    draft: (id: string) => `${ADMIN_PREFIX}/posts/drafts/${id}`,
   },
 
   me: '/auth/me',
