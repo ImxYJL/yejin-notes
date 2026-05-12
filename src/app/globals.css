@@ -60,11 +60,20 @@
   --width-editor: var(--editor-max-w);
 
   /* 📐 z-index Tokens */
-  --z-index-sidebar: 50;
-  --z-index-sidebar-btn: 51;
-  --z-index-sidebar-mobile: 61;
-  --z-index-overlay: 60;
-  --z-index-toast: 900;
+  /* 1. 바닥 레이어 (Navigation) */
+  --z-index-header: 100;
+  --z-index-sidebar: 110;
+  --z-index-sidebar-btn: 120;
+
+  /* 2. 오버레이 레이어 (사이드바보다 위에 와야 하는 경우) */
+  --z-index-overlay: 600;
+
+  /* 3. 모바일/드로어 레이어 */
+  --z-index-drawer: 700;
+  --z-index-sidebar-mobile: 710;
+
+  /* 4. 시스템 레이어 (항상 최상단) */
+  --z-index-toast: 1000;
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
