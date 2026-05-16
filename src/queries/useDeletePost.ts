@@ -17,8 +17,7 @@ const useDeletePost = () => {
   const { showToast } = useToastStore();
 
   return useMutation({
-    mutationFn: ({ id, categorySlug }: DeleteParams) =>
-      deletePostApi(id, categorySlug),
+    mutationFn: ({ id }: DeleteParams) => deletePostApi(id),
     onSuccess: (_, { id, categorySlug }) => {
       showToast('게시글이 삭제되었습니다.', 'success');
 

@@ -1,10 +1,11 @@
 'use client';
 
 import { Portal } from '@/components/common';
+import useDeleteDraft from '@/queries/useDeleteDraft';
 import useDrafts from '@/queries/useDrafts';
 import { formatDate } from '@/utils/date';
 import { cn } from '@/utils/styles';
-import { X, FileText, Loader2 } from 'lucide-react';
+import { X, Loader2, Trash2 } from 'lucide-react';
 
 type DraftListDrawerProps = {
   isOpen: boolean;
@@ -14,14 +15,16 @@ type DraftListDrawerProps = {
 
 const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) => {
   const { data: drafts, isLoading, isError } = useDrafts(isOpen);
+  const { mutate: deleteDraft, isPending: isDeletePending } = useDeleteDraft();
 
   return (
     <Portal>
       {/* 1. 오버레이 */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-[80]',
+          'fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-index-overlay',
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
+          isDeletePending && 'pointer-events-none',
         )}
         onClick={onClose}
       />
@@ -29,7 +32,7 @@ const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) =>
       {/* 2. 드로어 본체 */}
       <aside
         className={cn(
-          'fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-[90] isolation-isolate',
+          'fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-index-drawer isolation-isolate',
           'transition-transform duration-300 ease-in-out border-l border-black/[0.03]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
@@ -46,8 +49,7 @@ const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) =>
             </button>
           </div>
 
-          {/* TODO: 리스트 영역이므로 태그 바꾸기 */}
-          <div className="flex-1 overflow-y-auto space-y-3 pr-1 custom-scrollbar">
+          <ul className="flex-1 overflow-y-auto divide-y divide-gray-300">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center h-40 gap-3 text-muted-foreground">
                 <Loader2 className="animate-spin" size={24} />
@@ -63,36 +65,44 @@ const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) =>
               </p>
             ) : (
               drafts?.map((draft) => (
-                <button
-                  key={draft.id}
-                  onClick={() => {
-                    onSelect(draft.id);
-                    onClose();
-                  }}
-                  className={cn(
-                    'w-full text-left p-4 rounded-main border border-transparent',
-                    'bg-[#f2f9f9]/50 hover:bg-[#f5f3f7] hover:border-accent-primary/20',
-                    'group base-transition shadow-sm',
-                  )}
-                >
-                  <div className="flex gap-3">
-                    <FileText
-                      size={16}
-                      className="mt-1 text-[#907aa9] group-hover:text-accent-primary"
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-[#575279] truncate group-hover:text-accent-primary">
+                <li key={draft.id} className="group relative">
+                  <button
+                    onClick={() => {
+                      onSelect(draft.id);
+                      onClose();
+                    }}
+                    className={cn(
+                      'w-full text-left p-4 border-transparent',
+                      'bg-white group base-transition',
+                    )}
+                  >
+                    <div className="flex-1 min-w-0 pr-8">
+                      <h3 className="text-sm font-semibold text-[#575279] truncate group-hover:text-accent-primary">
                         {draft.title || '제목 없는 글'}
                       </h3>
                       <p className="text-[11px] text-muted-foreground mt-1.5 font-medium uppercase tracking-wider">
                         {formatDate(draft.createdAt)}
                       </p>
                     </div>
-                  </div>
-                </button>
+                  </button>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteDraft(draft.id);
+                    }}
+                    className={cn(
+                      'absolute right-4 top-1/2 -translate-y-1/2 p-2',
+                      'opacity-0 group-hover:opacity-100 transition-opacity duration-200',
+                      'text-gray-400 hover:text-red-500',
+                    )}
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                </li>
               ))
             )}
-          </div>
+          </ul>
         </div>
       </aside>
     </Portal>
