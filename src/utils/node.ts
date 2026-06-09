@@ -1,6 +1,5 @@
 import { ReactNode } from 'react';
 import { hasChildren } from './type';
-import { clearTimeout } from 'timers';
 
 /**
  * 노드 트리 내에서 실제 내용이 있는 첫 번째 텍스트를 재귀적으로 찾아 반환
@@ -25,14 +24,12 @@ export const getFirstText = (node: ReactNode): string => {
   return '';
 };
 
-type Timer = ReturnType<typeof setTimeout>;
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const debounce = <T extends (...args: any[]) => void>(
   callback: T,
   time = 3000,
 ) => {
-  let timerId: Timer | null = null;
+  let timerId: ReturnType<typeof setTimeout> | null = null;
 
   const debounce = (...args: Parameters<T>) => {
     if (timerId) clearTimeout(timerId);
