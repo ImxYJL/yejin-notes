@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAdminPosts, upsertPost } from '@/services/postService';
+import { getAdminPosts, publishPost } from '@/services/postService';
 import { AppError, handleRouteError } from '@/utils/error';
 import { QUERY_PARAMS } from '@/constants/system';
 import { isCategorySlug } from '@/utils/type';
@@ -31,8 +31,7 @@ export const POST = async (request: Request) => {
   try {
     const body = await request.json();
 
-    const post = await upsertPost(body);
-
+    const post = await publishPost(body);
     return NextResponse.json({
       success: true,
       data: post,

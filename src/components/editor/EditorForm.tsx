@@ -7,14 +7,15 @@ import { ContentEditor, TitleInput } from '.';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import useSavePost from '@/queries/useSavePost';
 import { EditorToolbar } from '@/app/(admin)/admin/edit/components';
-import useSaveDraft from '@/queries/useSaveDraft';
 import { useQueryClient } from '@tanstack/react-query';
-import { getAdminPostApi } from '@/apis/posts';
-import { BLOG_QUERY_KEY } from '@/queries/queryKey';
+import { getEditorPostApi } from '@/apis/posts';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';
 import { convertToPostForm } from '@/utils/posts';
 import { buildCategoryMap } from '@/utils/posts/category';
+import useSaveDraft from '@/queries/useSaveDraft';
+import useAutoSave from '@/hooks/useAutoSave';
+import { PAGE_PATH } from '@/constants/paths';
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -29,38 +30,44 @@ export const EDITOR_LAYOUT = {
 const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   const [formData, setFormData] = useState<PostForm>(initialData);
 
-  const handleUpdateField = useCallback(
-    <K extends keyof PostForm>(field: K, value: PostForm[K]) => {
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    },
-    [],
-  );
+  const setPostId = (id: string) => {
+    setFormData((prev) => ({ ...prev, id }));
+  };
 
-  const { editorRef, previewRef, handleScroll, handleMouseEnter } = useScrollSync();
+  // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
+  const deferredContent = useDeferredValue(formData.content);
+
   const categoryMap = buildCategoryMap(categories);
+  const { editorRef, previewRef, handleScroll, handleMouseEnter } = useScrollSync();
 
   const queryClient = useQueryClient();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
-  const { mutate: onDraftSave, isPending: isSaveDraftPending } = useSaveDraft();
+  const { mutate: onDraftSave, isPending: isSaveDraftPending } =
+    useSaveDraft(setPostId);
+  const { trigger: autoSave, cancel: cancelAutoSave } = useAutoSave(
+    formData,
+    setPostId,
+  );
+
+  const isPending = isSavePending || isSaveDraftPending;
+
+  const handleUpdateField = <K extends keyof PostForm>(
+    field: K,
+    value: PostForm[K],
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    autoSave(field, value);
+  };
+
   const { insertImage, autoThumbnail } = usePostImage({
     content: formData.content,
     onUpdateField: handleUpdateField,
     editorRef,
   });
 
-  const handleImgPaste = useCallback(
-    (file: File) => {
-      insertImage(file);
-    },
-    [insertImage],
-  );
-
-  const isPending = isSavePending || isSaveDraftPending;
-  // 미리보기 성능 최적화 (본문 렌더링을 0.x초 뒤로 미룸)
-  const deferredContent = useDeferredValue(formData.content);
+  const handleImgPaste = (file: File) => {
+    insertImage(file);
+  };
 
   const handleSave = () => {
     if (isSavePending) return;
@@ -79,12 +86,10 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   };
 
   const handleSelectDraft = async (id: string) => {
-    const data = await queryClient.fetchQuery({
-      queryKey: [BLOG_QUERY_KEY.post, id],
-      queryFn: () => getAdminPostApi(id),
-    });
-
+    cancelAutoSave();
+    const data = await getEditorPostApi(id);
     setFormData(convertToPostForm(data));
+    window.history.replaceState(null, '', PAGE_PATH.admin.edit(id));
   };
 
   const handleToggleIsPrivate = () => {
@@ -105,26 +110,20 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
     }));
   };
 
-  const handleContentChange = useCallback(
-    (val: string) => {
-      handleUpdateField('content', val);
-    },
-    [handleUpdateField],
-  );
+  const handleContentChange = (val: string) => {
+    handleUpdateField('content', val);
+  };
 
-  const handleTitleChange = useCallback(
-    (val: string) => {
-      handleUpdateField('title', val);
-    },
-    [handleUpdateField],
-  );
+  const handleTitleChange = (val: string) => {
+    handleUpdateField('title', val);
+  };
 
   const handleEditorScroll = useCallback(() => {
     handleScroll('editor');
   }, [handleScroll]);
 
   return (
-    <div className="p-2 flex flex-col h-full gap-2">
+    <div className="flex flex-col h-full gap-2 p-2">
       <EditorToolbar
         mode={mode}
         categorySlug={formData.categorySlug}
@@ -139,7 +138,7 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
 
       <TitleInput value={formData.title} onChange={handleTitleChange} />
 
-      <div className="flex-1 flex min-h-0 gap-6">
+      <div className="flex flex-1 min-h-0 gap-6">
         <section
           onMouseEnter={() => handleMouseEnter('editor')}
           className={`flex-1 flex flex-col pb-[${EDITOR_LAYOUT.bottomPadding}vh]`}
@@ -165,7 +164,7 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
         >
           <MarkdownPreview
             content={deferredContent}
-            className="mb-6  border-red-400"
+            className="mb-6 border-red-400"
           />
         </section>
       </div>

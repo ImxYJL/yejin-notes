@@ -1,11 +1,13 @@
 import { API_ENDPOINT } from '@/constants/paths';
 import type {
   CategorySlug,
-  DraftPost,
+  DraftPostItem,
+  EditorPost,
   Post,
   PostDetailResponse,
   PostForm,
   PostsResponse,
+  SaveDraftResponse,
 } from '@/types/blog';
 import axiosInstance from '@/libs/axios/axios';
 import { PaginationParams } from '@/types/page';
@@ -63,10 +65,7 @@ export const getAdminPostsApi = async (
  * [Admin] 포스트 수정/저장
  */
 export const savePostApi = async (formData: PostForm): Promise<Post> => {
-  const { data } = await axiosInstance.patch(
-    API_ENDPOINT.admin.post(formData.id),
-    formData,
-  );
+  const { data } = await axiosInstance.post(API_ENDPOINT.admin.post(), formData);
   return data.data;
 };
 
@@ -80,7 +79,7 @@ export const deletePostApi = async (id: string): Promise<void> => {
 /**
  * [Admin] 임시 저장된 포스트(초안) 목록 조회
  */
-export const getDraftsApi = async (): Promise<DraftPost[]> => {
+export const getDraftsApi = async (): Promise<DraftPostItem[]> => {
   const { data } = await axiosInstance.get(API_ENDPOINT.admin.drafts);
   return data.data;
 };
@@ -90,4 +89,24 @@ export const getDraftsApi = async (): Promise<DraftPost[]> => {
  */
 export const deleteDraftApi = async (id: string): Promise<void> => {
   await axiosInstance.delete(API_ENDPOINT.admin.draft(id));
+};
+
+/**
+ * [Admin] 포스트 임시저장
+ */
+export const saveDraftApi = async (
+  formData: PostForm,
+): Promise<SaveDraftResponse> => {
+  const { data } = await axiosInstance.post(API_ENDPOINT.admin.drafts, formData);
+
+  return data.data;
+};
+
+/**
+ * [Admin] 에디터용 포스트 불러오기
+ */
+export const getEditorPostApi = async (id: string): Promise<EditorPost> => {
+  const { data } = await axiosInstance.get(API_ENDPOINT.admin.draft(id));
+
+  return data.data;
 };

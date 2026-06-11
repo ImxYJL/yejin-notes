@@ -1,4 +1,4 @@
-import { ChangeEvent, KeyboardEvent, memo } from 'react';
+import { ChangeEvent, KeyboardEvent } from 'react';
 import { Textarea } from '../common';
 
 type ContentEditorProps = {
@@ -9,43 +9,47 @@ type ContentEditorProps = {
   ref?: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-const ContentEditor = memo(
-  ({ value, onChange, onScroll, onImgPaste, ref }: ContentEditorProps) => {
-    const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-      const item = e.clipboardData.items[0];
+const ContentEditor = ({
+  value,
+  onChange,
+  onScroll,
+  onImgPaste,
+  ref,
+}: ContentEditorProps) => {
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const item = e.clipboardData.items[0];
 
-      if (item?.type.startsWith('image/')) {
-        const file = item.getAsFile();
-        if (file) {
-          e.preventDefault(); // 이미지 텍스트 데이터가 붙여넣어지는 것 방지
-          onImgPaste(file);
-        }
+    if (item?.type.startsWith('image/')) {
+      const file = item.getAsFile();
+      if (file) {
+        e.preventDefault(); // 이미지 텍스트 데이터가 붙여넣어지는 것 방지
+        onImgPaste(file);
       }
-    };
+    }
+  };
 
-    const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      handleTabSupport(e, value, onChange);
-    };
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    handleTabSupport(e, value, onChange);
+  };
 
-    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-      onChange(e.target.value);
-    };
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e.target.value);
+  };
 
-    return (
-      <Textarea
-        variant="outline"
-        placeholder="여기에 입력해주세요"
-        value={value}
-        onChange={handleChange}
-        onScroll={onScroll}
-        onPaste={handlePaste}
-        onKeyDown={handleKeyDown}
-        ref={ref}
-        className="mb-6 flex-1 resize-none font-mono text-base leading-relaxed overflow-y-auto border-muted-foreground/50"
-      />
-    );
-  },
-);
+  return (
+    <Textarea
+      variant="outline"
+      placeholder="여기에 입력해주세요"
+      value={value}
+      onChange={handleChange}
+      onScroll={onScroll}
+      onPaste={handlePaste}
+      onKeyDown={handleKeyDown}
+      ref={ref}
+      className="mb-6 flex-1 resize-none font-mono text-base leading-relaxed overflow-y-auto border-muted-foreground/50"
+    />
+  );
+};
 
 /**
  * Textarea의 현재 커서 위치에 텍스트를 삽입하고 포커스를 유지
@@ -100,5 +104,4 @@ const handleTabSupport = (
   }, 0);
 };
 
-ContentEditor.displayName = 'ContentEditor';
 export default ContentEditor;

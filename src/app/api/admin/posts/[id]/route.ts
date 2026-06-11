@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { deletePost, getAdminPost, upsertPost } from '@/services/postService';
+import { deletePost, getAdminPost } from '@/services/postService';
 import { handleRouteError } from '@/utils/error';
 
 export type PostParams = {
@@ -16,22 +16,6 @@ export const GET = async (_request: NextRequest, { params }: PostParams) => {
     return NextResponse.json({
       success: true,
       data: post,
-    });
-  } catch (error) {
-    return handleRouteError(error);
-  }
-};
-
-export const PATCH = async (request: Request, { params }: PostParams) => {
-  try {
-    const { id } = await params;
-
-    const body = await request.json();
-    const updatedPost = await upsertPost({ ...body, id });
-
-    return NextResponse.json({
-      success: true,
-      data: updatedPost,
     });
   } catch (error) {
     return handleRouteError(error);

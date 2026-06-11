@@ -34,6 +34,14 @@ export type Post = {
   updatedAt: string;
 };
 
+// 목록용 미리보기
+export type PostItem = Omit<Post, 'content' | 'updatedAt' | 'category'>;
+
+export type PostNavigation = {
+  prevPost: Pick<Post, 'id' | 'title'> | null;
+  nextPost: Pick<Post, 'id' | 'title'> | null;
+};
+
 /** -----------------------------------------------------------
  * 3. DB Raw Data (Supabase에서 넘어오는 원본)
  * ----------------------------------------------------------- */
@@ -48,23 +56,47 @@ export type PostRow = {
   is_published: boolean;
   thumbnail_url: string | null;
   created_at: string;
-  updated_at: string; // DB에서 알아서 생성해줌
+  updated_at: string;
   category: {
     // TODO: 프론트에서도 이대로 쓸 것인가?
     slug: string;
     name: string;
   };
+  draft_data: DraftData | null;
 };
+
+export type PostItemRow = Pick<
+  PostRow,
+  | 'id'
+  | 'title'
+  | 'summary'
+  | 'tags'
+  | 'thumbnail_url'
+  | 'is_private'
+  | 'is_published'
+  | 'created_at'
+>;
+
+export type PublishedPostRow = Omit<PostRow, 'draft_data'>;
 
 /** -----------------------------------------------------------
  * 4. DTO & Form (생성, 수정, 입력)
  * ----------------------------------------------------------- */
 
-export type DraftPost = Pick<Post, 'createdAt' | 'title' | 'id'>;
+export type DraftData = Pick<
+  Post,
+  'title' | 'content' | 'summary' | 'tags' | 'thumbnailUrl' | 'isPrivate'
+>;
 
-export type PostForm = Omit<Post, 'createdAt' | 'updatedAt' | 'category'> & {
+export type EditorPost = Omit<Post, 'draftData'>;
+
+export type DraftPostItem = Pick<Post, 'createdAt' | 'title' | 'id'>;
+
+export type PostForm = Omit<Post, 'createdAt' | 'updatedAt' | 'category' | 'id'> & {
   categorySlug: CategorySlug;
+  id?: string;
 };
+
 export type PostImg = Pick<Post, 'thumbnailUrl' | 'content'>;
 
 export type CategoryMap = Record<CategorySlug, Category>;
@@ -75,16 +107,12 @@ export type EditorMode = 'create' | 'edit';
  * 5. Response & Navigation (API 응답)
  * ----------------------------------------------------------- */
 
-// 목록용 미리보기
-export type PostItem = Omit<Post, 'content' | 'updatedAt' | 'category'>;
-
-export type PostNavigation = {
-  prevPost: Pick<Post, 'id' | 'title'> | null;
-  nextPost: Pick<Post, 'id' | 'title'> | null;
-};
-
 export type PostDetailResponse = Post & PostNavigation;
 
 export type PostsResponse = PaginationMeta & {
   posts: PostItem[];
+};
+
+export type SaveDraftResponse = {
+  id: string;
 };

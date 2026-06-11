@@ -11,13 +11,18 @@ import {
 import { getAuthUser, validateAdmin } from './authService';
 import {
   CategorySlug,
-  DraftPost,
+  DraftData,
+  DraftPostItem,
+  EditorPost,
   Post,
   PostDetailResponse,
   PostForm,
   PostItem,
+  PostItemRow,
   PostNavigation,
   PostRow,
+  PublishedPostRow,
+  SaveDraftResponse,
 } from '@/types/blog';
 import { publicSupabase } from '@/libs/supabase/client';
 import { revalidateTag, unstable_cache } from 'next/cache';
@@ -79,16 +84,36 @@ export const getPublicPosts = (
 export const getPublicPost = (postId: string) =>
   unstable_cache(
     async (postId: string): Promise<Post> => {
-      const { data: currentPost, error } = await publicSupabase
+      const { data, error } = await publicSupabase
         .from('posts')
-        .select('*, category:categories(slug, name)')
+        .select(
+          `
+            id,
+            title,
+            content,
+            summary,
+            category_id,
+            tags,
+            is_private,
+            is_published,
+            thumbnail_url,
+            created_at,
+            updated_at,
+            category:categories(slug, name)
+          `,
+        )
         .eq('id', postId)
         .single();
 
-      if (error || !currentPost) throw AppError.notFound();
+      if (error || !data) throw AppError.notFound();
+
+      const normalizedData: PublishedPostRow = {
+        ...data,
+        category: data.category[0], // NOTE: join의 한계로 카테고리가 배열로 추론됨
+      };
 
       return {
-        ...mapPostDetailResponse(currentPost),
+        ...mapPostDetailResponse(normalizedData),
       };
     },
     [NEXT_CACHE_KEY.post(postId)],
@@ -175,16 +200,36 @@ export const getAdminPost = async (postId: string): Promise<Post> => {
 
   const supabase = await createServerSupabaseClient();
 
-  const { data: currentPost, error } = await supabase
+  const { data, error } = await supabase
     .from('posts')
-    .select('*, category:categories(slug, name)')
+    .select(
+      `
+        id,
+        title,
+        content,
+        summary,
+        category_id,
+        tags,
+        is_private,
+        is_published,
+        thumbnail_url,
+        created_at,
+        updated_at,
+        category:categories(slug, name)
+      `,
+    )
     .eq('id', postId)
     .single();
 
-  if (error || !currentPost) throw AppError.notFound();
+  if (error || !data) throw AppError.notFound();
+
+  const normalizedData: PublishedPostRow = {
+    ...data,
+    category: data.category[0],
+  };
 
   return {
-    ...mapPostDetailResponse(currentPost),
+    ...mapPostDetailResponse(normalizedData),
   };
 };
 
@@ -219,50 +264,60 @@ export const getAdminPostNavigation = async (
   });
 };
 
-export const upsertPost = async (formData: PostForm): Promise<Post> => {
+export const publishPost = async (formData: PostForm): Promise<Post> => {
   const supabase = await createServerSupabaseClient();
+  const isEditMode = !!formData.id;
 
   const [user, category] = await Promise.all([
     validateAdmin(),
     getCategoryBySlug(formData.categorySlug),
   ]);
 
-  const oldPost = await getAdminPost(formData.id).catch(() => null);
-  if (oldPost) {
-    await revalidateAdjacentPosts(oldPost.category.slug, oldPost.createdAt);
+  // 기존 글 캐시 무효화 (이전 글/다음 글 등)
+  if (isEditMode) {
+    const oldPost = await getAdminPost(formData.id!).catch(() => null);
+    if (oldPost) {
+      await revalidateAdjacentPosts(oldPost.category.slug, oldPost.createdAt);
+    }
+  }
+
+  const postPayload: Record<string, unknown> = {
+    title: formData.title,
+    content: formData.content,
+    summary: formData.summary,
+    category_id: category.id,
+    tags: formData.tags,
+    is_private: formData.isPrivate,
+    is_published: formData.isPublished,
+    thumbnail_url: formData.thumbnailUrl,
+    user_id: user.id,
+
+    // NOTE: 임시저장 비우기
+    draft_data: null,
+  };
+
+  if (isEditMode) {
+    postPayload.id = formData.id;
   }
 
   const { data, error } = await supabase
     .from('posts')
-    .upsert(
-      {
-        id: formData.id,
-        title: formData.title,
-        content: formData.content,
-        summary: formData.summary,
-        category_id: category.id,
-        tags: formData.tags,
-        is_private: formData.isPrivate,
-        is_published: formData.isPublished,
-        thumbnail_url: formData.thumbnailUrl,
-        user_id: user.id,
-      },
-      { onConflict: 'id' },
-    )
+    .upsert(postPayload, { onConflict: 'id' })
     .select('*, category:categories!inner(slug, name)')
     .single();
 
   if (error) throw AppError.fromSupabase(error);
   if (!data) throw AppError.internal('데이터 처리에 실패했습니다.');
 
-  revalidateTag(NEXT_CACHE_TAG.post(formData.id), 'default');
+  const finalId = formData.id ?? data.id;
+  revalidateTag(NEXT_CACHE_TAG.post(finalId), 'default');
   revalidateTag(NEXT_CACHE_TAG.categoryPosts(formData.categorySlug), 'default');
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 
   const newPost = mapPostDetailResponse(data);
   await revalidateAdjacentPosts(newPost.category.slug, newPost.createdAt);
 
-  return mapPostDetailResponse(data);
+  return newPost;
 };
 
 export const deletePost = async (id: string) => {
@@ -280,7 +335,7 @@ export const deletePost = async (id: string) => {
   revalidateTag(NEXT_CACHE_TAG.posts, 'default');
 };
 
-export const getDrafts = async (): Promise<DraftPost[]> => {
+export const getDrafts = async (): Promise<DraftPostItem[]> => {
   await validateAdmin();
   const supabase = await createServerSupabaseClient();
 
@@ -291,7 +346,109 @@ export const getDrafts = async (): Promise<DraftPost[]> => {
     .order('created_at', { ascending: false });
 
   if (error) throw AppError.fromSupabase(error);
-  return (data as DraftPost[]) || [];
+  return (data as DraftPostItem[]) || [];
+};
+
+export const getEditorPost = async (postId: string): Promise<EditorPost> => {
+  await validateAdmin();
+  const supabase = await createServerSupabaseClient();
+
+  const { data, error } = await supabase
+    .from('posts')
+    .select(
+      `
+        id,
+        title,
+        content,
+        summary,
+        category_id,
+        tags,
+        is_private,
+        is_published,
+        thumbnail_url,
+        created_at,
+        updated_at,
+        draft_data,
+        category:categories(slug, name)
+      `,
+    )
+    .eq('id', postId)
+    .single();
+
+  if (error) {
+    throw AppError.fromSupabase(error);
+  }
+
+  const category = Array.isArray(data.category) ? data.category[0] : data.category;
+
+  return mapEditorPostResponse({ ...data, category });
+};
+
+export const saveDraft = async (formData: PostForm): Promise<SaveDraftResponse> => {
+  const supabase = await createServerSupabaseClient();
+
+  const [user, category] = await Promise.all([
+    validateAdmin(),
+    getCategoryBySlug(formData.categorySlug),
+  ]);
+
+  console.log(formData);
+
+  const draftData: DraftData = {
+    title: formData.title,
+    content: formData.content,
+    summary: formData.summary,
+    tags: formData.tags,
+    thumbnailUrl: formData.thumbnailUrl,
+    isPrivate: formData.isPrivate,
+  };
+
+  // 수정
+  if (formData.id) {
+    const { data, error } = await supabase
+      .from('posts')
+      .update({
+        draft_data: draftData,
+      })
+      .eq('id', formData.id)
+      .select('id')
+      .single();
+
+    if (error) throw AppError.fromSupabase(error);
+    if (!data) throw AppError.internal('임시 저장에 실패했습니다.');
+
+    return {
+      id: data.id,
+    };
+  }
+
+  const { data, error } = await supabase
+    .from('posts')
+    .insert({
+      title: '',
+      content: '',
+      summary: '',
+      category_id: category.id,
+
+      tags: [],
+      is_private: false,
+      is_published: false,
+
+      thumbnail_url: null,
+
+      user_id: user.id,
+
+      draft_data: draftData,
+    })
+    .select('id')
+    .single();
+
+  if (error) throw AppError.fromSupabase(error);
+  if (!data) throw AppError.internal('임시 저장에 실패했습니다.');
+
+  return {
+    id: data.id,
+  };
 };
 
 export const deleteDraft = async (id: string) => {
@@ -377,9 +534,7 @@ export const getPostNavigation = async ({
   };
 };
 
-export const mapPostItemResponse = (
-  row: Omit<PostRow, 'content' | 'category'>,
-): PostItem => ({
+export const mapPostItemResponse = (row: PostItemRow): PostItem => ({
   id: row.id,
   title: row.title,
   summary: row.summary,
@@ -390,7 +545,7 @@ export const mapPostItemResponse = (
   createdAt: row.created_at,
 });
 
-export const mapPostDetailResponse = (row: PostRow): Post => ({
+export const mapPostDetailResponse = (row: PublishedPostRow): Post => ({
   ...mapPostItemResponse(row),
   content: row.content,
   updatedAt: row.updated_at || row.created_at,
@@ -399,3 +554,24 @@ export const mapPostDetailResponse = (row: PostRow): Post => ({
     name: row.category.name,
   },
 });
+
+export const mapEditorPostResponse = (row: PostRow): EditorPost => {
+  const draft = row.draft_data;
+
+  return {
+    id: row.id,
+    title: draft?.title ?? row.title,
+    content: draft?.content ?? row.content,
+    summary: draft?.summary ?? row.summary,
+    category: {
+      slug: row.category.slug as CategorySlug,
+      name: row.category.name,
+    },
+    tags: draft?.tags ?? row.tags ?? [],
+    thumbnailUrl: draft?.thumbnailUrl ?? row.thumbnail_url,
+    isPrivate: draft?.isPrivate ?? row.is_private,
+    isPublished: row.is_published,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+};

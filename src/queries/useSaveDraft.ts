@@ -1,32 +1,25 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter, usePathname } from 'next/navigation';
-import { useToastStore } from '@/store/useToastStore';
 import { PostForm } from '@/types/blog';
-import { savePostApi } from '@/apis/posts';
+import { saveDraftApi } from '@/apis/posts';
 import { PAGE_PATH } from '@/constants/paths';
 import { BLOG_QUERY_KEY } from './queryKey';
 
-const useSaveDraft = () => {
-  const router = useRouter();
-  const pathname = usePathname();
+const useSaveDraft = (onSuccess?: (id: string) => void) => {
   const queryClient = useQueryClient();
-  const { showToast } = useToastStore();
 
-  // NOTE: 현재 임시저장과 발행된 글을 따로 관리하지 않으므로,
-  // 이미 발행한 글에서 다시 임시저장을 할 경우 게시되었던 글도 목록에서 사라지게 됨!!
   return useMutation({
-    mutationFn: (formData: PostForm) =>
-      savePostApi({ ...formData, isPublished: false }),
-    onSuccess: (newPost) => {
-      showToast('임시저장에 성공했습니다.', 'success');
+    mutationFn: (formData: PostForm) => saveDraftApi({ ...formData }),
+    onSuccess: ({ id }, variables) => {
+      window.history.replaceState(null, '', PAGE_PATH.admin.edit(id));
 
-      queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.drafts] });
-
-      if (pathname.includes('write')) {
-        router.replace(PAGE_PATH.admin.edit(newPost.id));
+      // 첫 작성일 때 임시저장 목록 캐시 무효화
+      if (!variables.id) {
+        queryClient.invalidateQueries({ queryKey: [BLOG_QUERY_KEY.drafts] });
+        // 서버로부터 받아온 id 세팅
+        onSuccess?.(id);
       }
     },
-    onError: () => showToast('임시저장에 실패했습니다.', 'error'),
+    onError: (error: Error) => console.log(error.message),
   });
 };
 
