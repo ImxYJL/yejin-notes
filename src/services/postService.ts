@@ -109,8 +109,10 @@ export const getPublicPost = (postId: string) =>
 
       const normalizedData: PublishedPostRow = {
         ...data,
-        category: data.category[0], // NOTE: join의 한계로 카테고리가 배열로 추론됨
+        category: Array.isArray(data.category) ? data.category[0] : data.category,
       };
+
+      if (!normalizedData.category) throw AppError.notFound();
 
       return {
         ...mapPostDetailResponse(normalizedData),
@@ -225,8 +227,10 @@ export const getAdminPost = async (postId: string): Promise<Post> => {
 
   const normalizedData: PublishedPostRow = {
     ...data,
-    category: data.category[0],
+    category: Array.isArray(data.category) ? data.category[0] : data.category,
   };
+
+  if (!normalizedData.category) throw AppError.notFound();
 
   return {
     ...mapPostDetailResponse(normalizedData),
