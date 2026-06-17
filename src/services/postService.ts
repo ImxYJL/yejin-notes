@@ -107,16 +107,7 @@ export const getPublicPost = (postId: string) =>
 
       if (error || !data) throw AppError.notFound();
 
-      const normalizedData: PublishedPostRow = {
-        ...data,
-        category: Array.isArray(data.category) ? data.category[0] : data.category,
-      };
-
-      if (!normalizedData.category) throw AppError.notFound();
-
-      return {
-        ...mapPostDetailResponse(normalizedData),
-      };
+      return mapPostDetailResponse(data as PublishedPostRow);
     },
     [NEXT_CACHE_KEY.post(postId)],
     {
@@ -225,16 +216,7 @@ export const getAdminPost = async (postId: string): Promise<Post> => {
 
   if (error || !data) throw AppError.notFound();
 
-  const normalizedData: PublishedPostRow = {
-    ...data,
-    category: Array.isArray(data.category) ? data.category[0] : data.category,
-  };
-
-  if (!normalizedData.category) throw AppError.notFound();
-
-  return {
-    ...mapPostDetailResponse(normalizedData),
-  };
+  return mapPostDetailResponse(data as PublishedPostRow);
 };
 
 export const getAdminPostDetail = async (
@@ -383,9 +365,7 @@ export const getEditorPost = async (postId: string): Promise<EditorPost> => {
     throw AppError.fromSupabase(error);
   }
 
-  const category = Array.isArray(data.category) ? data.category[0] : data.category;
-
-  return mapEditorPostResponse({ ...data, category });
+  return mapEditorPostResponse(data);
 };
 
 export const saveDraft = async (formData: PostForm): Promise<SaveDraftResponse> => {
@@ -549,18 +529,22 @@ export const mapPostItemResponse = (row: PostItemRow): PostItem => ({
   createdAt: row.created_at,
 });
 
-export const mapPostDetailResponse = (row: PublishedPostRow): Post => ({
-  ...mapPostItemResponse(row),
-  content: row.content,
-  updatedAt: row.updated_at || row.created_at,
-  category: {
-    slug: (row.category.slug as CategorySlug) || 'dev', // TODO
-    name: row.category.name,
-  },
-});
+export const mapPostDetailResponse = (row: PublishedPostRow): Post => {
+  const category = Array.isArray(row.category) ? row.category[0] : row.category;
+  return {
+    ...mapPostItemResponse(row),
+    content: row.content,
+    updatedAt: row.updated_at || row.created_at,
+    category: {
+      slug: (category.slug as CategorySlug) || 'dev', // TODO
+      name: category.name,
+    },
+  };
+};
 
 export const mapEditorPostResponse = (row: PostRow): EditorPost => {
   const draft = row.draft_data;
+  const category = Array.isArray(row.category) ? row.category[0] : row.category;
 
   return {
     id: row.id,
@@ -568,8 +552,8 @@ export const mapEditorPostResponse = (row: PostRow): EditorPost => {
     content: draft?.content ?? row.content,
     summary: draft?.summary ?? row.summary,
     category: {
-      slug: row.category.slug as CategorySlug,
-      name: row.category.name,
+      slug: category.slug as CategorySlug,
+      name: category.name,
     },
     tags: draft?.tags ?? row.tags ?? [],
     thumbnailUrl: draft?.thumbnailUrl ?? row.thumbnail_url,

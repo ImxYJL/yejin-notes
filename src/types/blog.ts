@@ -57,11 +57,8 @@ export type PostRow = {
   thumbnail_url: string | null;
   created_at: string;
   updated_at: string;
-  category: {
-    // TODO: 프론트에서도 이대로 쓸 것인가?
-    slug: string;
-    name: string;
-  };
+  // Supabase SDK가 FK join 결과를 배열로 추론하는 quirk로 인해 union 타입
+  category: { slug: string; name: string } | { slug: string; name: string }[];
   draft_data: DraftData | null;
 };
 
