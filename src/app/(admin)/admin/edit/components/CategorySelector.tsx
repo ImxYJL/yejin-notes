@@ -2,20 +2,15 @@
 
 import { Badge } from '@/components/common';
 import { CATEGORY_KEYS } from '@/constants/blog';
-import { useAllCategories } from '@/queries/useCategories';
-import { CategorySlug } from '@/types/blog';
+import { CategoryMap, CategorySlug } from '@/types/blog';
 
 type Props = {
   categorySlug: CategorySlug;
+  categoryMap: CategoryMap;
   onSelect: (slug: CategorySlug) => void;
 };
 
-const CategorySelector = ({ categorySlug, onSelect }: Props) => {
-  const allData = useAllCategories();
-  const categoryMap = allData?.categoryMap;
-
-  if (!categoryMap) return null;
-
+const CategorySelector = ({ categorySlug, categoryMap, onSelect }: Props) => {
   return (
     <ul className="flex items-center gap-2">
       {CATEGORY_KEYS.map((slug) => {

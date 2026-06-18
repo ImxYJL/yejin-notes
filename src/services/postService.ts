@@ -2,13 +2,8 @@ import 'server-only';
 
 import { createServerSupabaseClient } from '@/libs/supabase/server';
 import { AppError } from '@/utils/error';
-import {
-  getAllCategories,
-  getCategoryBySlug,
-  getPublicCategories,
-  validateCategoryAccess,
-} from './categoryService';
-import { getAuthUser, validateAdmin } from './authService';
+import { getCategoryBySlug } from './categoryService';
+import { validateAdmin } from './authService';
 import {
   CategorySlug,
   DraftData,
@@ -43,9 +38,6 @@ export const getPublicPosts = (
 ) =>
   unstable_cache(
     async (categorySlug: CategorySlug, page: number, limit?: number) => {
-      const categories = await getPublicCategories();
-      validateCategoryAccess(categorySlug, categories, null);
-
       const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
       const from = (page - 1) * LIMIT;
       const to = from + LIMIT - 1;
@@ -154,9 +146,6 @@ export const getAdminPosts = async (
   limit?: number,
 ) => {
   await validateAdmin();
-
-  const [categories, user] = await Promise.all([getAllCategories(), getAuthUser()]);
-  validateCategoryAccess(categorySlug, categories, user);
 
   const LIMIT = Math.min(limit || DEFAULT_PAGE_LIMIT, MAX_PAGE_LIMIT);
   const from = (page - 1) * LIMIT;

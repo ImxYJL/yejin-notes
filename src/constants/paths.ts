@@ -26,7 +26,6 @@ export const PAGE_PATH = {
 
 export const API_ENDPOINT = {
   // public
-  categories: '/categories',
   posts: (slug: CategorySlug) => `/posts?${QUERY_PARAMS.categorySlug}=${slug}`,
   post: (id: string) => `/posts/${id}`,
 
@@ -34,7 +33,8 @@ export const API_ENDPOINT = {
   admin: {
     posts: (slug: CategorySlug) =>
       `${ADMIN_PREFIX}/posts?${QUERY_PARAMS.categorySlug}=${slug}`,
-    post: (id?: string) => id ? `${ADMIN_PREFIX}/posts/${id}` : `${ADMIN_PREFIX}/posts`,
+    post: (id?: string) =>
+      id ? `${ADMIN_PREFIX}/posts/${id}` : `${ADMIN_PREFIX}/posts`,
     drafts: `${ADMIN_PREFIX}/posts/drafts`,
     draft: (id: string) => `${ADMIN_PREFIX}/posts/drafts/${id}`,
   },

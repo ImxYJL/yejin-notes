@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Lock, Unlock, Tag, SaveAll } from 'lucide-react';
 import { Button } from '@/components/common';
-import { CategorySlug, EditorMode } from '@/types/blog';
+import { CategoryMap, CategorySlug, EditorMode } from '@/types/blog';
 import { cn } from '@/utils/styles';
 import CategorySelector from './CategorySelector';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ type EditorToolbarProps = {
   isPrivate: boolean;
   isPending: boolean;
   categorySlug: CategorySlug;
+  categoryMap: CategoryMap;
   onTogglePrivate: () => void;
   onCategorySelect: (slug: CategorySlug) => void;
   onDraftSelect: (id: string) => void;
@@ -26,6 +27,7 @@ const EditorToolbar = ({
   isPrivate,
   isPending,
   categorySlug,
+  categoryMap,
   onTogglePrivate,
   onDraftSave,
   onCategorySelect,
@@ -62,7 +64,7 @@ const EditorToolbar = ({
           <span>{isPrivate ? '비공개' : '공개'}</span>
         </button>
 
-        <CategorySelector categorySlug={categorySlug} onSelect={onCategorySelect} />
+        <CategorySelector categorySlug={categorySlug} categoryMap={categoryMap} onSelect={onCategorySelect} />
       </div>
 
       <div className="flex items-center gap-4">

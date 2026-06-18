@@ -127,6 +127,7 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
       <EditorToolbar
         mode={mode}
         categorySlug={formData.categorySlug}
+        categoryMap={categoryMap}
         isPrivate={formData.isPrivate}
         isPending={isPending}
         onTogglePrivate={handleToggleIsPrivate}

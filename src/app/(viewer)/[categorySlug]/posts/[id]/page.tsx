@@ -5,9 +5,8 @@ import {
 import { getPublicPostDetail, getPublicPosts } from '@/services/postService';
 import { Suspense } from 'react';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
-import { redirect } from 'next/navigation';
-import { PAGE_PATH } from '@/constants/paths';
-import { AppError } from '@/utils/error';
+import { notFound } from 'next/navigation';
+import { AppError, isAppError } from '@/utils/error';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -40,8 +39,9 @@ const PostDetailPage = async ({
   const category = await getPublicCategoryBySlug(rawCategorySlug);
   if (!category) throw AppError.notFound();
 
-  const post = await getPublicPostDetail(id).catch(() => {
-    redirect(PAGE_PATH.admin.postDetail(category.slug, id));
+  const post = await getPublicPostDetail(id).catch((e) => {
+    if (isAppError(e) && e.code === 'NOT_FOUND') notFound();
+    throw e;
   });
 
   return (
