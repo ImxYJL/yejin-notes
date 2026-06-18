@@ -54,9 +54,10 @@ export const middleware = async (request: NextRequest) => {
 
   // 5. 보호된 경로 체크 (어드민 전용 페이지 등)
   const isAdminPath = (pathname: string) => pathname.startsWith('/admin');
+  const isAdmin = user?.email === process.env.ADMIN_EMAIL;
 
-  // 6. [리다이렉트 로직] 로그인이 필요한 페이지에 비로그인 유저 접근 시
-  if (isAdminPath(pathname) && !user) {
+  // 6. [리다이렉트 로직] 어드민 경로에 비로그인 또는 비어드민 접근 시
+  if (isAdminPath(pathname) && (!user || !isAdmin)) {
     // 만약 API 요청이라면 리다이렉트 대신 401 상태코드를 반환
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
