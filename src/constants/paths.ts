@@ -10,7 +10,7 @@ export const PAGE_PATH = {
 
   // public
   posts: (slug: CategorySlug, page: number = START_PAGE_NUM) =>
-    `/${slug}/posts?${QUERY_PARAMS.page}=${page}`,
+    page <= START_PAGE_NUM ? `/${slug}/posts` : `/${slug}/posts/page/${page}`,
   postDetail: (slug: CategorySlug, postId: string) => `/${slug}/posts/${postId}`,
 
   // admin

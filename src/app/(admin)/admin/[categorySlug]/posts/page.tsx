@@ -35,7 +35,7 @@ export default async function AdminPostListPage({
     postsLength: postsRes.posts.length,
     totalPages: postsRes.totalPages,
     currentPage: page,
-    basePath: PAGE_PATH.admin.posts(category.slug),
+    getPagePath: (page) => createUrl(PAGE_PATH.admin.posts(category.slug), { page }),
   });
 
   return (

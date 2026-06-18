@@ -1,4 +1,3 @@
-import { QUERY_PARAMS } from '@/constants/system';
 import { redirect } from 'next/navigation';
 
 /**
@@ -32,7 +31,7 @@ type PageGuardProps = {
   postsLength: number;
   totalPages: number;
   currentPage: number;
-  basePath: string;
+  getPagePath: (page: number) => string;
 };
 
 /**
@@ -43,10 +42,10 @@ export const validatePageBounds = ({
   postsLength,
   totalPages,
   currentPage,
-  basePath,
+  getPagePath,
 }: PageGuardProps) => {
   // 1페이지는 글이 아예 없을 수도 있으므로 제외 (page > 1)
   if (postsLength === 0 && totalPages > 0 && currentPage > START_PAGE_NUM) {
-    redirect(`${basePath}?${QUERY_PARAMS.page}=${totalPages}`);
+    redirect(getPagePath(totalPages));
   }
 };
