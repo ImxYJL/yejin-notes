@@ -5,7 +5,7 @@ import {
   getPublicCategoryBySlug,
 } from '@/services/categoryService';
 import { PAGE_PATH } from '@/constants/paths';
-import { AppError } from '@/utils/error';
+import { notFound } from 'next/navigation';
 
 const ViewerLayout = async ({
   params,
@@ -22,8 +22,7 @@ const ViewerLayout = async ({
 
   const { categorySlug } = await params;
 
-  const category = await getPublicCategoryBySlug(categorySlug);
-  if (!category) throw AppError.notFound();
+  const category = await getPublicCategoryBySlug(categorySlug).catch(() => notFound());
 
   return (
     <div className="flex min-h-screen bg-background">

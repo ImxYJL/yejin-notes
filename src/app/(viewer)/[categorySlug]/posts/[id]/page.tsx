@@ -6,7 +6,7 @@ import { getPublicPostDetail, getPublicPosts } from '@/services/postService';
 import { Suspense } from 'react';
 import { PostDetail, PostDetailSkeleton } from '@/app/(viewer)/components/server';
 import { notFound } from 'next/navigation';
-import { AppError, isAppError } from '@/utils/error';
+import { isAppError } from '@/utils/error';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -36,8 +36,9 @@ const PostDetailPage = async ({
 }) => {
   const { categorySlug: rawCategorySlug, id } = await params;
 
-  const category = await getPublicCategoryBySlug(rawCategorySlug);
-  if (!category) throw AppError.notFound();
+  const category = await getPublicCategoryBySlug(rawCategorySlug).catch(() =>
+    notFound(),
+  );
 
   const post = await getPublicPostDetail(id).catch((e) => {
     if (isAppError(e) && e.code === 'NOT_FOUND') notFound();

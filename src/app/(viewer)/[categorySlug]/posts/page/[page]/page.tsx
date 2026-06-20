@@ -8,9 +8,8 @@ import { getValidatedPage, START_PAGE_NUM, validatePageBounds } from '@/utils/pa
 import { PAGE_PATH } from '@/constants/paths';
 import { PostListLayout } from '../../../../components/server';
 import { buildCategoryMap } from '@/utils/posts/category';
-import { AppError } from '@/utils/error';
 import { CategorySlug } from '@/types/blog';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 export async function generateStaticParams() {
   const categories = await getPublicCategories();
@@ -42,8 +41,7 @@ const PostListPage = async ({
     redirect(PAGE_PATH.posts(rawCategorySlug as CategorySlug));
   }
 
-  const category = await getPublicCategoryBySlug(rawCategorySlug);
-  if (!category) throw AppError.notFound();
+  const category = await getPublicCategoryBySlug(rawCategorySlug).catch(() => notFound());
 
   const [categories, postsRes] = await Promise.all([
     getPublicCategories(),
