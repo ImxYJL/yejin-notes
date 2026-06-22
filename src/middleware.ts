@@ -10,12 +10,19 @@ export const middleware = async (request: NextRequest) => {
   // 1. [필터링] 미들웨어가 개입할 필요가 없는 요청들 우선 처리
   // - Next.js 내부 요청 (prefetch, static, image 등)
   // - 정적 파일들
-  if (
-    request.headers.get('x-middleware-prefetch') ||
-    pathname.startsWith('/_next') ||
-    pathname.includes('.') // 확장자가 있는 파일들 (favicon.ico, .png 등)
-  ) {
-    return NextResponse.next();
+
+  // admin 경로는 early return 없이 항상 인증 체크
+  const isAdminPath = (p: string) =>
+    p.startsWith('/admin') || p.startsWith('/api/admin');
+
+  if (!isAdminPath(pathname)) {
+    if (
+      request.headers.get('x-middleware-prefetch') ||
+      pathname.startsWith('/_next') ||
+      pathname.includes('.')
+    ) {
+      return NextResponse.next();
+    }
   }
 
   // 2. 응답 객체 초기화
@@ -52,13 +59,12 @@ export const middleware = async (request: NextRequest) => {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // 5. 보호된 경로 체크 (어드민 전용 페이지 등)
-  const isAdminPath = (pathname: string) => pathname.startsWith('/admin');
+  // 5. 어드민 여부 확인
   const isAdmin = user?.email === process.env.ADMIN_EMAIL;
 
   // 6. [리다이렉트 로직] 어드민 경로에 비로그인 또는 비어드민 접근 시
   if (isAdminPath(pathname) && (!user || !isAdmin)) {
-    // 만약 API 요청이라면 리다이렉트 대신 401 상태코드를 반환
+    // API 요청이라면 리다이렉트 대신 401 반환
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: '로그인이 필요합니다.' }, { status: 401 });
     }
