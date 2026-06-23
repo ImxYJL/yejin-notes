@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const AdminPostListActions = () => (
   <Link
-    href={PAGE_PATH.admin.write}
+    href={PAGE_PATH.admin.edit()}
     className={getButtonStyles('primary', 'md', 'font-bold')}
   >
     <Plus size={24} />

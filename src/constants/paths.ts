@@ -15,8 +15,8 @@ export const PAGE_PATH = {
 
   // admin
   admin: {
-    write: `${ADMIN_PREFIX}/write`,
-    edit: (postId: string) => `${ADMIN_PREFIX}/edit/${postId}`,
+    edit: (postId?: string) =>
+      postId ? `${ADMIN_PREFIX}/edit/${postId}` : `${ADMIN_PREFIX}/edit`,
     posts: (slug: CategorySlug, page: number = START_PAGE_NUM) =>
       `${ADMIN_PREFIX}/${slug}/posts?${QUERY_PARAMS.page}=${page}`,
     postDetail: (slug: CategorySlug, postId: string) =>
