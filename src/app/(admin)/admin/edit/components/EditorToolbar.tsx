@@ -38,7 +38,7 @@ const EditorToolbar = ({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <header className="flex justify-between items-center pr-6 pt-6 pb-2 bg-background/80 backdrop-blur-sm sticky top-0 z-index-header">
+    <header className="flex justify-between items-center pr-6 pt-6 pb-2 bg-background/80 backdrop-blur-sm sticky top-0 z-header">
       <div className="flex items-center gap-4">
         <Button
           variant="ghost"

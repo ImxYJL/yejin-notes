@@ -22,7 +22,7 @@ const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) =>
       {/* 1. 오버레이 */}
       <div
         className={cn(
-          'fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-index-overlay',
+          'fixed inset-0 bg-black/10 backdrop-blur-[1px] transition-opacity duration-300 z-overlay',
           isOpen ? 'opacity-100 visible' : 'opacity-0 invisible',
           isDeletePending && 'pointer-events-none',
         )}
@@ -32,7 +32,7 @@ const DraftListDrawer = ({ isOpen, onClose, onSelect }: DraftListDrawerProps) =>
       {/* 2. 드로어 본체 */}
       <aside
         className={cn(
-          'fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-index-drawer isolation-isolate',
+          'fixed top-0 right-0 h-full w-[360px] bg-white shadow-2xl z-drawer isolation-isolate',
           'transition-transform duration-300 ease-in-out border-l border-black/[0.03]',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
