@@ -11,7 +11,7 @@ export function makeQueryClient() {
       },
       mutations: {
         retry: 1,
-        throwOnError: true,
+        throwOnError: false,
       },
       dehydrate: {
         // dehydrate 시 성공한 쿼리만 포함

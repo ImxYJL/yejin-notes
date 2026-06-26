@@ -16,6 +16,7 @@ import { buildCategoryMap } from '@/utils/posts/category';
 import useSaveDraft from '@/queries/useSaveDraft';
 import useAutoSave from '@/hooks/useAutoSave';
 import { PAGE_PATH } from '@/constants/paths';
+import { useToastStore } from '@/store/useToastStore';
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -40,7 +41,7 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   const categoryMap = buildCategoryMap(categories);
   const { editorRef, previewRef, handleScroll, handleMouseEnter } = useScrollSync();
 
-  const queryClient = useQueryClient();
+  const { showToast } = useToastStore();
   const { mutate: onSave, isPending: isSavePending } = useSavePost();
   const { mutate: onDraftSave, isPending: isSaveDraftPending } =
     useSaveDraft(setPostId);
@@ -87,7 +88,13 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
 
   const handleSelectDraft = async (id: string) => {
     cancelAutoSave();
-    const data = await getEditorPostApi(id);
+
+    const data = await getEditorPostApi(id).catch(() => {
+      showToast('초안을 불러오지 못했습니다.', 'error');
+      return null;
+    });
+    if (!data) return;
+
     setFormData(convertToPostForm(data));
     window.history.replaceState(null, '', PAGE_PATH.admin.edit(id));
   };

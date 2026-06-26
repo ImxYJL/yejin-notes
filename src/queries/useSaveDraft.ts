@@ -3,9 +3,11 @@ import { PostForm } from '@/types/blog';
 import { saveDraftApi } from '@/apis/posts';
 import { PAGE_PATH } from '@/constants/paths';
 import { BLOG_QUERY_KEY } from './queryKey';
+import { useToastStore } from '@/store/useToastStore';
 
 const useSaveDraft = (onSuccess?: (id: string) => void) => {
   const queryClient = useQueryClient();
+  const { showToast } = useToastStore();
 
   return useMutation({
     mutationFn: (formData: PostForm) => saveDraftApi({ ...formData }),
@@ -19,7 +21,7 @@ const useSaveDraft = (onSuccess?: (id: string) => void) => {
         onSuccess?.(id);
       }
     },
-    onError: (error: Error) => console.log(error.message),
+    onError: () => showToast('임시저장에 실패했습니다.', 'error'),
   });
 };
 
