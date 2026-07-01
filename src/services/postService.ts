@@ -317,7 +317,7 @@ export const getDrafts = async (): Promise<DraftPostItem[]> => {
   const { data, error } = await supabase
     .from('posts')
     .select('id, title, createdAt:created_at')
-    .eq('is_published', false)
+    .not('draft_data', 'is', null)
     .order('created_at', { ascending: false });
 
   if (error) throw AppError.fromSupabase(error);
