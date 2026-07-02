@@ -365,8 +365,6 @@ export const saveDraft = async (formData: PostForm): Promise<SaveDraftResponse> 
     getCategoryBySlug(formData.categorySlug),
   ]);
 
-  console.log(formData);
-
   const draftData: DraftData = {
     title: formData.title,
     content: formData.content,
