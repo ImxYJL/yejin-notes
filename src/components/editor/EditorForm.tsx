@@ -7,7 +7,6 @@ import { ContentEditor, TitleInput } from '.';
 import { useScrollSync } from '@/hooks/useScrollSync';
 import useSavePost from '@/queries/useSavePost';
 import { EditorToolbar } from '@/app/(admin)/admin/edit/components';
-import { useQueryClient } from '@tanstack/react-query';
 import { getEditorPostApi } from '@/apis/posts';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';

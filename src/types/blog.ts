@@ -85,7 +85,7 @@ export type DraftData = Pick<
   'title' | 'content' | 'summary' | 'tags' | 'thumbnailUrl' | 'isPrivate'
 >;
 
-export type EditorPost = Omit<Post, 'draftData'>;
+export type EditorPost = Post;
 
 export type DraftPostItem = Pick<Post, 'createdAt' | 'title' | 'id'>;
 
