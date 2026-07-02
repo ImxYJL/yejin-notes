@@ -87,7 +87,11 @@ export type DraftData = Pick<
 
 export type EditorPost = Post;
 
-export type DraftPostItem = Pick<Post, 'createdAt' | 'title' | 'id'>;
+export type DraftPostItem = {
+  id: string;
+  title: string | null;
+  createdAt: string;
+};
 
 export type PostForm = Omit<Post, 'createdAt' | 'updatedAt' | 'category' | 'id'> & {
   categorySlug: CategorySlug;
