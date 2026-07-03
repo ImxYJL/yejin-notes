@@ -16,6 +16,7 @@ import useSaveDraft from '@/queries/useSaveDraft';
 import useAutoSave from '@/hooks/useAutoSave';
 import { PAGE_PATH } from '@/constants/paths';
 import { useToastStore } from '@/store/useToastStore';
+import { extractSummary } from '@/utils/markdowns/regex';
 
 type EditorFormProps = {
   mode: EditorMode;
@@ -176,25 +177,6 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
         </section>
       </div>
     </div>
-  );
-};
-
-export const extractSummary = (content: string, length = 150): string => {
-  if (!content) return '';
-
-  return (
-    content
-      // 1. 마크다운 특수문자 제거
-      .replace(/[#*`>_~]/g, '')
-      .replace(/[!image]/g, '')
-      .replace(/\[(.*?)\]\(.*?\)/g, '$1') // [링크텍스트](URL) 에서 링크텍스트만 남김
-
-      // 2. 공백 및 줄바꿈 정리
-      .replace(/\s+/g, ' ') // 모든 연속된 공백과 줄바꿈을 한 칸의 공백으로 변경
-
-      // 3. 길이 조절 및 정리
-      .slice(0, length)
-      .trim()
   );
 };
 

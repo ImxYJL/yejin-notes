@@ -6,6 +6,7 @@ import { cn } from '@/utils/styles';
 
 import 'highlight.js/styles/base16/brush-trees-dark.css';
 import { Callout } from '../common';
+import { normalizeBreaks } from '@/utils/markdowns/regex';
 
 type MarkdownPreviewProps = {
   content: string;
@@ -50,7 +51,7 @@ const MarkdownPreview = ({ content, className }: MarkdownPreviewProps) => (
         },
       }}
     >
-      {content}
+      {normalizeBreaks(content)}
     </ReactMarkdown>
   </div>
 );

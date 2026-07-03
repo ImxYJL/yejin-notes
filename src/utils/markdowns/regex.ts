@@ -1,4 +1,25 @@
-// TODO: 마크다운 관련 정규식들 이리로 가져오기
+/**
+ * <br> 태그를 줄바꿈으로 변환 (react-markdown용 전처리)
+ */
+export const normalizeBreaks = (content: string): string =>
+  content.replace(/<br\s*\/?>/gi, '\n');
+
+/**
+ * 본문 마크다운에서 요약문 추출
+ */
+export const extractSummary = (content: string, length = 150): string => {
+  if (!content) return '';
+
+  return (
+    content
+      .replace(/[#*`>_~]/g, '')
+      .replace(/[!image]/g, '')
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+      .replace(/\s+/g, ' ')
+      .slice(0, length)
+      .trim()
+  );
+};
 
 /**
  * 본문 마크다운에서 모든 이미지 URL을 추출
