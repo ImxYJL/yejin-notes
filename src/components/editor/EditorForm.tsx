@@ -10,7 +10,7 @@ import { EditorToolbar } from '@/app/(admin)/admin/edit/components';
 import { getEditorPostApi } from '@/apis/posts';
 import usePostImage from '@/hooks/usePostImage';
 import { MarkdownPreview } from '../markdown';
-import { convertToPostForm } from '@/utils/posts';
+import { convertToPostForm, mergeFormData } from '@/utils/posts';
 import { buildCategoryMap } from '@/utils/posts/category';
 import useSaveDraft from '@/queries/useSaveDraft';
 import useAutoSave from '@/hooks/useAutoSave';
@@ -56,8 +56,12 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
     field: K,
     value: PostForm[K],
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-    autoSave(field, value);
+    const partial = { [field]: value };
+
+    // NOTE: merge base가 updater는 prev, trigger(autoSave)는 이번 렌더의 formData로 다름
+    // 같은 핸들러 안에서 autoSave를 두 번 부르면 앞의 변경이 유실될 수 있음 → 변경분을 하나의 partial로 묶어 호출할 것
+    setFormData((prev) => mergeFormData(prev, partial));
+    autoSave(partial);
   };
 
   const { insertImage, autoThumbnail } = usePostImage({
@@ -100,21 +104,18 @@ const EditorForm = ({ mode, categories, initialData }: EditorFormProps) => {
   };
 
   const handleToggleIsPrivate = () => {
-    setFormData((prev) => ({
-      ...prev,
-      isPrivate: !prev.isPrivate,
-    }));
+    const partial = { isPrivate: !formData.isPrivate };
+    setFormData((prev) => mergeFormData(prev, partial));
+    autoSave(partial);
   };
 
   const handleSelectCategory = (slug: CategorySlug) => {
     const targetCategory = categoryMap?.[slug];
     if (!targetCategory) return;
 
-    setFormData((prev) => ({
-      ...prev,
-      categorySlug: slug,
-      isPrivate: categoryMap[slug].isPrivate,
-    }));
+    const partial = { categorySlug: slug, isPrivate: targetCategory.isPrivate };
+    setFormData((prev) => mergeFormData(prev, partial));
+    autoSave(partial);
   };
 
   const handleContentChange = (val: string) => {

@@ -1,6 +1,7 @@
 import useSaveDraft from '@/queries/useSaveDraft';
 import { PostForm } from '@/types/blog';
 import { debounce } from '@/utils/node';
+import { mergeFormData } from '@/utils/posts';
 import { useEffect, useRef } from 'react';
 
 const AUTOSAVE_TIME = 5000;
@@ -22,8 +23,8 @@ const useAutoSave = (formData: PostForm, setId: (id: string) => void) => {
     return () => debouncedSave.cancel();
   }, []);
 
-  const trigger = <K extends keyof PostForm>(field: K, value: PostForm[K]) => {
-    debouncedSave({ ...formData, [field]: value });
+  const trigger = (partialData: Partial<PostForm>) => {
+    debouncedSave(mergeFormData(formData, partialData));
   };
 
   // ref의 current값 평가 지연용 (렌더링 규칙 위반 방지)
