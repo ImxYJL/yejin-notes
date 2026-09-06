@@ -1,25 +1,34 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ThemeName = 'rainbow' | 'ocean' | 'forest';
+type ThemeName = 'cream' | 'forest' | 'ocean';
 
 type ThemeState = {
   theme: ThemeName;
   setTheme: (theme: ThemeName) => void;
 };
 
+const applyTheme = (theme: ThemeName) => {
+  if (typeof window !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+};
+
 const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      theme: 'rainbow',
+      theme: 'forest',
       setTheme: (theme) => {
         set({ theme });
-        if (typeof window !== 'undefined') {
-          document.documentElement.setAttribute('data-theme', theme);
-        }
+        applyTheme(theme);
       },
     }),
-    { name: 'theme-storage' },
+    {
+      name: 'theme-storage',
+      onRehydrateStorage: () => (state) => {
+        if (state) applyTheme(state.theme);
+      },
+    },
   ),
 );
 

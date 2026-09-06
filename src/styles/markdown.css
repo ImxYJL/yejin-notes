@@ -14,29 +14,37 @@
 .markdown-body h1 {
   color: var(--md-h1);
   font-size: 2.25rem;
-  font-weight: 800;
+  font-weight: 600;
   margin-bottom: 1.5rem;
+  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
+  letter-spacing: -0.02em;
 }
+
 .markdown-body h2 {
   color: var(--md-h2);
   font-size: 1.75rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-top: 2rem;
-  border-bottom: 1px solid var(--palette-9);
+  border-bottom: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 60%);
   padding-bottom: 0.5rem;
+  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
+  letter-spacing: -0.02em;
 }
+
 .markdown-body h3 {
   color: var(--md-h3);
   font-size: 1.4rem;
-  font-weight: 700;
+  font-weight: 600;
+  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
+  letter-spacing: -0.02em;
 }
 
 .markdown-body blockquote {
-  border-left: 4px solid var(--md-h4);
-  background: var(--md-quote);
-  padding: 1rem 1.5rem;
+  border-left: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 45%);
+  background: transparent;
+  padding: 0.75rem 1.25rem;
   margin: 1.5rem 0;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 var(--radius-main) var(--radius-main) 0;
 }
 
 .markdown-body mark {
@@ -48,9 +56,8 @@
 
 .markdown-body code:not(pre code) {
   font-family: var(--font-mono);
-  background-color: var(--palette-9);
+  background-color: color-mix(in srgb, var(--color-accent), transparent 85%);
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   font-size: 0.85em;
-  opacity: 0.8;
 }
