@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { PostItem as PostItemType } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 
@@ -9,33 +8,26 @@ type PostItemProps = {
 };
 
 const PostItem = ({ href, post }: PostItemProps) => (
-  <li>
-    <Link href={href} className="block py-10 group border-muted-foreground/40">
-      <article className="flex flex-col md:flex-row gap-6 md:gap-10 items-start md:items-center">
-        {post.thumbnailUrl && (
-          <div className="relative w-full md:w-48 lg:w-64 aspect-video overflow-hidden rounded-main shrink-0 md:order-last">
-            <Image
-              src={post.thumbnailUrl}
-              alt={post.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 200px, 256px"
-            />
-          </div>
-        )}
-
-        <div className="flex-1 space-y-3 w-full">
-          <h2 className="text-2xl font-bold group-hover:text-palette-0 base-transition tracking-tight leading-snug">
-            {post.title}
-          </h2>
-          <p className="text-muted-foreground line-clamp-2 leading-relaxed text-base">
+  <li
+    className="border-b"
+    style={{
+      borderColor: 'color-mix(in srgb, var(--color-accent), transparent 60%)',
+    }}
+  >
+    <Link href={href} className="flex items-baseline gap-5 py-8 group">
+      <div className="flex-1 min-w-0">
+        <h2 className="text-2xl font-semibold tracking-tight leading-snug group-hover:text-accent-primary base-transition">
+          {post.title}
+        </h2>
+        {post.summary && (
+          <p className="text-sm opacity-60 line-clamp-2 leading-relaxed mt-1">
             {post.summary}
           </p>
-          <div className="flex items-center gap-3 text-sm text-muted-foreground/60 font-mono pt-1">
-            <span>{formatDate(post.createdAt)}</span>
-          </div>
-        </div>
-      </article>
+        )}
+      </div>
+      <span className="font-mono text-xs opacity-50 shrink-0">
+        {formatDate(post.createdAt)}
+      </span>
     </Link>
   </li>
 );
