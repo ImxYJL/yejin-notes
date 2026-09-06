@@ -11,32 +11,29 @@
   font-variant-ligatures: none;
 }
 
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
+  letter-spacing: -0.02em;
+}
+
 .markdown-body h1 {
   color: var(--md-h1);
   font-size: 2.25rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
-  letter-spacing: -0.02em;
 }
 
 .markdown-body h2 {
   color: var(--md-h2);
   font-size: 1.75rem;
-  font-weight: 600;
-  margin-top: 2rem;
-  border-bottom: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 60%);
-  padding-bottom: 0.5rem;
-  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
-  letter-spacing: -0.02em;
 }
 
 .markdown-body h3 {
   color: var(--md-h3);
   font-size: 1.4rem;
-  font-weight: 600;
-  font-family: 'Space Grotesk', 'IBM Plex Sans KR', var(--font-pretendard), sans-serif;
-  letter-spacing: -0.02em;
 }
 
 .markdown-body blockquote {
@@ -45,6 +42,12 @@
   padding: 0.75rem 1.25rem;
   margin: 1.5rem 0;
   border-radius: 0 var(--radius-main) var(--radius-main) 0;
+}
+
+.markdown-body hr {
+  border: none !important;
+  border-top: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 60%) !important;
+  margin: 2rem 0;
 }
 
 .markdown-body mark {

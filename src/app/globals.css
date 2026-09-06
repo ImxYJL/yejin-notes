@@ -54,6 +54,8 @@
   /* ── 파생 시맨틱 토큰 ── */
   --background: var(--color-bg);
   --foreground: color-mix(in srgb, var(--color-accent) 24%, #232120);
+  --muted-fg: color-mix(in srgb, var(--color-accent) 30%, #6b7280);
+  --muted-bg: color-mix(in srgb, var(--color-accent) 10%, #f1f5f9);
 
   /* ── Tailwind accent 유틸 리매핑 ── */
   --palette-5: var(--color-accent);
@@ -118,8 +120,8 @@
  * ================================================================ */
 @theme inline {
   --color-primary: #3b82f6;
-  --color-muted: #f1f5f9;
-  --color-muted-foreground: #64748b;
+  --color-muted: var(--muted-bg);
+  --color-muted-foreground: var(--muted-fg);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -232,7 +234,7 @@
 .post-header {
   padding-bottom: 2.5rem;
   margin-bottom: 3.5rem;
-  border-bottom: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 55%);
+  border-bottom: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 40%);
 }
 
 /* 제목: 굵기를 600(SemiBold)으로 고정 */

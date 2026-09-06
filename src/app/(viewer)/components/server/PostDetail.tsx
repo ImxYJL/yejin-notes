@@ -53,7 +53,7 @@ const PostDetail = async ({ categorySlug, post, actions }: Props) => {
         </section>
       </article>
 
-      <Divider direction="horizontal" className="opacity-80" />
+      <Divider direction="horizontal" />
 
       <PostNavigation
         navigation={{ prevPost: post.prevPost, nextPost: post.nextPost }}

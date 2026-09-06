@@ -12,7 +12,7 @@ const Divider = ({ direction = 'vertical', className, style }: DividerProps) => 
     <div
       style={style}
       className={cn(
-        'bg-muted-foreground/20 shrink-0',
+        'bg-foreground shrink-0',
         direction === 'vertical' ? 'w-px h-full' : 'h-px w-full',
         className,
       )}
