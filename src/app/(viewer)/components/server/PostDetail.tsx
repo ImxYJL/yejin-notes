@@ -1,5 +1,5 @@
+import { Lock } from 'lucide-react';
 import { Divider } from '@/components/common';
-import { Lock, Clock, Tag } from 'lucide-react';
 import { CategorySlug, PostDetailResponse } from '@/types/blog';
 import { formatDate } from '@/utils/date';
 import { getMarkdownComponent } from '@/utils/markdowns/style';
@@ -18,41 +18,35 @@ const PostDetail = async ({ categorySlug, post, actions }: Props) => {
   return (
     <div className="space-y-16">
       <article>
-        <header className="mb-4 space-y-2">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
-            <h1 className="text-3xl font-extrabold tracking-tight leading-tight max-w-[80%]">
-              {post.title}
-            </h1>
-
-            <div className="flex flex-col gap-2 items-end">
-              <span className="flex items-center gap-1.5 text-sm text-muted-foreground shrink-0 pb-1">
-                <Clock size={20} /> {formatDate(post.createdAt)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
+        <header className="post-header">
+          <div className="flex items-center justify-between text-xs uppercase tracking-wider opacity-60">
+            <div className="flex items-center gap-2">
+              <span>{formatDate(post.createdAt)}</span>
               {post.isPrivate && (
-                <span className="text-palette-0 font-bold bg-palette-0/10 px-2 py-0.5 rounded flex items-center justify-center">
-                  <Lock size={20} />
-                </span>
-              )}
-              {post.tags.length > 0 && (
                 <>
-                  <Tag size={20} />
-                  {post.tags.map((tag, i) => (
-                    <span key={i}>{tag}</span>
-                  ))}
+                  <span>·</span>
+                  <span className="inline-flex items-center gap-1">
+                    <Lock size={12} />
+                    비공개
+                  </span>
                 </>
               )}
-            </span>
-
+            </div>
             {actions}
           </div>
-        </header>
 
-        <Divider direction="horizontal" className="mb-12" />
+          <h1 className="mt-4 text-4xl leading-tight tracking-tight">
+            {post.title}
+          </h1>
+
+          {post.tags.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-sm opacity-60">
+              {post.tags.map((tag, i) => (
+                <span key={i}>#{tag}</span>
+              ))}
+            </div>
+          )}
+        </header>
 
         <section className="bg-background rounded-main">
           <MarkdownViewer contentNode={contentNode} />
