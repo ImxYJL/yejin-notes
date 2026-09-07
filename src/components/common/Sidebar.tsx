@@ -5,6 +5,7 @@ import Button from './Button';
 import { Github, Mail, X, Menu, Lock } from 'lucide-react';
 import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
+import ThemeSwitcher from './ThemeSwitcher';
 import { CATEGORY_MAP } from '@/constants/blog';
 import useDevice from '@/hooks/useDevice';
 import { Category, CategorySlug } from '@/types/blog';
@@ -64,7 +65,7 @@ const Sidebar = ({ categories, selectedSlug }: Props) => {
 
           // 데스크탑 (md 이상)
           'md:sticky md:top-0 md:h-screen md:z-sidebar md:overflow-hidden',
-          'md:translate-x-0 md:bg-background/60 md:backdrop-blur-xl md:shadow-none',
+          'md:translate-x-0 md:bg-background md:shadow-none',
 
           isSidebarOpen
             ? 'md:w-sidebar md:border-r md:border-solid md:border-muted-foreground/40'
@@ -73,9 +74,8 @@ const Sidebar = ({ categories, selectedSlug }: Props) => {
       >
         <div className="w-sidebar p-6 h-full flex flex-col">
           {/* Profile Section */}
-          <div className="flex justify-between items-start mb-10">
+          <div className="flex justify-between items-start mb-6">
             <div className="space-y-3">
-              <div className="w-16 h-16 rounded-main g-linear-to-tr from-(--palette-0) to-(--palette-2) shadow-inner" />
               <div>
                 <h2 className="font-bold text-xl text-foreground tracking-tight">
                   Yejin
@@ -108,11 +108,11 @@ const Sidebar = ({ categories, selectedSlug }: Props) => {
                     'flex items-center gap-3 p-3 rounded-main transition-all duration-300 group relative overflow-hidden',
                     isSelected
                       ? 'text-foreground font-medium pl-5'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-white/40 hover:pl-5',
+                      : 'text-muted-foreground hover:text-foreground hover:pl-5',
                   )}
                 >
                   {isSelected && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-primary animate-in fade-in slide-in-from-left-1 duration-300" />
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-accent-primary animate-in fade-in slide-in-from-left-1 duration-300" />
                   )}
 
                   <span
@@ -153,6 +153,7 @@ const Sidebar = ({ categories, selectedSlug }: Props) => {
                 <Mail size={20} />
               </a>
             </div>
+            <ThemeSwitcher />
           </div>
         </div>
       </aside>

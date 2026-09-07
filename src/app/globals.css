@@ -253,7 +253,7 @@ svg {
 }
 
 /* 콜아웃: 사방 균일한 얇은 accent 선 박스 */
-aside {
+.markdown-body aside {
   background-color: #ffffff !important;
   border: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 45%) !important;
   border-radius: var(--radius-main) !important;
@@ -261,7 +261,7 @@ aside {
 }
 
 /* 콜아웃 이모지 → 모노라인 두들(반짝이) SVG mask */
-aside > span[aria-hidden] {
+.markdown-body aside > span[aria-hidden] {
   display: inline-block;
   flex-shrink: 0;
   width: 1.5rem;
