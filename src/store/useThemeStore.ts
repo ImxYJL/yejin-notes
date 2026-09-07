@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
-type ThemeName = 'cream' | 'forest' | 'ocean';
+import { ThemeName } from '@/constants/theme';
 
 type ThemeState = {
   theme: ThemeName;
