@@ -1,5 +1,4 @@
 import { ChangeEvent } from 'react';
-import { Input } from '../common';
 
 type TitleInputProps = {
   value: string;
@@ -7,14 +6,12 @@ type TitleInputProps = {
 };
 
 const TitleInput = ({ value, onChange }: TitleInputProps) => (
-  <Input
+  <input
     name="title"
-    variant="ghost"
-    fontSize="3xl"
     placeholder="제목을 입력하세요"
     value={value}
     onChange={(e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
-    className="p-2 border-none font-bold placeholder:text-muted-foreground/40"
+    className="w-full bg-transparent border-none outline-none text-[1.75rem] font-semibold leading-tight tracking-tight mb-8 placeholder:text-muted-foreground/25"
   />
 );
 

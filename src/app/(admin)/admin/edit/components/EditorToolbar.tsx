@@ -1,80 +1,68 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Save, Lock, Unlock, Tag, SaveAll } from 'lucide-react';
-import { Button } from '@/components/common';
-import { CategoryMap, CategorySlug, EditorMode } from '@/types/blog';
+import { ArrowLeft, Save, Eye } from 'lucide-react';
 import { cn } from '@/utils/styles';
-import CategorySelector from './CategorySelector';
 import { useState } from 'react';
 import DraftListDrawer from './DraftListDrawer';
 
 type EditorToolbarProps = {
-  mode: EditorMode;
-  isPrivate: boolean;
   isPending: boolean;
-  categorySlug: CategorySlug;
-  categoryMap: CategoryMap;
-  onTogglePrivate: () => void;
-  onCategorySelect: (slug: CategorySlug) => void;
-  onDraftSelect: (id: string) => void;
+  showPreview: boolean;
+  onTogglePreview: () => void;
   onSave: () => void;
   onDraftSave: () => void;
+  onDraftSelect: (id: string) => void;
 };
 
 const EditorToolbar = ({
-  onDraftSelect,
-  isPrivate,
   isPending,
-  categorySlug,
-  categoryMap,
-  onTogglePrivate,
-  onDraftSave,
-  onCategorySelect,
+  showPreview,
+  onTogglePreview,
+  onDraftSelect,
   onSave,
+  onDraftSave,
 }: EditorToolbarProps) => {
   const router = useRouter();
-
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <header className="flex justify-between items-center pr-6 pt-6 pb-2 bg-background/80 backdrop-blur-sm sticky top-0 z-header">
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.back()}
-          icon={<ArrowLeft size={20} />}
-          className="hover:bg-accent-primary/10"
-        >
-          나가기
-        </Button>
-
-        {/* <Divider vertical className="h-4" /> */}
-
-        {/* 비밀글 토글 */}
+    <header
+      className="shrink-0 sticky top-0 z-header bg-background/90 backdrop-blur-md flex items-center justify-between px-8 py-2"
+      style={{ borderBottom: '1.25px solid color-mix(in srgb, var(--color-accent), transparent 40%)' }}
+    >
+      <div className="flex items-center gap-1">
         <button
-          onClick={onTogglePrivate}
-          className={cn(
-            'flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all text-xs font-medium',
-            'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800',
-          )}
+          onClick={() => router.back()}
+          className="flex items-center gap-1.5 text-[13px] text-muted-foreground hover:text-foreground base-transition px-2 py-2 rounded-main hover:bg-muted/60"
         >
-          {isPrivate ? <Lock size={14} /> : <Unlock size={14} />}
-          <span>{isPrivate ? '비공개' : '공개'}</span>
+          <ArrowLeft size={16} />
+          나가기
         </button>
 
-        <CategorySelector categorySlug={categorySlug} categoryMap={categoryMap} onSelect={onCategorySelect} />
+        <div className="w-px h-4 bg-muted-foreground/20 mx-1" />
+
+        <button
+          onClick={onTogglePreview}
+          className={cn(
+            'flex items-center gap-1.5 text-[13px] px-3 py-1.5 rounded-main border base-transition',
+            showPreview
+              ? 'border-accent-primary/50 text-accent-primary bg-accent-primary/8'
+              : 'border-muted-foreground/20 text-muted-foreground hover:text-foreground hover:border-muted-foreground/40',
+          )}
+        >
+          <Eye size={14} />
+          미리보기
+        </button>
       </div>
 
-      <div className="flex items-center gap-4">
-        <Button
-          variant="ghost"
+      <div className="flex items-center gap-2">
+        <button
           onClick={() => setIsDrawerOpen((prev) => !prev)}
-          // className="text-xs font-bold text-muted-foreground hover:text-accent-primary underline underline-offset-4 base-transition mr-2"
+          className="text-[13px] text-muted-foreground/70 hover:text-muted-foreground base-transition px-2 py-2"
         >
-          임시저장 목록 열기
-        </Button>
+          임시저장 목록
+        </button>
 
         <DraftListDrawer
           isOpen={isDrawerOpen}
@@ -82,26 +70,22 @@ const EditorToolbar = ({
           onSelect={onDraftSelect}
         />
 
-        <Button
-          variant="outline"
-          size="md"
+        <button
           onClick={onDraftSave}
           disabled={isPending}
-          className="font-semibold text-muted-foreground border-muted-foreground"
+          className="text-[13px] px-3.5 py-1.5 rounded-main border border-muted-foreground/30 text-muted-foreground hover:border-muted-foreground/60 hover:text-foreground base-transition disabled:opacity-40"
         >
           임시저장
-        </Button>
+        </button>
 
-        <Button
-          variant="primary"
-          size="md"
+        <button
           onClick={onSave}
           disabled={isPending}
-          icon={<Save size={16} />}
-          className="font-semibold"
+          className="flex items-center gap-1.5 text-[13px] px-4 py-1.5 rounded-main bg-accent-primary text-white font-medium hover:opacity-90 base-transition disabled:opacity-40"
         >
+          <Save size={13} style={{ color: 'white' }} />
           저장
-        </Button>
+        </button>
       </div>
     </header>
   );

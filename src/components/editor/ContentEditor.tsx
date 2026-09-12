@@ -1,15 +1,25 @@
-import { ChangeEvent, KeyboardEvent } from 'react';
+'use client';
+
+import { ChangeEvent, KeyboardEvent, useEffect } from 'react';
 import { Textarea } from '../common';
 
 type Props = {
   value: string;
   onChange: (val: string) => void;
-  onScroll: () => void;
   onImgPaste: (file: File) => void;
   ref?: React.RefObject<HTMLTextAreaElement | null>;
 };
 
-const ContentEditor = ({ value, onChange, onScroll, onImgPaste, ref }: Props) => {
+const autoResize = (el: HTMLTextAreaElement) => {
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+};
+
+const ContentEditor = ({ value, onChange, onImgPaste, ref }: Props) => {
+  useEffect(() => {
+    if (ref && 'current' in ref && ref.current) autoResize(ref.current);
+  }, [ref]);
+
   const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     if (handleImagePaste(e, onImgPaste)) return;
 
@@ -22,6 +32,7 @@ const ContentEditor = ({ value, onChange, onScroll, onImgPaste, ref }: Props) =>
 
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
+    autoResize(e.target);
   };
 
   return (
@@ -30,11 +41,10 @@ const ContentEditor = ({ value, onChange, onScroll, onImgPaste, ref }: Props) =>
       placeholder="여기에 입력해주세요"
       value={value}
       onChange={handleChange}
-      onScroll={onScroll}
       onPaste={handlePaste}
       onKeyDown={handleKeyDown}
       ref={ref}
-      className="mb-6 flex-1 resize-none font-mono text-base leading-relaxed overflow-y-auto border-muted-foreground/50"
+      className="resize-none font-mono text-base leading-relaxed overflow-hidden min-h-[50vh] border-muted-foreground/40 px-5 py-4 focus:border-accent-primary/70"
     />
   );
 };
