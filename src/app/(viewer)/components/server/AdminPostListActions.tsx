@@ -1,4 +1,3 @@
-import { getButtonStyles } from '@/components/common/Button';
 import { PAGE_PATH } from '@/constants/paths';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
@@ -6,9 +5,9 @@ import Link from 'next/link';
 const AdminPostListActions = () => (
   <Link
     href={PAGE_PATH.admin.edit()}
-    className={getButtonStyles('primary', 'md', 'font-bold')}
+    className="flex items-center justify-center text-accent-primary base-transition hover:opacity-70"
   >
-    <Plus size={24} />
+    <Plus size={28} />
   </Link>
 );
 

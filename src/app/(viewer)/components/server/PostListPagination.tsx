@@ -24,7 +24,7 @@ const PostListPagination = ({ currentPage, totalPages, getPageHref }: Props) => 
                 className={`
                   relative w-8 h-8 text-sm font-mono transition-all duration-200
                   flex items-center justify-center
-                  hover:bg-accent-primary/10
+                  hover:opacity-70
                   ${
                     isActive
                       ? 'text-accent-primary font-bold shadow-[0_2px_0_0_currentColor]'
