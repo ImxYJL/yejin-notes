@@ -24,7 +24,7 @@ const ViewerLayout = async ({
 
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar categories={categoriesWithHref} selectedSlug={category.slug} />
+      <Sidebar categories={categoriesWithHref} selectedSlug={category.slug} isAdmin />
 
       <main
         className={cn(
