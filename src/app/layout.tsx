@@ -9,7 +9,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={pretendard.variable}>
+    <html lang="ko" className={pretendard.variable} data-theme="forest" suppressHydrationWarning>
       <body>
         <Toast />
         <ClientProviders>{children}</ClientProviders>
