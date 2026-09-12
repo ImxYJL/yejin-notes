@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import Button from './Button';
-import { Github, Mail, X, Menu, Lock } from 'lucide-react';
+import { Github, Mail, X, Menu, Lock, Plus } from 'lucide-react';
 import { cn } from '@/utils/styles';
 import useLayoutStore from '@/store/useLayoutStore';
 import ThemeSwitcher from './ThemeSwitcher';
 import { CATEGORY_MAP } from '@/constants/blog';
+import { PAGE_PATH } from '@/constants/paths';
 import useDevice from '@/hooks/useDevice';
 import { Category, CategorySlug } from '@/types/blog';
 
@@ -15,9 +16,10 @@ type CategoryWithHref = Category & { href: string };
 type Props = {
   categories: CategoryWithHref[];
   selectedSlug: CategorySlug | null;
+  isAdmin?: boolean;
 };
 
-const Sidebar = ({ categories, selectedSlug }: Props) => {
+const Sidebar = ({ categories, selectedSlug, isAdmin }: Props) => {
   const { isSidebarOpen, toggleSidebar, closeSidebar } = useLayoutStore();
   const { isMobile } = useDevice();
 
@@ -153,7 +155,17 @@ const Sidebar = ({ categories, selectedSlug }: Props) => {
                 <Mail size={20} />
               </a>
             </div>
-            <ThemeSwitcher />
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <Link
+                  href={PAGE_PATH.admin.edit()}
+                  className="text-accent-primary base-transition hover:opacity-70"
+                >
+                  <Plus size={20} />
+                </Link>
+              )}
+              <ThemeSwitcher />
+            </div>
           </div>
         </div>
       </aside>
