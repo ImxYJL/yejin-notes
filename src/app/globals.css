@@ -134,13 +134,13 @@
   --width-content: var(--content-max-w);
   --width-editor: var(--editor-max-w);
 
-  --z-header: 100;
-  --z-sidebar: 110;
-  --z-sidebar-btn: 120;
-  --z-overlay: 600;
-  --z-drawer: 700;
-  --z-sidebar-mobile: 710;
-  --z-toast: 1000;
+  --z-index-header: 100;
+  --z-index-sidebar: 110;
+  --z-index-sidebar-btn: 120;
+  --z-index-overlay: 600;
+  --z-index-drawer: 700;
+  --z-index-sidebar-mobile: 710;
+  --z-index-toast: 1000;
 
   --font-sans: var(--font-pretendard);
   --font-mono: var(--font-geist-mono);
