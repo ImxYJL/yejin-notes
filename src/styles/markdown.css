@@ -46,7 +46,7 @@
 
 .markdown-body hr {
   border: none !important;
-  border-top: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 60%) !important;
+  border-top: 1.25px solid color-mix(in srgb, var(--color-accent), transparent 78%) !important;
   margin: 2rem 0;
 }
 
