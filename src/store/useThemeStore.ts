@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { ThemeName } from '@/constants/theme';
+import { ThemeName, THEME_STORAGE_KEY } from '@/constants/theme';
 
 type ThemeState = {
   theme: ThemeName;
@@ -23,7 +23,7 @@ const useThemeStore = create<ThemeState>()(
       },
     }),
     {
-      name: 'theme-storage',
+      name: THEME_STORAGE_KEY,
       onRehydrateStorage: () => (state) => {
         if (state) applyTheme(state.theme);
       },

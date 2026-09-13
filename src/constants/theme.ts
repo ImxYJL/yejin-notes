@@ -9,6 +9,9 @@ export const BLOG_THEMES = [
 
 export type ThemeName = (typeof BLOG_THEMES)[number]['name'];
 
+/** zustand persist가 테마를 저장하는 localStorage 키. layout.tsx의 FOUC 방지 스크립트와 공유한다. */
+export const THEME_STORAGE_KEY = 'theme-storage';
+
 export const CODE_VIEWER_THEME = {
   rosePineDawn: rosePineDawn,
   nord: nord,
